@@ -86,11 +86,20 @@ AllsData.AgeAll.Scen1.Afg.max_med <- aggregate(med ~ .id + compartment, AllsData
 
 
 # figure out delay and reduction and eff values
-# otherwise, try plotting peak case value and peak day
 
-# also, try to build an interface so users could pick 
+# I would think the peak scen case max + reduction would equal alls scen 1 max?  it is close but not quite
+
+# 243582 + 35379
+# [1] 278961
+# from alls data: 285259.0
+# diff of 6298
+
+# TODO: otherwise, try plotting peak case value and peak day
+
+# TODO: try to build an interface so users could pick 
 # what to subset
 
+# TODO: try to re-write this using data tables
 
 
 expander <- data.table(expand.grid(

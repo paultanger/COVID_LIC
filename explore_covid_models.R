@@ -7,16 +7,22 @@ scen_over = readRDS(file = "../../scenarios_overview.rds")
 scen = readRDS('../../scenarios.rds')
 # one s
 scen[[1]] #unmitigated
+
 # two s - 20 and 50%
 scen[[2]] #50% self-isolation and 20/50% social-distancing
+# in the paper, this is scen 2 and 3
+
 # 16 s - combinations of hirisk_prop_isolated and hirisk_lorisk_contact
 scen[[3]] #50% self-isolation and 80% shielding
+# in the paper, this is scen 7
+
 # 32 s - combinations of gen_socdist_other and gen_socdist_contact (basically combinations of 2 and 3 above)
 scen[[4]] #50% self-isolation and 80% shielding and 20/50% social-distancing
+# in the paper this must be scen 4,5,6... although it seems like it would only cover scen 6 (80 shield, 20 distance)
 
 # look at digest.R - I think that is the script that generated it... start at line 166
 # takes one arg.. I think dir of files
-# quantiles are not what we thought:
+# quantiles are not what we thought?
 # refprobs <- c(lo.lo=0.025, lo=0.25, med=0.5, hi=0.75, hi.hi=0.975)
 
 setwd('../2020_05_05_archived_04_30_generated/afghanistan/')
