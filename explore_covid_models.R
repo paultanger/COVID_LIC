@@ -60,6 +60,8 @@ median(qs00114t30$value)
 
 # this is probably what we want
 # it is the peak numbers for each scenario, but doesn't have t for them
+# it doesn't have scen 1 (unmitigated)
+# well it does have timing..
 peak = qread('peak.qs')
 peak = droplevels(peak)
 levels(peak$metric)

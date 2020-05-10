@@ -1,15 +1,20 @@
 suppressPackageStartupMessages({
   require(data.table)
   require(qs)
+  require(plyr)
 })
 
 .args <- if (interactive()) c(
-  "caboverde/peak.qs"
+  "2020_05_05_archived_04_30_generated/afghanistan/"
 ) else commandArgs(trailingOnly = TRUE)
 
 refprobs <- c(lo.lo=0.025, lo=0.25, med=0.5, hi=0.75, hi.hi=0.975)
-
-simfns <- sort(list.files(dirname(.args[1]), "\\d+\\.qs", full.names = TRUE))
+# \\. matches only qs files
+# d+ finds digits in filename
+# need to go one dir deep
+# just get peak.qs
+# simfns <- sort(list.files(dirname(.args[1]), "\\d+\\.qs", full.names = TRUE))
+simfns <- sort(list.files(dirname(.args[1]), "peak.qs", full.names = TRUE, recursive = TRUE))
 
 # readsimf <- function(fn) {
 #   res <- qread(fn)[, w := (t-1) %/% 7 ][w < 52]
@@ -20,7 +25,73 @@ simfns <- sort(list.files(dirname(.args[1]), "\\d+\\.qs", full.names = TRUE))
 #   res
 # }
 
+# this won't work because need to add country category back
 ref <- qread(simfns[1])
+
+# get country names from directories
+countries = as.vector(list.files(dirname(.args[1])))
+
+# name the file list vector
+names(simfns) <- countries
+
+# combine into one df
+AllPeakData = ldply(simfns, qread)
+
+# assign to ref (for code below if we need it)
+ref = AllPeakData
+
+# we can easily get max for each country peak from this
+# but we also want the day when this happens
+# maybe we can use timing?
+# disable scinot
+options(scipen=999)
+
+# get timing max and peak cases max for each country
+# we're going to have narrow these scenarios somehow
+
+AllPeakData.agg <- aggregate(med ~ .id + compartment + metric + age + scen_id, AllPeakData, max)
+summary(AllPeakData)
+
+# subset all and discard age disag
+AllPeakData.agg.all = subset(AllPeakData.agg, AllPeakData.agg$age == "all")
+
+# get afganistan as example
+AllPeakData.agg.all.Agf = subset(AllPeakData.agg.all, .id == "afghanistan")
+
+# need to repeat this using alls files to get the unmitigated scenario results
+
+# TODO: make this a function
+# make list of files
+alls_unmit <- sort(list.files(dirname(.args[1]), "alls.qs", full.names = TRUE, recursive = TRUE))
+names(alls_unmit) <- countries
+# put together in one df
+AllsData = ldply(alls_unmit, qread)
+# add .id as col
+#AllsData$Country = AllsData$.id
+# subset just scen 1 ages all
+AllsData.AgeAll.Scen1 = subset(AllsData[,c(1:4, 7, 10)], (AllsData$age == "all") & (AllsData$scen_id == 1))
+AllsData.AgeAll.Scen1 = droplevels(AllsData.AgeAll.Scen1)
+summary(AllsData.AgeAll.Scen1)
+
+# need to melt before doing this to keep t and max
+# or one of these methods:
+# https://stackoverflow.com/questions/34523679/aggregate-multiple-columns-at-once
+AllsData.AgeAll.Scen1.Peaks <- aggregate(med ~ .id + compartment, AllsData.AgeAll.Scen1[,-3], max)
+
+# check Afg.. day 111 285259.0
+AllsData.AgeAll.Scen1.Afg = subset(AllsData[,c(1:4, 7, 10)], (AllsData$age == "all") & (AllsData$scen_id == 1) & (AllsData$.id == "afghanistan"))
+AllsData.AgeAll.Scen1.Afg = droplevels(AllsData.AgeAll.Scen1.Afg)
+
+AllsData.AgeAll.Scen1.Afg.max_med <- aggregate(med ~ .id + compartment, AllsData.AgeAll.Scen1.Afg[,-3], max)
+
+
+# figure out delay and reduction and eff values
+# otherwise, try plotting peak case value and peak day
+
+# also, try to build an interface so users could pick 
+# what to subset
+
+
 
 expander <- data.table(expand.grid(
   run=1:max(ref$run),
