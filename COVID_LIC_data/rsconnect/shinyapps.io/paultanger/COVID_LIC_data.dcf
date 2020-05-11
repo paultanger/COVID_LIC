@@ -1,0 +1,12 @@
+name: COVID_LIC_data
+title:
+username:
+account: paultanger
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2280525
+bundleId: 3132713
+url: https://paultanger.shinyapps.io/COVID_LIC_data/
+when: 1589216714.52553
+asMultiple: FALSE
+asStatic: FALSE

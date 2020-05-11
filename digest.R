@@ -55,6 +55,13 @@ summary(AllPeakData)
 # subset all and discard age disag
 AllPeakData.agg.all = subset(AllPeakData.agg, AllPeakData.agg$age == "all")
 
+# save this data file for app
+filename = addStampToFilename('AllPeakDataAggAllAges', 'qs')
+qsave(AllPeakData.agg.all, filename)
+
+# test load
+test = qread('AllPeakDataAggAllAges_20200511_1020.qs')
+
 # get afganistan as example
 AllPeakData.agg.all.Agf = subset(AllPeakData.agg.all, .id == "afghanistan")
 
@@ -77,6 +84,75 @@ summary(AllsData.AgeAll.Scen1)
 # or one of these methods:
 # https://stackoverflow.com/questions/34523679/aggregate-multiple-columns-at-once
 AllsData.AgeAll.Scen1.Peaks <- aggregate(med ~ .id + compartment, AllsData.AgeAll.Scen1[,-3], max)
+
+library(data.table)
+
+AllsData.AgeAll.Scen1.dt <- as.data.table(AllsData.AgeAll.Scen1[,c(1,2,4,5)])
+
+Scen1_peak_med_and_t = AllsData.AgeAll.Scen1.dt[AllsData.AgeAll.Scen1.dt[, .I[which.max(med)], by=list(.id, compartment)]$V1]
+
+# save it
+filename = addStampToFilename('Scen1_PeakData_AgeAll_median_and_t', 'csv')
+wd = '~/Desktop/github/COVID_LIC/COVID_LIC_data/data/'
+setwd(wd)
+write.csv(Scen1_peak_med_and_t, filename, row.names = FALSE)
+
+# combine scenario data with unmitigated
+AllsData.AgeAll.Scen1.dt <- as.data.table(AllsData.AgeAll.Scen1)
+
+# reorg cols
+AllsData.AgeAll.Scen1.dt = AllsData.AgeAll.Scen1.dt[,c(1,2,6,3,4,5)]
+
+AllPeakData.agg.all = AllPeakData.agg.all[,c(1,2,5,4,3,6)]
+head(AllsData.AgeAll.Scen1.dt, 3)
+
+AllsData.AgeAll.Scen1.dt = AllsData.AgeAll.Scen1.dt[,-c(3,4)]
+
+# get max peak and day
+Scen1_peak_med_and_t = AllsData.AgeAll.Scen1.dt[AllsData.AgeAll.Scen1.dt[, .I[which.max(med)], by=list(.id, compartment)]$V1]
+
+# add scen and age group cols
+Scen1_peak_med_and_t$scen_id = 1
+Scen1_peak_med_and_t$age = 'all'
+head(Scen1_peak_med_and_t,3)
+
+Scen1_peak_med_and_t = Scen1_peak_med_and_t[,c(1,2,5,6,3,4)]
+head(Scen1_peak_med_and_t,3)
+
+# prep cols to merge
+head(AllPeakData.agg.all,3)
+#Scen1_peak_med_and_t$metric = 'value'
+# make long so we have timing and med values
+# rename t to timing to match
+names(Scen1_peak_med_and_t)[names(Scen1_peak_med_and_t) == "t"] <- "timing"
+names(Scen1_peak_med_and_t)[names(Scen1_peak_med_and_t) == "med"] <- "value"
+
+head(Scen1_peak_med_and_t,3)
+#Scen1_peak_med_and_t = Scen1_peak_med_and_t[,-5]
+Scen1_peak_med_and_t_long <- melt(Scen1_peak_med_and_t, id=c(".id","compartment", "scen_id", "age"), variable.name = "metric", value.name = "med")
+
+head(Scen1_peak_med_and_t_long,3)
+# names(Scen1_peak_med_and_t_long)[names(Scen1_peak_med_and_t_long) == "variable"] <- "metric"
+
+head(Scen1_peak_med_and_t_long,3)
+
+#Scen1_peak_med_and_t = Scen1_peak_med_and_t[,c(1:4,7,5,6)]
+head(AllPeakData.agg.all,3)
+
+# merge with other scenario data
+merged = rbind(Scen1_peak_med_and_t_long, AllPeakData.agg.all)
+
+# save it
+filename = addStampToFilename('AllScenarioMedians', 'csv')
+wd = '~/Desktop/github/COVID_LIC/COVID_LIC_data/data/'
+setwd(wd)
+write.csv(merged, filename, row.names = FALSE)
+
+# setDT(AllsData.AgeAll.Scen1[,-3])[, lapply(.SD, max), by = .(t, med)] 
+
+# melt to get max t and med value
+# scen1t_med <- melt(AllsData.AgeAll.Scen1[,c(1,2,4,5)], id=c(".id","compartment"))
+# AllsData.AgeAll.Scen1
 
 # check Afg.. day 111 285259.0
 AllsData.AgeAll.Scen1.Afg = subset(AllsData[,c(1:4, 7, 10)], (AllsData$age == "all") & (AllsData$scen_id == 1) & (AllsData$.id == "afghanistan"))

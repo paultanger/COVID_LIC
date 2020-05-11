@@ -38,6 +38,14 @@ summary(scene)
 # makes sense mostly except what is the s values?
 # those are the specific scenarios from above
 
+# subset
+alls.subset = alls[(alls$compartment =='cases') & (alls$age == "all") & (alls$t == 111) & (alls$scen_id %in% c(1,2))]
+
+alls.subset = alls[(alls$compartment =='cases') & (alls$age == "all") & (alls$scen_id %in% c(2))]
+
+# get peak of scen 2
+alls.subset[alls.subset$med == max(alls.subset$med)]
+
 Eforday0 = subset(alls, (compartment == "E") & (t== 1))
 # there is 6 age groups including all and 51 scenarios
 
@@ -60,6 +68,8 @@ accs = qread('accs.qs')
 levels(accs$metric)
 accs14t30 = accs[(accs$compartment =='E') & (accs$age == "<14") & (accs$t == 30) & (accs$scen_id == 2) & (accs$metric %in% c('value', 'reduction'))]
 alls14t30 = alls[(alls$compartment =='E') & (alls$age == "<14") & (alls$t == 30) & (alls$scen_id == 2)]
+
+peak[(peak$compartment =='cases') & (peak$age == "all") & (peak$scen_id == 2) & (peak$metric %in% c('value'))]
 
 qs00114t30 = qs001[(qs001$compartment =='E') & (qs001$age == "<14") & (qs001$t == 30)]
 median(qs00114t30$value)
