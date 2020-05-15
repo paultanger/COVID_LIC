@@ -7,7 +7,7 @@ cbPalette2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"
 mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4){
   # lines for each scenario
   dotplot <- ggplot(mydata, aes(x=Date, y= med, group=Scenarios, color=Scenarios)) +
-    geom_line(size = 1.5)
+    geom_line(size = 1.2)
     # add points for values
     # geom_point(aes(shape=scen_id, color=scen_id, fill=scen_id),   size=pointsize)
   
