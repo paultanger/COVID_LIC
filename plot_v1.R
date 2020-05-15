@@ -9,7 +9,7 @@ source('plot_function.R')
 require(qs)
 #alls = qread('alls.qs')
 setwd(datadir)
-alls = qread('AllAlls7ScensAgeAll_20200514_1709.qs')
+alls = qread('AllAlls7ScensAgeAll_20200515_1422.qs')
 subset.alls.plot = alls
 
 # define factors
@@ -29,6 +29,14 @@ subset.alls.plot <- subset.alls.plot[, Country:=as.factor(Country)]
 # set origin - will be easy to define origin for each country and pull that
 origin = "2019-12-31"
 subset.alls.plot$Date = as.Date(subset.alls.plot$t, origin=origin)
+
+# ok, let's use the JHU origin when each country reported 50+ cases
+# from organize JHU script:
+JHUcases = read.csv("JHU_first_date_50_May09.csv")
+JHUcasescountries = JHUcases[,c(3,5)]
+
+subset.alls.plot$JHU_date = as.Date(subset.alls.plot$t, origin=)
+test = merge(subset.alls.plot, JHUcasescountries, by.x = "Country", by.y = "country_folder", all=T)
   
 #subset.alls.plot$Scenarios = with(subset.alls.plot, factor(Scenarios, ordered=T))
 # levels(subset.alls.plot$scen_id)
