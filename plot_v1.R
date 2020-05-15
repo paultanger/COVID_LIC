@@ -140,4 +140,37 @@ sugarplots = arrangeGrob(mylegend, nrow=2, heights=c(1,10), # makes a small row 
                            penplot + theme(legend.position="none"),
                            gluWplot + theme(legend.position="none"),
                            penWplot + theme(legend.position="none"),
-                           ncol=2) # defines columns for plots only
+                           ncol=2)) # defines columns for plots only
+
+# get quick stats on dates..
+# so we want to get the JHU peak date..
+# keep what we need
+PeakMedAllCntryAllScensCases = subset.alls.plot[,c("age","t","scen_id","Date","date_50"):=NULL]
+
+PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases[
+  PeakMedAllCntryAllScensCases[, .I[which.max(med)], by=list(Country, compartment,Scenarios)]$V1]
+
+# just cases
+PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases2[compartment == "cases"]
+
+# so we want the range of dates for each scenario (for all countries)
+# maybe later do for USAID countries
+summary(PeakMedAllCntryAllScensCases2$Date_JHU)
+with(PeakMedAllCntryAllScensCases2, tapply(Date_JHU, Scenarios, range))
+
+filename = addStampToFilename("DateStats_AllCountries", "txt")
+setwd(datadir)
+sink(filename)
+with(PeakMedAllCntryAllScensCases2, tapply(Date_JHU, Scenarios, range))
+sink()
+
+
+PeakMedAllCntryAllScensCasesStats <- PeakMedAllCntryAllScensCases2[,list(minutes=sum(minutes),
+                                           mean=mean(pp48),
+                                           min=min(pp48),
+                                           lower=quantile(pp48, .25, na.rm=TRUE),
+                                           middle=quantile(pp48, .50, na.rm=TRUE),
+                                           upper=quantile(pp48, .75, na.rm=TRUE),
+                                           max=max(pp48)),
+                                     by='player']
+
