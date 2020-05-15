@@ -7,6 +7,9 @@ source('plot_function.R')
 #setwd("2020_05_05_archived_04_30_generated/afghanistan/")
 
 require(qs)
+require(lubridate)
+require(ggplot2)
+require(scales)
 #alls = qread('alls.qs')
 setwd(datadir)
 alls = qread('AllAlls7ScensAgeAll_20200515_1422.qs')
@@ -21,8 +24,8 @@ subset.alls.plot[scen_id == 5,11] <- "40/80 shielding"
 subset.alls.plot[scen_id == 7,11] <- "80/80 shielding"
 subset.alls.plot[scen_id == 39,11] <- "80/80 shielding, 20% distancing"
 subset.alls.plot[scen_id == 23,11] <- "80/80 shielding, 50% distancing"
-subset.alls.plot <- subset.alls.plot[, Scenarios:=as.factor(Scenarios)]
-subset.alls.plot <- subset.alls.plot[, Country:=as.factor(Country)]
+subset.alls.plot[, Scenarios:=as.factor(Scenarios)]
+subset.alls.plot[, Country:=as.factor(Country)]
 
 
 # convert to date
@@ -32,14 +35,23 @@ subset.alls.plot$Date = as.Date(subset.alls.plot$t, origin=origin)
 
 # ok, let's use the JHU origin when each country reported 50+ cases
 # from organize JHU script:
-JHUcases = read.csv("JHU_first_date_50_May09.csv")
+JHUcases = fread("JHU_first_date_50_May09.csv", header=T)
 JHUcasescountries = JHUcases[,c(3,5)]
 
-subset.alls.plot$JHU_date = as.Date(subset.alls.plot$t, origin=)
-test = merge(subset.alls.plot, JHUcasescountries, by.x = "Country", by.y = "country_folder", all=T)
+#subset.alls.plot$JHU_date = as.Date(subset.alls.plot$t, origin=)
+# TODO: there is probably an apply method to do this easier..
+# because we are adding to a data.table we lose the date class
+subset.alls.plot = merge(subset.alls.plot, JHUcasescountries, by.x = "Country", by.y = "country_folder", all.x=T)
+# if date_50 is "day zero" then we just add t...
+# but maybe we want t=1 to be equal to date_50 (diff of one day..)
+# need to reassign date_50 as date
+subset.alls.plot <- subset.alls.plot[, date_50:=as.Date(date_50, format='%m/%d/%y')]
+# set t from JHU origin
+subset.alls.plot$Date_JHU = subset.alls.plot$date_50 + days(subset.alls.plot$t)
   
 #subset.alls.plot$Scenarios = with(subset.alls.plot, factor(Scenarios, ordered=T))
 # levels(subset.alls.plot$scen_id)
+# reorder scenarios
 subset.alls.plot$Scenarios  <- factor(subset.alls.plot$Scenarios , levels = c(
                                   "Unmitigated",
                                   "20% distancing",
@@ -74,6 +86,9 @@ ggsave(filename, PlotObj)
 compartments = c("cases", "death_o")
 # all countries
 countries = levels(subset.alls.plot$Country)
+
+# drop countries without a JHU 50 date yet
+subset.alls.plot = na.omit(subset.alls.plot, cols="Date_JHU")
 
 AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[Country %in% countries & compartment %in% compartments]
 AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll.SelectCountries)
@@ -110,9 +125,9 @@ for(i in i:length(countrieslist)){
   }}
 
 # print them
-filename = addStampToFilename("AllCountriesAgeAllCasesDeaths", "pdf")
+filename = addStampToFilename("AllCountriesAgeAllCasesDeaths_JHU50", "pdf")
 
-pdf("all.pdf", width=11, height=8.5)
+pdf(filename, width=11, height=8.5)
 # unpack list
 do.call(c, unlist(plots, recursive=FALSE))
 dev.off()
