@@ -45,6 +45,22 @@ alls.subset = alls[(alls$compartment =='cases') & (alls$age == "all") & (alls$sc
 
 # get peak of scen 2
 alls.subset[alls.subset$med == max(alls.subset$med)]
+# both
+time_check = alls[(alls$compartment =='cases') & (alls$age == "all") & (alls$scen_id %in% c(1,2)),]
+# export this
+# save it
+filename = addStampToFilename('scen1and2_fromAllsFile', 'csv')
+wd = '~/Desktop/github/COVID_LIC/COVID_LIC_data/data/'
+setwd(wd)
+write.csv(time_check, filename, row.names = FALSE)
+
+# just scen 2
+time_check2 = alls[(alls$compartment =='cases') & (alls$age == "all") & (alls$scen_id %in% c(2)),]
+
+time_check2[time_check2$med == max(time_check2$med),]
+# so peak in alls file for scen 2 is 189 (not 172 according to peak file)?
+
+time_check3 = alls[(alls$compartment =='cases') & (alls$age == "all") & (alls$scen_id %in% c(2)) & (alls$t == 172),]
 
 Eforday0 = subset(alls, (compartment == "E") & (t== 1))
 # there is 6 age groups including all and 51 scenarios
@@ -69,6 +85,31 @@ levels(accs$metric)
 accs14t30 = accs[(accs$compartment =='E') & (accs$age == "<14") & (accs$t == 30) & (accs$scen_id == 2) & (accs$metric %in% c('value', 'reduction'))]
 alls14t30 = alls[(alls$compartment =='E') & (alls$age == "<14") & (alls$t == 30) & (alls$scen_id == 2)]
 
+# get cum cases
+scen23_cases_all_fromall = alls[(alls$compartment =='cases') & (alls$age == "all") & (alls$scen_id == 23),]
+
+check = as.data.frame(scen23_cases_all_fromall$med)
+sum(scen23_cases_all_fromall$med)
+
+scen23_cases_all_fromaccs = accs[(accs$compartment =='cases') & (accs$age == "all") & (accs$scen_id == 23) & (accs$metric == 'value'),]
+
+sum(scen23_cases_all_fromaccs$med)
+###########
+
+levels(accs$compartment)
+
+
+scen23_death_all_fromall = alls[(alls$compartment =='death_o') & (alls$age == "all") & (alls$scen_id == 23),]
+
+sum(scen23_death_all_fromall$med)
+
+scen23_death_all_fromaccs = accs[(accs$compartment =='death_o') & (accs$age == "all") & (accs$scen_id == 23) & (accs$metric == 'value'),]
+
+sum(scen23_death_all_fromaccs$med)
+
+peak[(peak$compartment =='cases') & (peak$age == "all") & (peak$scen_id == 23) & (peak$metric %in% c('value')),]
+
+########
 peak[(peak$compartment =='cases') & (peak$age == "all") & (peak$scen_id == 2) & (peak$metric %in% c('value'))]
 
 qs00114t30 = qs001[(qs001$compartment =='E') & (qs001$age == "<14") & (qs001$t == 30)]
