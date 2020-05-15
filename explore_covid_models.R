@@ -2,6 +2,9 @@
 library(qs)
 library(Hmisc)
 
+options(scipen=999)
+
+
 scen_over = readRDS(file = "../../scenarios_overview.rds")
 # these are all the parameters for the diff scenarios
 scen = readRDS('../../scenarios.rds')
@@ -32,6 +35,28 @@ describe(alls)
 summary(alls)
 str(alls)
 levels(alls$compartment)
+
+# check cumul is adding values from alls to get peak values
+# get max med.. looks like day 139
+AllAllsData.Afg.deaths.ageall = AllAllsData[age == "all" & compartment == "death_o" & .id == "afghanistan" & scen_id == 1]
+AllAllsData.Afg.deaths.ageall[, .SD[which.max(med)],]
+# so compute sum
+AllAllsData.Afg.deaths.ageall.t139 = AllAllsData[t <= 139 & age == "all" & compartment == "death_o" & .id == "afghanistan" & scen_id == 1]
+sum(AllAllsData.Afg.deaths.ageall.t139$med)
+# get peak from peak file
+AllPeakData[.id == "afghanistan" & metric %in% c("value", "timing") & compartment == "death_o" & age == "all" & scen_id %in% c(1,2)]
+# looks like 198 so sum from alls file to see what we get
+AllAllsData.Afg.deaths.ageall.t198 = AllAllsData[t <= 198 & age == "all" & compartment == "death_o" & .id == "afghanistan" & scen_id == 2]
+sum(AllAllsData.Afg.deaths.ageall.t198$med)
+# well, 242 is pretty different than 8989
+# what if we add the reduction from peaks?
+AllPeakData[.id == "afghanistan" & metric %in% c("reduction") & compartment == "death_o" & age == "all" & scen_id %in% c(1,2)]
+sum(AllAllsData.Afg.deaths.ageall.t198$med) - 1620.5
+
+# export for Katie
+AllPeakData[.id == "afghanistan" & metric %in% c("value", "timing", "reduction") & compartment == "death_o" & age == "all" & scen_id %in% c(1,2)]
+
+
 
 scene = alls[,9]
 summary(scene)
