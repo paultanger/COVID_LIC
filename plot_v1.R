@@ -63,7 +63,14 @@ subset.alls.plot$Scenarios  <- factor(subset.alls.plot$Scenarios , levels = c(
 
 # here might be a good place to combine with other sorting variables like region?
 # use this file:
+setwd(datadir)
 other_sorting_cols = fread("country_folder_list_with_regions.csv", stringsAsFactors=T, drop=1, header=T)
+
+head(subset.alls.plot,2)
+head(other_sorting_cols,2)
+
+# merge with data in case we want to facet plot by these groups
+subset.alls.plot = merge(other_sorting_cols, subset.alls.plot, by.x = "Country_OU", by.y = "Country", all=T)
 
 ####### TEST WITH ONE ############
 # set titles
@@ -120,13 +127,51 @@ case_death_plots = arrangeGrob(mylegend, nrow=2, heights=c(1,10), # makes a smal
                            ncol=2)) # defines columns for plots only
 ggsave("test.pdf", case_death_plots)
 
+# or try cowplot?
+plot_grid(p1, p2, labels = c('A', 'B'), label_size = 12)
+ggdraw(p) + 
+  draw_image(logo_file, x = 1, y = 1, hjust = 1, vjust = 1, width = 0.13, height = 0.2)
+
+# add CI to graphs?
+
+# from covidm reports github intervention plots:
+# ggplotqs(meltquantiles(a.dt[age=="all"]), aes(
+#    color=factor(scen_id), group=variable, alpha=variable
+#  )) +
+#    facet_grid(compartment ~ scen_id, scale = "free_y", switch = "y", labeller = fct_labels(
+#    scen_id = { res <- levels(int.factorize(c(1, scens))); names(res) <- c(1, scens); res }
+#  )) + 
+#  scale_x_t() +
+#  scale_alpha_manual(guide = "none", values = c(lo.lo=0.25, lo=0.5, med=1, hi=0.5, hi.hi=0.25)) 
+
+# and from plotting support:
+# meltquantiles <- function(dt, probs = refprobs) {
+#   ky <- setdiff(names(dt), names(probs))
+#   setkeyv(melt(
+#     dt, measure.vars = names(probs)
+#   ), c(ky, "variable"))
+# }
+
 # get quick stats on dates..
 # so we want to get the JHU peak date..
 # keep what we need
 PeakMedAllCntryAllScensCases = subset.alls.plot[,c("age","t","scen_id","Date","date_50"):=NULL]
 
+# get peaks
 PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases[
-  PeakMedAllCntryAllScensCases[, .I[which.max(med)], by=list(Country, compartment,Scenarios)]$V1]
+  PeakMedAllCntryAllScensCases[, .I[which.max(med)], by=list(Country_OU, compartment,Scenarios)]$V1]
+
+# drop NA
+summary(PeakMedAllCntryAllScensCases2)
+PeakMedAllCntryAllScensCases2 = na.omit(PeakMedAllCntryAllScensCases2, cols="Date_JHU")
+# save this in case want to use pivot tables
+filename = addStampToFilename("PeakMedAllCntryAllScensCases2", "csv")
+write.csv(PeakMedAllCntryAllScensCases2, filename, row.names = F)
+
+# instead of just cases below, just get the ranges of everything
+PeakMedAllCntryAllScens.Ranges.n.etc = PeakMedAllCntryAllScensCases2[, .( Min=min(Date_JHU, na.rm=T), Median=median(Date_JHU), Max=max(Date_JHU, na.rm=T)), by=c('Continent', 'USAID_region', 'compartment', 'Scenarios')]
+
+PeakMedAllCntryAllScens.Ranges.n.etc = setDT(PeakMedAllCntryAllScensCases2)[, .(.N, Min=min(Date_JHU, na.rm=T), Median=median(Date_JHU), Max=max(Date_JHU, na.rm=T)), by=c('Continent', 'USAID_region', 'compartment', 'Scenarios')]
 
 # just cases
 PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases2[compartment == "cases"]
@@ -141,14 +186,4 @@ setwd(datadir)
 sink(filename)
 with(PeakMedAllCntryAllScensCases2, tapply(Date_JHU, Scenarios, range))
 sink()
-
-
-PeakMedAllCntryAllScensCasesStats <- PeakMedAllCntryAllScensCases2[,list(minutes=sum(minutes),
-                                           mean=mean(pp48),
-                                           min=min(pp48),
-                                           lower=quantile(pp48, .25, na.rm=TRUE),
-                                           middle=quantile(pp48, .50, na.rm=TRUE),
-                                           upper=quantile(pp48, .75, na.rm=TRUE),
-                                           max=max(pp48)),
-                                     by='player']
 
