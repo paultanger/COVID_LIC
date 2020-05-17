@@ -98,32 +98,7 @@ countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="Country")
 
 # TODO: maybe change this to a data table or apply function
 setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
-i= 1
-j = 1
-# initialize list to store results
-plots = vector(mode = "list", length = length(countrieslist))
-names(plots) = countries
-# create plot objects and put in list
-for(i in i:length(countrieslist)){
-  for(j in levels(countrieslist[[i]]$compartment)){
-    #print(countrieslist[[i]]$compartment[j])
-    print(paste0(names(countrieslist[i]), "_", j, "_AgeAll"))
-    # name the file
-    filename = addStampToFilename(paste0(names(countrieslist[i]), "_", j, "_AgeAll"), "pdf")
-    # subset for compartment
-    tempdata = countrieslist[[i]][compartment == j]
-    # setup names of things
-    mytitle = paste0(names(countrieslist[i]), " ", j, " over time")
-    myxlab = "Date (days since 50 confirmed cases)"
-    myylab = paste0("Number of ", j)
-    # make the plot
-    PlotObj = mydotplotv1(tempdata, mytitle, myxlab, myylab, fontsize=12, pointsize=4)
-    # save into a list of plot objects
-    plots[[i]][[j]] = c(plots[[i]][[j]],list(PlotObj))
-    # access like: plots$afghanistan$death_o
-    #ggsave(filename, PlotObj)
-  }}
-
+plots = plot_loop(countrieslist, compartments, fontsize=10)
 # print them
 filename = addStampToFilename("AllCountriesAgeAllCasesDeaths_JHU50", "pdf")
 
@@ -133,14 +108,17 @@ do.call(c, unlist(plots, recursive=FALSE))
 dev.off()
 
 # or use this method:
+# run again with to get plot objects
+plots = plot_loop(countrieslist, compartments, fontsize=10)
 
-sugarplots = arrangeGrob(mylegend, nrow=2, heights=c(1,10), # makes a small row for the legend at top, and big row for plots..
+mylegend = ggplotlegend(plots$afghanistan$death_o[[1]])
+#mylegend = mylegend + theme(legend.position = "right")
+case_death_plots = arrangeGrob(mylegend, nrow=2, heights=c(1,10), # makes a small row for the legend at top, and big row for plots..
                          arrangeGrob( 
-                           gluplot + theme(legend.position="none"),
-                           penplot + theme(legend.position="none"),
-                           gluWplot + theme(legend.position="none"),
-                           penWplot + theme(legend.position="none"),
+                           plots$afghanistan$cases[[1]] + theme(legend.position="none"),
+                           plots$afghanistan$death_o[[1]] + theme(legend.position="none"),
                            ncol=2)) # defines columns for plots only
+ggsave("test.pdf", case_death_plots)
 
 # get quick stats on dates..
 # so we want to get the JHU peak date..

@@ -47,10 +47,10 @@ mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4
     panel.grid.major.y = element_line(color="grey", size=1), # grid line size is 1... a bit smaller than error bars
     #panel.grid.minor = element_blank(), # switch off minor gridlines
     #legend.key = element_rect(color=NULL),
-    legend.position = "right",
+    legend.position = "top",
     #legend.position = c(0.9,.8), # manually position the legend (numbers being from 0,0 at bottom left of whole plot to 1,1 at top right)
     #legend.title = element_blank(), # switch off the legend title
-    legend.text = element_text(size=fontsize),
+    legend.text = element_text(size=fontsize-2),
     #legend.key.size = unit(1.5, "cm"),
     legend.key = element_blank(), # switch off the rectangle around symbols in the legend
     panel.background = element_blank(), # panel background
