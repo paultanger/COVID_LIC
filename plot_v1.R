@@ -92,20 +92,22 @@ ggsave(filename, PlotObj)
 #countries = c("afghanistan", "ethiopia")
 compartments = c("cases", "death_o")
 # all countries
-countries = levels(subset.alls.plot$Country)
+countries = levels(subset.alls.plot$Country_OU)
 
 # drop countries without a JHU 50 date yet
 subset.alls.plot = na.omit(subset.alls.plot, cols="Date_JHU")
 
-AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[Country %in% countries & compartment %in% compartments]
+AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[Country_OU %in% countries & compartment %in% compartments]
 AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll.SelectCountries)
 
 # make a list of the subsets for each country
-countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="Country")
+countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="Country_OU")
+AllAllsData.7scens.AgeAll.SelectCountries$Country_OU = as.factor(AllAllsData.7scens.AgeAll.SelectCountries$Country_OU)
+countries = levels(AllAllsData.7scens.AgeAll.SelectCountries$Country_OU)
 
 # TODO: maybe change this to a data table or apply function
 setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
-plots = plot_loop(countrieslist, compartments, fontsize=10)
+plots = plot_loop(countrieslist, countries, compartments, fontsize=10)
 # print them
 filename = addStampToFilename("AllCountriesAgeAllCasesDeaths_JHU50", "pdf")
 
@@ -116,8 +118,8 @@ dev.off()
 
 # or use this method:
 # run again with to get plot objects
-plots = plot_loop(countrieslist, compartments, fontsize=10)
-
+plots = plot_loop(countrieslist, countries, compartments, fontsize=10, CI=T)
+setwd(datadir)
 mylegend = ggplotlegend(plots$afghanistan$death_o[[1]])
 #mylegend = mylegend + theme(legend.position = "right")
 case_death_plots = arrangeGrob(mylegend, nrow=2, heights=c(1,10), # makes a small row for the legend at top, and big row for plots..
@@ -126,13 +128,38 @@ case_death_plots = arrangeGrob(mylegend, nrow=2, heights=c(1,10), # makes a smal
                            plots$afghanistan$death_o[[1]] + theme(legend.position="none"),
                            ncol=2)) # defines columns for plots only
 ggsave("test.pdf", case_death_plots)
+plots$afghanistan$cases[[1]]
+
+# try with CI
+# just with one scenario to get this working
+AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[Country_OU %in% countries & compartment %in% compartments & Scenarios == "Unmitigated"]
+# or with 4 scenarios
+AllAllsData.7scens.AgeAll.SelectCountries = AllAllsData.7scens.AgeAll.SelectCountries[Country_OU %in% countries & compartment %in% compartments & Scenarios %in% c("Unmitigated", "20% distancing", "50% distancing", "40/80 shielding")]
+countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="Country_OU")
+countries = levels(AllAllsData.7scens.AgeAll.SelectCountries$Country_OU)
+plots = plot_loop(countrieslist, countries, compartments, fontsize=10, CI=T)
+plots$afghanistan$cases[[1]]
+# ok this is weird... 
+# I think we need to get the diff between med and lo and med and hi to get CI
+plottest = AllAllsData.7scens.AgeAll.SelectCountries[compartment == "cases" & Country_OU == "afghanistan"]
+plottest$Country_OU = as.factor(plottest$Country_OU)
+countries = levels(plottest$Country_OU)
+plot(plottest$med ~ plottest$Date_JHU)
+lines(plottest$Date_JHU, plottest$lo, pch = 18, col = "blue", type = "b", lty = 2)
+lines(plottest$Date_JHU, plottest$hi, pch = 20, col = "red", type = "b", lty = 3)
+legend("topright", legend=c("med", "lo", "hi"),
+       col=c("black", "blue", "red"), lty = 1:3, cex=0.8)
+
+# try ggplot CI method..
+countrieslist = split(plottest, by="Country_OU")
+plots = plot_loop(countrieslist, countries, compartments, fontsize=10, CI=T)
+plots$afghanistan$cases[[1]]
+
 
 # or try cowplot?
 plot_grid(p1, p2, labels = c('A', 'B'), label_size = 12)
 ggdraw(p) + 
   draw_image(logo_file, x = 1, y = 1, hjust = 1, vjust = 1, width = 0.13, height = 0.2)
-
-# add CI to graphs?
 
 # from covidm reports github intervention plots:
 # ggplotqs(meltquantiles(a.dt[age=="all"]), aes(

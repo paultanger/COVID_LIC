@@ -18,7 +18,18 @@ write.csv(PeakMedAllCntryAllScensCases2, filename, row.names = F)
 # instead of just cases below, just get the ranges of everything
 PeakMedAllCntryAllScens.Ranges.n.etc = PeakMedAllCntryAllScensCases2[, .( Min=min(Date_JHU, na.rm=T), Median=median(Date_JHU), Max=max(Date_JHU, na.rm=T)), by=c('Continent', 'USAID_region', 'compartment', 'Scenarios')]
 
+# but this won't work because need to get min of lo and hi dates separately
 PeakMedAllCntryAllScens.Ranges.n.etc = setDT(PeakMedAllCntryAllScensCases2)[, .(.N, Min=min(Date_JHU, na.rm=T), Median=median(Date_JHU), Max=max(Date_JHU, na.rm=T)), by=c('Continent', 'USAID_region', 'compartment', 'Scenarios')]
+
+# just med
+PeakMedAllCntryAllScens.Ranges.n.etc = setDT(PeakMedAllCntryAllScensCases2)[, .(.N, Median=median(Date_JHU)), by=c('Continent', 'USAID_region', 'compartment', 'Scenarios')]
+
+# export this
+setwd(datadir)
+filename = addStampToFilename("DateStats_AllCountriesBins", "csv")
+write.csv(PeakMedAllCntryAllScens.Ranges.n.etc, filename, row.names = F)
+
+# TODO: get min and max
 
 # just cases
 PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases2[compartment == "cases"]
