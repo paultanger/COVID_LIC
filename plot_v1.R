@@ -4,12 +4,9 @@ datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
 setwd(codedir)
 source('functions.R')
 source('plot_function.R')
+source('load_libs.R')
 #setwd("2020_05_05_archived_04_30_generated/afghanistan/")
 
-require(qs)
-require(lubridate)
-require(ggplot2)
-require(scales)
 #alls = qread('alls.qs')
 setwd(datadir)
 alls = qread('AllAlls7ScensAgeAll_20200515_1422.qs')
