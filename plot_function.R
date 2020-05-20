@@ -32,7 +32,9 @@ mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4
   #dotplot <- dotplot + scale_x_continuous(limits= c(0, max(mydata$t)+5), breaks = round((seq(0, max(mydata$t)+5, by = 5)/5)) * 5)
   # demo_datetime(date_range("20170115", 30), labels = label_date())
   # dotplot <- dotplot + scale_x_datetime(labels = label_date()) 
-  dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b")
+  # dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b")
+  # force to same scale as other plot
+  dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b", limits=c(as.Date("2020-01-01"), as.Date("2021-12-31")))
   # this would change legend title
   #scale_colour_discrete("Continents"),
   dotplot <- dotplot + scale_y_continuous(breaks = waiver(), n.breaks=10, labels = comma)
@@ -41,6 +43,7 @@ mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4
     plot.margin = unit(c(1,1,1,1), "lines"), # make margins a little bigger so y axis label fits
     plot.title = element_text(face="bold", size=fontsize+2, hjust = 0.5),
     axis.text = element_text(color="black", size=fontsize),
+    axis.text.x = element_text(angle=45),
     axis.title.x = element_text(face="bold", size=fontsize, vjust=0),
     axis.title.y = element_text(face="bold", size=fontsize, angle=90, vjust=0),
     axis.ticks.y = element_blank(),

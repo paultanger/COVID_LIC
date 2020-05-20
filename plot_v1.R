@@ -45,6 +45,7 @@ subset.alls.plot = merge(subset.alls.plot, JHUcasescountries, by.x = "Country", 
 subset.alls.plot <- subset.alls.plot[, date_50:=as.Date(date_50, format='%m/%d/%y')]
 # set t from JHU origin
 subset.alls.plot$Date_JHU = subset.alls.plot$date_50 + days(subset.alls.plot$t)
+
   
 #subset.alls.plot$Scenarios = with(subset.alls.plot, factor(Scenarios, ordered=T))
 # levels(subset.alls.plot$scen_id)
@@ -69,6 +70,9 @@ head(other_sorting_cols,2)
 # merge with data in case we want to facet plot by these groups
 subset.alls.plot = merge(other_sorting_cols, subset.alls.plot, by.x = "Country_OU", by.y = "Country", all=T)
 
+# set Country_OU as factor
+subset.alls.plot[, Country_OU:=as.factor(Country_OU)]
+
 ####### TEST WITH ONE ############
 # set titles
 mytitle = "Afghanistan symptomatic cases over time"
@@ -88,6 +92,9 @@ ggsave(filename, PlotObj)
 # TODO: adapt later to filter based on subset of other_sorting_cols
 #countries = c("afghanistan", "ethiopia")
 compartments = c("cases", "death_o")
+compartments = c("cases")
+countries = c("afghanistan")
+
 # all countries
 countries = levels(subset.alls.plot$Country_OU)
 
@@ -115,7 +122,7 @@ dev.off()
 
 # or use this method:
 # run again with to get plot objects
-plots = plot_loop(countrieslist, countries, compartments, fontsize=10, CI=T)
+plots = plot_loop(countrieslist, countries, compartments, fontsize=10, CI=F)
 setwd(datadir)
 mylegend = ggplotlegend(plots$afghanistan$death_o[[1]])
 #mylegend = mylegend + theme(legend.position = "right")
