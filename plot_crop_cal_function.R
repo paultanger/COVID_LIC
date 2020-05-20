@@ -15,8 +15,15 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
   # veg to end
   geom_segment(aes(x=veg_date, xend=harv_date, yend=crop), color = "#F0E442", size = linesize+5, data=mydata) +
   geom_segment(aes(x=harv_date, xend=end_date, yend=crop), color = "#009E73", size = linesize+5, data=mydata) +
-  geom_segment(aes(x=end_date, xend=out_date, yend=crop), color = "#D55E00", size = linesize+5, data=mydata)
+  geom_segment(aes(x=end_date, xend=out_date, yend=crop), color = "#D55E00", size = linesize+5, data=mydata) +
   #geom_segment(aes(x=veg_date, xend=end_date, yend=crop), size = linesize+5, data=mydata)
+  # add a second year
+  geom_segment(aes(x=plant_date2, xend=veg_date2, yend=crop), color = "#E69F00", size = linesize+5, data=mydata) +
+    #+ geom_label(data=mydata, aes(x=plant_date, y=crop,  label = "P"), vjust = "center", hjust = "center") +
+    # veg to end
+    geom_segment(aes(x=veg_date2, xend=harv_date2, yend=crop), color = "#F0E442", size = linesize+5, data=mydata) +
+    geom_segment(aes(x=harv_date2, xend=end_date2, yend=crop), color = "#009E73", size = linesize+5, data=mydata) +
+    geom_segment(aes(x=end_date2, xend=out_date2, yend=crop), color = "#D55E00", size = linesize+5, data=mydata)
   # add CI
   if(CI==T){
     dotplot <- dotplot + geom_ribbon(aes(ymin=mydata$lo, ymax=mydata$hi, fill=Scenarios), linetype=2, alpha=0.1, show.legend = F, color=mydata$Scenarios)}
@@ -43,7 +50,7 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
   # adjust scale
   #dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b")
   # this drops the data unless we include all the ends of geom segment
-  dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b", limits=c(as.Date("2020-01-01"), as.Date("2021-12-31")))
+  dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b", limits=c(as.Date("2020-04-01"), as.Date("2021-04-01")))
   # try to limit to same x axis as other data
   #dotplot <- dotplot + coord_cartesian(xlim = c(as.Date("2020-04-01"), as.Date("2021-04-01"), clip="on"))
   # this would change legend title

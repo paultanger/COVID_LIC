@@ -34,7 +34,7 @@ mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4
   # dotplot <- dotplot + scale_x_datetime(labels = label_date()) 
   # dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b")
   # force to same scale as other plot
-  dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b", limits=c(as.Date("2020-01-01"), as.Date("2021-12-31")))
+  dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b", limits=c(as.Date("2020-04-01"), as.Date("2021-04-01")))
   # this would change legend title
   #scale_colour_discrete("Continents"),
   dotplot <- dotplot + scale_y_continuous(breaks = waiver(), n.breaks=10, labels = comma)

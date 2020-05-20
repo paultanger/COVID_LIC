@@ -8,6 +8,9 @@ source('plot_crop_cal_function.R')
 setwd(datadir)
 
 crops_cal = read.csv("CropCal_20200519_1000.csv", colClasses=c(rep("factor",3), rep("numeric",5), rep("Date", 5)))
+crops_cal = read.csv("CropCalv2_20200519_2041.csv", colClasses=c(rep("factor",3), rep("numeric",5), rep("Date", 5)))
+crops_cal = read.csv("CropCalv3_just_dates_20200520_1125.csv", colClasses=c(rep("factor",3), rep("Date", 5)))
+crops_cal = read.csv("CropCalv3_just_dates_20200520_1141.csv", colClasses=c(rep("factor",3), rep("Date", 10)))
 
 # just one country for now
 
@@ -18,7 +21,7 @@ crops_cal = read.csv("CropCal_20200519_1000.csv", colClasses=c(rep("factor",3), 
 crops_cal = crops_cal[(crops_cal$country == "Ethiopia"), ]
 
 # just keep dates
-crops_cal = crops_cal[,-c(4:8)]
+#crops_cal = crops_cal[,-c(4:8)]
 
 # make it long format
 #crops_cal_long = melt(crops_cal, id=c("country", "region", "crop"), variable.name = "dates", value.name = "value")
@@ -61,7 +64,7 @@ title <- ggdraw() + draw_label("Afghanistan", fontface='bold')
 
 final = plot_grid(title, plots$afghanistan$cases[[1]], PlotObj, align = "v", ncol = 1, rel_heights = c(0.2, 1, 1))
 final
-
+dev.off()
 # but I guess we really need 2019 to include the current ongoing season
 
 # with grid arrange
