@@ -37,5 +37,17 @@ setwd(datadir)
 filename = addStampToFilename('SortingColsLookupCountriesRegionsEtc', 'csv')
 write.csv(other_sorting_cols, filename, row.names = FALSE)
 
+# here is a new version
+other_sorting_cols2 = fread("SortingCols_From_USAID_v1.csv", stringsAsFactors=F, header=T)
+other_sorting_cols3 = fread("SortingColsLookupCountriesRegionsEtc_20200519_0839.csv", stringsAsFactors=F, header=T)
+
+# merge these two versions to check
+other_sorting_cols4 = merge(other_sorting_cols2, other_sorting_cols3, by.x="JHU_name", by.y="JHU_Country", all=T)
+setwd(datadir)
+filename = addStampToFilename('SortingColsLookupCountriesRegionsEtcv2', 'csv')
+write.csv(other_sorting_cols4, filename, row.names = FALSE)
+
+# check with Katie which to keep
+
 # and continue integration of the case date in the plotv1 script as origin
 
