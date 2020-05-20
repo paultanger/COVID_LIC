@@ -122,7 +122,7 @@ dev.off()
 
 # or use this method:
 # run again with to get plot objects
-plots = plot_loop(countrieslist, countries, compartments, fontsize=10, CI=F)
+plots = plot_loop(countrieslist, countries, compartments, fontsize=9, CI=F)
 setwd(datadir)
 mylegend = ggplotlegend(plots$afghanistan$death_o[[1]])
 #mylegend = mylegend + theme(legend.position = "right")

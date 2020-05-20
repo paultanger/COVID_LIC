@@ -43,7 +43,7 @@ mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4
     plot.margin = unit(c(1,1,1,1), "lines"), # make margins a little bigger so y axis label fits
     plot.title = element_text(face="bold", size=fontsize+2, hjust = 0.5),
     axis.text = element_text(color="black", size=fontsize),
-    axis.text.x = element_text(angle=45),
+    axis.text.x = element_text(angle=90, size=fontsize-2),
     axis.title.x = element_text(face="bold", size=fontsize, vjust=0),
     axis.title.y = element_text(face="bold", size=fontsize, angle=90, vjust=0),
     axis.ticks.y = element_blank(),

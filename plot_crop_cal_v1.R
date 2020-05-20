@@ -19,6 +19,7 @@ crops_cal = read.csv("CropCalv3_just_dates_20200520_1141.csv", colClasses=c(rep(
 # multiple regions
 #crops_cal = crops_cal[(crops_cal$country == "Afghanistan"), ]
 crops_cal = crops_cal[(crops_cal$country == "Ethiopia"), ]
+crops_cal = crops_cal[(crops_cal$country == "Turkmenistan"), ]
 
 # just keep dates
 #crops_cal = crops_cal[,-c(4:8)]

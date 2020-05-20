@@ -50,9 +50,12 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
   # adjust scale
   #dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b")
   # this drops the data unless we include all the ends of geom segment
-  dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b", limits=c(as.Date("2020-04-01"), as.Date("2021-04-01")))
+  # dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b", limits=c(as.Date("2020-04-01"), as.Date("2021-04-01")))
+  dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b")
   # try to limit to same x axis as other data
-  #dotplot <- dotplot + coord_cartesian(xlim = c(as.Date("2020-04-01"), as.Date("2021-04-01"), clip="on"))
+  dotplot <- dotplot + coord_x_date(xlim = c("2020-04-15", "2022-04-01")) # , clip="on")
+  
+  #dotplot <- dotplot + coord_cartesian(xlim = as.numeric(as.Date(c("2020-04-01", "2021-04-01"))) ) # , clip="on")
   # this would change legend title
   #scale_colour_discrete("Continents"),
   #dotplot <- dotplot + scale_y_continuous(breaks = waiver(), n.breaks=10, labels = comma)
@@ -63,7 +66,7 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
     axis.text = element_text(color="black", size=fontsize),
     axis.title.x = element_text(face="bold", size=fontsize, vjust=0),
     axis.title.y = element_text(face="bold", size=fontsize, angle=90, vjust=0),
-    axis.text.x = element_text(angle=45),
+    axis.text.x = element_text(angle=90, size=fontsize-2),
     axis.ticks.y = element_blank(),
     axis.ticks.x = element_blank(),
     #axis.ticks.x = element_line(size=1, color="black"),
