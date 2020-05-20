@@ -11,6 +11,9 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
     # plant to out
     # to get same color as crop put this inside aes color = crop
     geom_segment(aes(x=plant_date, xend=veg_date, yend=crop), color = "#E69F00", size = linesize+5, data=mydata) +
+    # for winter wheat
+    geom_segment(aes(x=plant_date, xend=winter_wheat, yend=crop), color = "#E69F00", size = linesize+5, data=mydata) +
+    geom_segment(aes(x=winter_wheat, xend=veg_date, yend=crop), color = "#999999", size = linesize+5, data=mydata) +
   #+ geom_label(data=mydata, aes(x=plant_date, y=crop,  label = "P"), vjust = "center", hjust = "center") +
   # veg to end
   geom_segment(aes(x=veg_date, xend=harv_date, yend=crop), color = "#F0E442", size = linesize+5, data=mydata) +
@@ -20,6 +23,9 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
   # add a second year
   geom_segment(aes(x=plant_date2, xend=veg_date2, yend=crop), color = "#E69F00", size = linesize+5, data=mydata) +
     #+ geom_label(data=mydata, aes(x=plant_date, y=crop,  label = "P"), vjust = "center", hjust = "center") +
+    # for winter wheat
+    geom_segment(aes(x=plant_date2, xend=winter_wheat2, yend=crop), color = "#E69F00", size = linesize+5, data=mydata) +
+    geom_segment(aes(x=winter_wheat2, xend=veg_date2, yend=crop), color = "#999999", size = linesize+5, data=mydata) +
     # veg to end
     geom_segment(aes(x=veg_date2, xend=harv_date2, yend=crop), color = "#F0E442", size = linesize+5, data=mydata) +
     geom_segment(aes(x=harv_date2, xend=end_date2, yend=crop), color = "#009E73", size = linesize+5, data=mydata) +
@@ -53,7 +59,7 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
   # dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b", limits=c(as.Date("2020-04-01"), as.Date("2021-04-01")))
   dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b")
   # try to limit to same x axis as other data
-  dotplot <- dotplot + coord_x_date(xlim = c("2020-04-15", "2022-04-01")) # , clip="on")
+  dotplot <- dotplot + coord_x_date(xlim = c("2020-04-15", "2021-04-01")) # , clip="on")
   
   #dotplot <- dotplot + coord_cartesian(xlim = as.numeric(as.Date(c("2020-04-01", "2021-04-01"))) ) # , clip="on")
   # this would change legend title

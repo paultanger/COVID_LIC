@@ -75,17 +75,17 @@ subset.alls.plot[, Country_OU:=as.factor(Country_OU)]
 
 ####### TEST WITH ONE ############
 # set titles
-mytitle = "Afghanistan symptomatic cases over time"
-myxlab = "Date (days since day zero)"
-myylab = "Number of cases"
-PlotObj = mydotplotv1(subset.alls.plot, mytitle, myxlab, myylab, fontsize=12, pointsize=4)
-PlotObj
-# save it
-filename = addStampToFilename('Afghanistan_Cases_Time_v3', 'pdf')
-# set data dir
-setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
-#ggsave(filename, PlotObj, width=7, height=6, units="in", scale=1.5)
-ggsave(filename, PlotObj)
+# mytitle = "Afghanistan symptomatic cases over time"
+# myxlab = "Date (days since day zero)"
+# myylab = "Number of cases"
+# PlotObj = mydotplotv1(subset.alls.plot, mytitle, myxlab, myylab, fontsize=12, pointsize=4)
+# PlotObj
+# # save it
+# filename = addStampToFilename('Afghanistan_Cases_Time_v3', 'pdf')
+# # set data dir
+# setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
+# #ggsave(filename, PlotObj, width=7, height=6, units="in", scale=1.5)
+# ggsave(filename, PlotObj)
 
 ############### DO ALL ##################
 # define countries to include

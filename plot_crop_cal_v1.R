@@ -7,14 +7,15 @@ source('load_libs.R')
 source('plot_crop_cal_function.R')
 setwd(datadir)
 
-crops_cal = read.csv("CropCal_20200519_1000.csv", colClasses=c(rep("factor",3), rep("numeric",5), rep("Date", 5)))
-crops_cal = read.csv("CropCalv2_20200519_2041.csv", colClasses=c(rep("factor",3), rep("numeric",5), rep("Date", 5)))
-crops_cal = read.csv("CropCalv3_just_dates_20200520_1125.csv", colClasses=c(rep("factor",3), rep("Date", 5)))
-crops_cal = read.csv("CropCalv3_just_dates_20200520_1141.csv", colClasses=c(rep("factor",3), rep("Date", 10)))
+# crops_cal = read.csv("CropCal_20200519_1000.csv", colClasses=c(rep("factor",3), rep("numeric",5), rep("Date", 5)))
+# crops_cal = read.csv("CropCalv2_20200519_2041.csv", colClasses=c(rep("factor",3), rep("numeric",5), rep("Date", 5)))
+# crops_cal = read.csv("CropCalv3_just_dates_20200520_1125.csv", colClasses=c(rep("factor",3), rep("Date", 5)))
+# crops_cal = read.csv("CropCalv3_just_dates_20200520_1141.csv", colClasses=c(rep("factor",3), rep("Date", 10)))
+crops_cal = read.csv("CropCalv4_just_dates_20200520_1558.csv", colClasses=c(rep("factor",3), rep("Date", 12)))
 
 # just one country for now
 
-#crops_cal = crops_cal[(crops_cal$country == "Afghanistan") & (crops_cal$region == "Badghis and Faryab"), ]
+crops_cal = crops_cal[(crops_cal$country == "Afghanistan") & (crops_cal$region == "Badghis and Faryab"), ]
 
 # multiple regions
 #crops_cal = crops_cal[(crops_cal$country == "Afghanistan"), ]
@@ -48,7 +49,7 @@ ggsave(filename, PlotObj)
 
 # or try cowplot?
 # plot_grid(p1, PlotObj, labels = c('A', 'B'), label_size = 12)
-together = plot_grid(plots$afghanistan$cases[[1]], PlotObj, labels = c('A', 'B'), label_size = 12)
+# together = plot_grid(plots$afghanistan$cases[[1]], PlotObj, labels = c('A', 'B'), label_size = 12)
 
 # set title
 title <- ggdraw() + draw_label("Afghanistan", fontface='bold')
@@ -68,35 +69,35 @@ final
 dev.off()
 # but I guess we really need 2019 to include the current ongoing season
 
-# with grid arrange
-library(grid)
-grid.newpage()
-grid.draw(rbind(ggplotGrob(plots$afghanistan$cases[[1]]), ggplotGrob(PlotObj), size = "last"))
-
-# or with egg?
-install.packages('egg')
-library(egg)
-ggarrange(plots$afghanistan$cases[[1]], PlotObj, ncol=1)
-
-# to get them to have same x I think I need to put all data together and plot in one object
-
-# but could try this..?
-draft <- ggdraw(plots$afghanistan$cases[[1]]) + ggdraw(PlotObj)
-  
-# and also overlay with the maps
-# https://wilkelab.org/cowplot/articles/drawing_with_on_plots.html
-inset <- ggplot(mpg, aes(drv)) + 
-  geom_bar(fill = "skyblue2", alpha = 0.7) + 
-  scale_y_continuous(expand = expand_scale(mult = c(0, 0.05))) +
-  theme_minimal_hgrid(11)
-
-ggdraw(p + theme_half_open(12)) +
-  draw_plot(inset, .45, .45, .5, .5) +
-  draw_plot_label(
-    c("A", "B"),
-    c(0, 0.45),
-    c(1, 0.95),
-    size = 12
-  )
-
-
+# # with grid arrange
+# library(grid)
+# grid.newpage()
+# grid.draw(rbind(ggplotGrob(plots$afghanistan$cases[[1]]), ggplotGrob(PlotObj), size = "last"))
+# 
+# # or with egg?
+# install.packages('egg')
+# library(egg)
+# ggarrange(plots$afghanistan$cases[[1]], PlotObj, ncol=1)
+# 
+# # to get them to have same x I think I need to put all data together and plot in one object
+# 
+# # but could try this..?
+# draft <- ggdraw(plots$afghanistan$cases[[1]]) + ggdraw(PlotObj)
+#   
+# # and also overlay with the maps
+# # https://wilkelab.org/cowplot/articles/drawing_with_on_plots.html
+# inset <- ggplot(mpg, aes(drv)) + 
+#   geom_bar(fill = "skyblue2", alpha = 0.7) + 
+#   scale_y_continuous(expand = expand_scale(mult = c(0, 0.05))) +
+#   theme_minimal_hgrid(11)
+# 
+# ggdraw(p + theme_half_open(12)) +
+#   draw_plot(inset, .45, .45, .5, .5) +
+#   draw_plot_label(
+#     c("A", "B"),
+#     c(0, 0.45),
+#     c(1, 0.95),
+#     size = 12
+#   )
+# 
+# 
