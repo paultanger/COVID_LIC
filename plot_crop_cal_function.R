@@ -9,11 +9,13 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
   dotplot <- ggplot(mydata, aes(x=value, y=crop, group=crop, color=crop)) +
     #geom_line(size = 10),
     # plant to out
-    geom_segment(aes(x=plant_date, xend=veg_date, yend=crop), size = linesize+5, data=mydata, color = "black") +
+    # to get same color as crop put this inside aes color = crop
+    geom_segment(aes(x=plant_date, xend=veg_date, yend=crop), color = "#E69F00", size = linesize+5, data=mydata) +
+  #+ geom_label(data=mydata, aes(x=plant_date, y=crop,  label = "P"), vjust = "center", hjust = "center") +
   # veg to end
-  geom_segment(aes(x=veg_date, xend=harv_date, yend=crop), size = linesize+5, data=mydata, color = "blue") +
-  geom_segment(aes(x=harv_date, xend=end_date, yend=crop), size = linesize+5, data=mydata, color = "red") +
-  geom_segment(aes(x=end_date, xend=out_date, yend=crop), size = linesize+5, data=mydata, color = "yellow")
+  geom_segment(aes(x=veg_date, xend=harv_date, yend=crop), color = "#F0E442", size = linesize+5, data=mydata) +
+  geom_segment(aes(x=harv_date, xend=end_date, yend=crop), color = "#009E73", size = linesize+5, data=mydata) +
+  geom_segment(aes(x=end_date, xend=out_date, yend=crop), color = "#D55E00", size = linesize+5, data=mydata)
   #geom_segment(aes(x=veg_date, xend=end_date, yend=crop), size = linesize+5, data=mydata)
   # add CI
   if(CI==T){
