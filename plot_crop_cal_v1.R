@@ -41,9 +41,9 @@ filename = addStampToFilename('Afghanistan_Crop_Cal_Region_v1', 'pdf')
 # set data dir
 setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
 #ggsave(filename, PlotObj, width=7, height=6, units="in", scale=1.5)
-ggsave(filename, PlotObj)
+#ggsave(filename, PlotObj)
 
-# TODO: loop through all
+# loop through all
 
 # setup list to plot of countries
 crops_cal = read.csv("CropCalv4_just_dates_20200520_1558.csv", colClasses=c(rep("factor",3), rep("Date", 12)))
@@ -60,6 +60,7 @@ countrieslist = split(crops_cal.SelectCountries, by="country")
 
 # run loop
 crop_plots = crop_plot_loop(countrieslist, countries, fontsize=9)
+#crop_plots$Afghanistan
 # access like:
 # crop_plots$Afghanistan
 # crop_plots$Algeria

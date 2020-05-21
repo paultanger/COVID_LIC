@@ -13,7 +13,7 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
     # for winter wheat
     geom_segment(aes(x=plant_date, xend=winter_wheat, yend=crop), color = "#E69F00", size = linesize+5, data=mydata) +
     geom_segment(aes(x=winter_wheat, xend=veg_date, yend=crop), color = "#999999", size = linesize+5, data=mydata) +
-    #+ geom_label(data=mydata, aes(x=plant_date, y=crop,  label = "P"), vjust = "center", hjust = "center") +
+
     # veg to end
     geom_segment(aes(x=veg_date, xend=harv_date, yend=crop), color = "#F0E442", size = linesize+5, data=mydata) +
     #geom_segment(aes(x=harv_date, xend=end_date, yend=crop), color = "#009E73", size = linesize+5, data=mydata) +
@@ -30,9 +30,20 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
     geom_segment(aes(x=winter_wheat2, xend=veg_date2, yend=crop), color = "#999999", size = linesize+5, data=mydata) +
     # veg to end
     geom_segment(aes(x=veg_date2, xend=harv_date2, yend=crop), color = "#F0E442", size = linesize+5, data=mydata) +
-    geom_segment(aes(x=harv_date2, xend=out_date2, yend=crop), color = "#009E73", size = linesize+5, data=mydata)
+    geom_segment(aes(x=harv_date2, xend=out_date2, yend=crop), color = "#009E73", size = linesize+5, data=mydata) +
     #geom_segment(aes(x=end_date2, xend=out_date2, yend=crop), color = "#D55E00", size = linesize+5, data=mydata)
 
+    # try labels
+    geom_text(data=mydata, aes(x=plant_date, y=crop,  label = "Plant"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=harv_date, y=crop,  label = "Veg"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=out_date, y=crop,  label = "Harv"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=plant_date2, y=crop,  label = "Plant"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=harv_date2, y=crop,  label = "Veg"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=out_date2, y=crop,  label = "Harv"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
+    # for winter wheat
+    geom_text(data=mydata, aes(x=winter_wheat, y=crop,  label = "idle"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=winter_wheat2, y=crop,  label = "idle"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black")
+  
   # use custom colors
   dotplot <- dotplot + scale_fill_manual(values=cbPalette2)
   dotplot <- dotplot + scale_color_manual(values=cbPalette2)
