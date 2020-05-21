@@ -13,7 +13,7 @@ ggplotlegend = function(plotobj){
 
 # TODO: maybe change this to a data table or apply function
 plot_loop = function(countrieslist, countries, compartments, fontsize=12, pointsize=4, CI=F){
-  # retunrs a list of plot objects
+  # returns a list of plot objects
   # access like: plots$afghanistan$death_o[[1]]
   i= 1
   j = 1
@@ -40,5 +40,36 @@ plot_loop = function(countrieslist, countries, compartments, fontsize=12, points
       # access like: plots$afghanistan$death_o[[1]]
       #ggsave(filename, PlotObj)
     }}
+  return (plots)
+}
+
+# TODO: maybe change this to a data table or apply function
+crop_plot_loop = function(countrieslist, countries, fontsize=10, linesize=4){
+  # returns a list of plot objects
+  # access like: plots$afghanistan[[1]]
+  i= 1
+  # initialize list to store results
+  plots = vector(mode = "list", length = length(countrieslist))
+  names(plots) = countries
+  # create plot objects and put in list
+  for(i in i:length(countrieslist)){
+      print(paste0(names(countrieslist[i]), "_"))
+      # name the file
+      filename = addStampToFilename(paste0(names(countrieslist[i]), "_Crops"), "pdf")
+      # subset for compartment
+      #tempdata = countrieslist[[i]]
+      # setup names of things
+      # if plotting regions
+      #mytitle = paste0(names(countrieslist[i]), countrieslist[[i]]$region)
+      mytitle = paste0(names(countrieslist[i]))
+      myxlab = "Date"
+      myylab = paste0("Crops")
+      # make the plot
+      PlotObjCrop = plot_crop_cal(countrieslist[[i]], mytitle, myxlab, myylab, fontsize=fontsize, linesize=linesize)
+      # save into a list of plot objects
+      plots[i] = list(PlotObjCrop)
+      # access like: plots$afghanistan[[1]]
+      #ggsave(filename, PlotObj)
+    }
   return (plots)
 }

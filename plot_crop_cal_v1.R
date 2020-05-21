@@ -45,7 +45,35 @@ ggsave(filename, PlotObj)
 
 # TODO: loop through all
 
+# setup list to plot of countries
+crops_cal = read.csv("CropCalv4_just_dates_20200520_1558.csv", colClasses=c(rep("factor",3), rep("Date", 12)))
+countries = c("Afghanistan")
+countries = levels(crops_cal$country)
 
+crops_cal.SelectCountries = crops_cal[crops_cal$country %in% countries, ]
+crops_cal.SelectCountries = droplevels(crops_cal.SelectCountries)
+
+crops_cal.SelectCountries = as.data.table(crops_cal.SelectCountries)
+countrieslist = split(crops_cal.SelectCountries, by="country")
+#crops_cal.SelectCountries$Country_OU = as.factor(crops_cal.SelectCountries$Country_OU)
+#countries = levels(crops_cal.SelectCountries$country)
+
+# run loop
+crop_plots = crop_plot_loop(countrieslist, countries, fontsize=9)
+# access like:
+# crop_plots$Afghanistan
+# crop_plots$Algeria
+
+# print them
+setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
+filename = addStampToFilename("AllCountriesAllRegionsCropPlots", "pdf")
+pdf(filename, width=11, height=8.5)
+# unpack list
+for (i in crop_plots) {
+  print(i)
+  #crop_plots$i
+}
+dev.off()
 
 # or try cowplot?
 # plot_grid(p1, PlotObj, labels = c('A', 'B'), label_size = 12)
