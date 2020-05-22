@@ -7,6 +7,8 @@ source('load_libs.R')
 setwd(datadir)
 
 crops_cal = read.csv("GEOGLAM_crop_calendars.csv")
+# try with revised file
+crops_cal = read.csv("GEOGLAM_crop_calendars_v2.csv")
 # the second set of cols we can just recalculate in R and do it correctly - spill over to next yr
 crops_cal = crops_cal[,c(1:8)]
 
@@ -98,9 +100,11 @@ crops_cal$winter_wheat[crops_cal$crop != "Winter Wheat"] = NA
 # export to check
 setwd(datadir)
 filename = addStampToFilename("CropCalv4", "csv")
+filename = addStampToFilename("CropCalv5", "csv")
 #write.csv(crops_cal, filename, row.names = F)
 
 # just keep dates
+as.data.frame(colnames(crops_cal))
 cropcalv3 = crops_cal[,c(1:3, 9, 34, 15, 21, 27, 33)]
 filename = addStampToFilename("CropCalv3_just_dates", "csv")
 #write.csv(cropcalv3, filename, row.names = F)

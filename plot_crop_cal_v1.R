@@ -12,6 +12,8 @@ setwd(datadir)
 # crops_cal = read.csv("CropCalv3_just_dates_20200520_1125.csv", colClasses=c(rep("factor",3), rep("Date", 5)))
 # crops_cal = read.csv("CropCalv3_just_dates_20200520_1141.csv", colClasses=c(rep("factor",3), rep("Date", 10)))
 crops_cal = read.csv("CropCalv4_just_dates_20200520_1558.csv", colClasses=c(rep("factor",3), rep("Date", 12)))
+# revised GEOGLAM data
+crops_cal = read.csv("CropCalv4_just_dates_20200522_1418.csv", colClasses=c(rep("factor",3), rep("Date", 12)))
 
 # just one country for now
 
@@ -48,6 +50,7 @@ setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/
 
 # setup list to plot of countries
 crops_cal = read.csv("CropCalv4_just_dates_20200520_1558.csv", colClasses=c(rep("factor",3), rep("Date", 12)))
+crops_cal = read.csv("CropCalv4_just_dates_20200522_1418.csv", colClasses=c(rep("factor",3), rep("Date", 12)))
 countries = c("Afghanistan")
 countries = levels(crops_cal$country)
 
@@ -68,7 +71,7 @@ crop_plots = crop_plot_loop(countrieslist, countries, fontsize=9)
 
 # print them
 setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
-filename = addStampToFilename("AllCountriesAllRegionsCropPlots", "pdf")
+filename = addStampToFilename("AllCountriesAllRegionsCropPlotsRevised", "pdf")
 pdf(filename, width=11, height=8.5)
 # unpack list
 for (i in crop_plots) {
