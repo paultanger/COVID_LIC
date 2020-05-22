@@ -34,15 +34,26 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
     #geom_segment(aes(x=end_date2, xend=out_date2, yend=crop), color = "#D55E00", size = linesize+5, data=mydata)
 
     # try labels
-    geom_text(data=mydata, aes(x=plant_date, y=crop,  label = "Plant"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
-    geom_text(data=mydata, aes(x=harv_date, y=crop,  label = "Veg"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
-    geom_text(data=mydata, aes(x=out_date, y=crop,  label = "Harv"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
-    geom_text(data=mydata, aes(x=plant_date2, y=crop,  label = "Plant"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
-    geom_text(data=mydata, aes(x=harv_date2, y=crop,  label = "Veg"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
-    geom_text(data=mydata, aes(x=out_date2, y=crop,  label = "Harv"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
-    # for winter wheat
-    geom_text(data=mydata, aes(x=winter_wheat, y=crop,  label = "idle"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
-    geom_text(data=mydata, aes(x=winter_wheat2, y=crop,  label = "idle"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black")
+    # geom_text(data=mydata, aes(x=plant_date+days(7), y=crop,  label = "Plant"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    # geom_text(data=mydata, aes(x=harv_date-days(14), y=crop,  label = "Veg"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
+    # geom_text(data=mydata, aes(x=out_date-days(14), y=crop,  label = "Harv"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
+    # geom_text(data=mydata, aes(x=plant_date2+days(7), y=crop,  label = "Plant"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    # geom_text(data=mydata, aes(x=harv_date2-days(14), y=crop,  label = "Veg"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
+    # geom_text(data=mydata, aes(x=(out_date2-days(14)), y=crop,  label = "Harv"), vjust = "center", hjust = "right", show.legend = F, size=fontsize-6, color="black") +
+    # # for winter wheat
+    # geom_text(data=mydata, aes(x=winter_wheat+days(5), y=crop,  label = "idle"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    # geom_text(data=mydata, aes(x=winter_wheat2+days(5), y=crop,  label = "idle"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black")
+    # 
+    # try to do as percent of size:
+    geom_text(data=mydata, aes(x=plant_date+days(as.integer((veg_date - plant_date)*.10)), y=crop,  label = "Plant"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=veg_date+days(as.integer((harv_date - plant_date)*.10)), y=crop,  label = "Veg"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=harv_date+days(as.integer((out_date - harv_date)*.10)), y=crop,  label = "Harv"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=winter_wheat+days(as.integer((veg_date - winter_wheat)*.10)), y=crop,  label = "Idle"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+
+    geom_text(data=mydata, aes(x=plant_date2+days(as.integer((veg_date2 - plant_date2)*.10)), y=crop,  label = "Plant"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=veg_date2+days(as.integer((harv_date2 - plant_date2)*.10)), y=crop,  label = "Veg"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=harv_date2+days(as.integer((out_date2 - harv_date2)*.10)), y=crop,  label = "Harv"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black") +
+    geom_text(data=mydata, aes(x=winter_wheat2+days(as.integer((veg_date2 - winter_wheat2)*.10)), y=crop,  label = "Idle"), vjust = "center", hjust = "left", show.legend = F, size=fontsize-6, color="black")
   
   # use custom colors
   dotplot <- dotplot + scale_fill_manual(values=cbPalette2)

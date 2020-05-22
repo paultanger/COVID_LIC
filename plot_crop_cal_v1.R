@@ -43,6 +43,7 @@ setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/
 #ggsave(filename, PlotObj, width=7, height=6, units="in", scale=1.5)
 #ggsave(filename, PlotObj)
 
+###########################
 # loop through all
 
 # setup list to plot of countries
