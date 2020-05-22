@@ -4,7 +4,7 @@ require(scales)
 
 cbPalette2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=4){
+plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=4, regions=T){
   # lines for each scenario
   dotplot <- ggplot(mydata, aes(x=value, y=crop, group=crop, color=crop)) +
     # plant to out
@@ -63,7 +63,9 @@ plot_crop_cal = function(mydata, mytitle, myxlab, myylab, fontsize=12, linesize=
   #dotplot <- dotplot + facet_grid(region ~ .)
   
   # or do as facet wrap?
-  dotplot <- dotplot + facet_wrap(~ region) # labeller = label_wrap_gen())
+  if(regions == T){
+    dotplot <- dotplot + facet_wrap(~ region)
+  }# labeller = label_wrap_gen())
   
   # add title
   dotplot <- dotplot + ggtitle(mytitle)

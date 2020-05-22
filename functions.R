@@ -44,7 +44,7 @@ plot_loop = function(countrieslist, countries, compartments, fontsize=12, points
 }
 
 # TODO: maybe change this to a data table or apply function
-crop_plot_loop = function(countrieslist, countries, fontsize=10, linesize=4){
+crop_plot_loop = function(countrieslist, countries, fontsize=10, linesize=4, regions=T){
   # returns a list of plot objects
   # access like: plots$afghanistan[[1]]
   i= 1
@@ -65,11 +65,44 @@ crop_plot_loop = function(countrieslist, countries, fontsize=10, linesize=4){
       myxlab = "Date"
       myylab = paste0("Crops")
       # make the plot
-      PlotObjCrop = plot_crop_cal(countrieslist[[i]], mytitle, myxlab, myylab, fontsize=fontsize, linesize=linesize)
+      PlotObjCrop = plot_crop_cal(countrieslist[[i]], mytitle, myxlab, myylab, fontsize=fontsize, linesize=linesize, regions=regions)
       # save into a list of plot objects
       plots[i] = list(PlotObjCrop)
       # access like: plots$afghanistan[[1]]
       #ggsave(filename, PlotObj)
     }
   return (plots)
+}
+
+# this version will plot each region in a separate plot (to combine with the peaks)
+crop_plot_loop2 = function(other_countries_list, other_countries, fontsize=10, linesize=4){
+  # returns a list of plot objects
+  # access like: plots$afghanistan$regionname[[1]]
+  i= 1
+  j = 1
+  # initialize list to store results
+  other_plots = vector(mode = "list", length = length(other_countries_list))
+  names(other_plots) = other_countries
+  # create plot objects and put in list
+  for(i in i:length(other_countries_list)){
+    for(j in levels(other_countries_list[[i]]$region)){
+      print(paste0(names(other_countries_list[i]), "_", j))
+      # name the file
+      #filename = addStampToFilename(paste0(names(other_countries_list[i]), "_", j, "_Crops"), "pdf")
+      # subset for region
+      tempdata = other_countries_list[[i]][region == j]
+      # setup names of things
+      # if plotting regions
+      mytitle = paste0(names(other_countries_list[i]), " ", j)
+      myxlab = "Date"
+      myylab = paste0("Crops")
+      # make the plot
+      PlotObjCrop = plot_crop_cal(tempdata, mytitle, myxlab, myylab, fontsize=fontsize, linesize=linesize, regions=F)
+      # save into a list of plot objects
+      other_plots[[i]][[j]] = c(other_plots[[i]][[j]],list(PlotObjCrop))
+      # access like: plots$afghanistan[[1]]
+      #ggsave(filename, PlotObj)
+    }
+  }
+  return (other_plots)
 }
