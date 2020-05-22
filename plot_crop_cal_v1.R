@@ -54,6 +54,17 @@ crops_cal = read.csv("CropCalv4_just_dates_20200522_1418.csv", colClasses=c(rep(
 countries = c("Afghanistan")
 countries = levels(crops_cal$country)
 
+# define countries we don't need to plot regions separately
+countries = c('Afghanistan', 'Algeria', 'Bangladesh', 'Bolivia', 'Cambodia', 
+'Cape Verde', 'Colombia', 'Cuba', "Dem People's Rep of Korea", 'Djibouti', 
+'Egypt', 'El Salvador', 'Equador', 'Eritrea', 'eSwatini', 'Gambia', 
+'Guatemala', 'Guinea-Bissau', 'Haiti', 'Indonesia', 'Iran  (Islamic Republic of)', 
+'Iraq', 'Kyrgyzstan', "Lao People's Democratic Republic", 'Lebanon', 'Lesotho', 
+'Libya', 'Malawi', 'Mauritania', 'Mongolia', 'Myanmar', 'Namibia', 'Nepal', 'Nicaragua', 
+'Niger', 'Pakistan', 'Peru', 'Philippines', 'Rwanda', 'Sierra Leone', 'Somalia', 
+'South Africa', 'Sri Lanka', 'Sudan', 'Syrian Arab Republic', 'Tajikistan', 'Thailand', 
+'Tunisia', 'Uzbekistan', 'Vietnam', 'Yemen')
+
 crops_cal.SelectCountries = crops_cal[crops_cal$country %in% countries, ]
 crops_cal.SelectCountries = droplevels(crops_cal.SelectCountries)
 
@@ -63,7 +74,7 @@ countrieslist = split(crops_cal.SelectCountries, by="country")
 #countries = levels(crops_cal.SelectCountries$country)
 
 # run loop
-crop_plots = crop_plot_loop(countrieslist, countries, fontsize=9)
+crop_plots = crop_plot_loop(countrieslist, countries, fontsize=9, regions=F)
 #crop_plots$Afghanistan
 # access like:
 # crop_plots$Afghanistan
@@ -78,6 +89,27 @@ for (i in crop_plots) {
   print(i)
   #crop_plots$i
 }
+dev.off()
+
+# ok, now plot the countries where we need the regions
+allcountries = levels(crops_cal$country)
+other_countries = allcountries[!(allcountries %in% countries)]
+crops_cal.OtherCountries = crops_cal[crops_cal$country %in% other_countries, ]
+crops_cal.OtherCountries = droplevels(crops_cal.OtherCountries)
+
+crops_cal.OtherCountries = as.data.table(crops_cal.OtherCountries)
+other_countries_list = split(crops_cal.OtherCountries, by="country")
+
+other_countries_list <- lapply(other_countries_list, function(x) droplevels(x))
+
+other_crop_plots = crop_plot_loop2(other_countries_list, other_countries, fontsize=9)
+
+# print them
+filename = addStampToFilename("AllCountriesAgeAllCasesDeaths_JHU50", "pdf")
+
+pdf(filename, width=11, height=8.5)
+# unpack list
+do.call(c, unlist(plots, recursive=FALSE))
 dev.off()
 
 # or try cowplot?
