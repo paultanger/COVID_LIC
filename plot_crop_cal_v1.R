@@ -102,6 +102,7 @@ other_countries_list = split(crops_cal.OtherCountries, by="country")
 
 other_countries_list <- lapply(other_countries_list, function(x) droplevels(x))
 
+
 other_crop_plots = crop_plot_loop2(other_countries_list, other_countries, fontsize=9, linesize=4)
 
 # print them
