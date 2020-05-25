@@ -1,6 +1,6 @@
-# COVID_LIC (impacts of COVID-19 in Low Income Countries)
+# COVID_LIC (impacts of COVID-19 in Low & Middle Income Countries)
 
-This repository is a collection of my work analyzing and integrating data mostly from these two sources of COVID-19 impacts in Low Income Countries.
+This repository is a collection of my work analyzing and integrating data mostly from these two sources of COVID-19 impacts in Low and Middle Income Countries.
 * https://github.com/cmmid/covidm_reports.  Described in more detail here: https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html.  This is a collection of country-specific projected COVID-19 epidemics with and without interventions.
 * https://github.com/CSSEGISandData/COVID-19.  Lots of data here, we were mostly using the dates for each country in which they reported > 50 COVID cases.
 
