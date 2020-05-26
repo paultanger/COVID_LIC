@@ -35,22 +35,7 @@ other_sorting_cols = other_sorting_cols[,c(2,3,4,8,1,9,5,6,7)]
 # export so Katie can update later if Bangladesh is added etc
 setwd(datadir)
 filename = addStampToFilename('SortingColsLookupCountriesRegionsEtc', 'csv')
-write.csv(other_sorting_cols, filename, row.names = FALSE)
-
-# here is a new version
-other_sorting_cols2 = fread("SortingColsLookupCountriesRegionsEtc_20200519_0839.csv", stringsAsFactors=F, header=T)
-# and this is from USAID data services
-other_sorting_cols3 = fread("SortingCols_From_USAID_v2.csv", stringsAsFactors=F, header=T)
-
-# merge these two versions to check
-other_sorting_cols4 = merge(other_sorting_cols2, other_sorting_cols3, by.x="JHU_Country", by.y="JHU_name", all=T)
-# rearrange cols
-as.data.frame(colnames(other_sorting_cols4))
-other_sorting_cols4 = other_sorting_cols4[,c(2,12:14,3,4,11,7,1,9,5,6,10,8,15:32)]
-
-setwd(datadir)
-filename = addStampToFilename('SortingColsLookupCountriesRegionsEtcv9', 'csv')
-write.csv(other_sorting_cols4, filename, row.names = FALSE)
+#write.csv(other_sorting_cols, filename, row.names = FALSE)
 
 # try to match JHU country with USAID country based on country codes
 fromUSAIDsheet = fread("COVID Data - master_country_list.csv", stringsAsFactors=T, header=T)
@@ -66,54 +51,38 @@ filename = addStampToFilename('JHU_UK_Katie_USAIDv2', 'csv')
 write.csv(JHU_UK_Katie_USAIDv2, filename, row.names = FALSE)
 
 # ok I made some edits after discussion with Katie so this is the official version:
-JHU_UK_Katie_USAIDv3 = fread("JHU_UK_Katie_USAIDv2_20200526_1139.csv", stringsAsFactors=T, header=T)
+JHU_UK_Katie_USAIDv3 = fread("JHU_UK_Katie_USAIDv2_20200526_1150.csv", stringsAsFactors=T, header=T)
 
+# now merge with GEOGLAM names
 
 # add the country lookup for the GEOGLAM crop data
-GEOGLAM = fread("GEOGLAM_crop_calendars_v2.csv", stringsAsFactors=T, header=T)
+GEOGLAM = fread("GEOGLAM_crop_calendars_v3.csv", stringsAsFactors=T, header=T)
 GEOGLAM_Countries = as.data.frame(levels(GEOGLAM$country))
 colnames(GEOGLAM_Countries) = "GEOGLAM_Countries"
 
-other_sorting_cols6 = merge(GEOGLAM_Countries, other_sorting_cols4, by.x="GEOGLAM_Countries", by.y="USAID_Country", all=T)
-
 # export to check
 setwd(datadir)
-filename = addStampToFilename('SortingColsLookupCountriesRegionsEtcv5', 'csv')
-write.csv(other_sorting_cols6, filename, row.names = FALSE)
-
-# try to use this lookup table:
-GEOGLAM3 = fread("GEOGLAM_to_USAID_lookupv2.csv", stringsAsFactors=T, header=T)
-other_sorting_cols7 = merge(GEOGLAM3, other_sorting_cols4, by.x="GEOGLAM_to_USAID", by.y="USAID_Country", all=T)
-
-filename = addStampToFilename('SortingColsLookupCountriesRegionsEtcv7', 'csv')
-write.csv(other_sorting_cols7, filename, row.names = FALSE)
-
-#########################
-# check if match USAID names
-other_sorting_cols4$USAID_Country = as.factor(other_sorting_cols4$USAID_Country)
-USAID_Countries = as.data.frame(levels(other_sorting_cols4$USAID_Country))
-colnames(USAID_Countries) = "USAID_Countries"
-
 filename = addStampToFilename('GEOGLAM_Countries', 'csv')
 write.csv(GEOGLAM_Countries, filename, row.names = FALSE)
 
-filename = addStampToFilename('USAID_Countries', 'csv')
-write.csv(USAID_Countries, filename, row.names = FALSE)
+# seems like merging with USAID_Country will match most, and we'll have to resolve the rest manually
+JHU_UK_Katie_USAIDv3_GEO = merge(GEOGLAM_Countries, JHU_UK_Katie_USAIDv3, by.x="GEOGLAM_Countries", by.y="USAID_Country", all=T)
+filename = addStampToFilename('JHU_UK_Katie_USAIDv3_GEO', 'csv')
+#write.csv(JHU_UK_Katie_USAIDv3_GEO, filename, row.names = FALSE)
 
-# export to check
-setwd(datadir)
-filename = addStampToFilename('SortingColsLookupCountriesRegionsEtcv3', 'csv')
-write.csv(other_sorting_cols5, filename, row.names = FALSE)
+# ok, reimport the manually updated version
+GEOGLAM = fread("GEOGLAM_Countries_20200526_1315.csv", stringsAsFactors=T, header=T)
+JHU_UK_Katie_USAIDv4_GEO = merge(GEOGLAM[,c(1,2)], JHU_UK_Katie_USAIDv3, by.x="GEOGLAM_to_USAID", by.y="USAID_Country", all=T)
+# check it
+filename = addStampToFilename('JHU_UK_Katie_USAIDv4_GEO', 'csv')
+#write.csv(JHU_UK_Katie_USAIDv4_GEO, filename, row.names = FALSE)
 
-filename = addStampToFilename('GEOGLAM_Countries', 'csv')
-write.csv(GEOGLAM_Countries, filename, row.names = FALSE)
+# looks good, rename col
+names(JHU_UK_Katie_USAIDv4_GEO)[names(JHU_UK_Katie_USAIDv4_GEO) == "GEOGLAM_to_USAID"] <- "USAID_Country"
 
-# try to fix GEOGLAM
-GEOGLAM2 = fread("GEOGLAM_lookup.csv", stringsAsFactors=T, header=T)
-other_sorting_cols6 = merge(GEOGLAM2, other_sorting_cols4, by.x="GEOGLAM_to_JHU", by.y="JHU_Country", all=T)
-
-filename = addStampToFilename('SortingColsLookupCountriesRegionsEtcv4', 'csv')
-write.csv(other_sorting_cols6, filename, row.names = FALSE)
+# save it!
+filename = addStampToFilename('JHU_UK_Katie_USAIDv4_GEO_FINAL', 'csv')
+write.csv(JHU_UK_Katie_USAIDv4_GEO, filename, row.names = FALSE)
 
 # and continue integration of the case date in the plotv1 script as origin
 
