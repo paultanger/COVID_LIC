@@ -9,6 +9,8 @@ setwd(datadir)
 crops_cal = read.csv("GEOGLAM_crop_calendars.csv")
 # try with revised file
 crops_cal = read.csv("GEOGLAM_crop_calendars_v2.csv")
+# this version, we changed zero out of season dates to one day before the plant date (as per Brian B. email)
+crops_cal = read.csv("GEOGLAM_crop_calendars_v3.csv")
 # the second set of cols we can just recalculate in R and do it correctly - spill over to next yr
 crops_cal = crops_cal[,c(1:8)]
 
@@ -94,6 +96,8 @@ crops_cal$out_date = crops_cal$end_date + days(crops_cal$out_end_diff)
 # for winter wheat, add a new part 7 weeks after start of planting as nonactivity
 # just split veg date into two for winter wheat
 crops_cal$winter_wheat = crops_cal$veg_date - days(49)
+# or maybe as a percent of plant period
+# TODO: try as percent
 # make NA for all but wheat
 crops_cal$winter_wheat[crops_cal$crop != "Winter Wheat"] = NA
 
@@ -101,6 +105,7 @@ crops_cal$winter_wheat[crops_cal$crop != "Winter Wheat"] = NA
 setwd(datadir)
 filename = addStampToFilename("CropCalv4", "csv")
 filename = addStampToFilename("CropCalv5", "csv")
+filename = addStampToFilename("CropCalv6", "csv")
 #write.csv(crops_cal, filename, row.names = F)
 
 # just keep dates
@@ -117,7 +122,7 @@ cropcalv3$harv_date2 = cropcalv3$harv_date + dyears(1)
 cropcalv3$end_date2 = cropcalv3$end_date + dyears(1)
 cropcalv3$out_date2 = cropcalv3$out_date + dyears(1)
 
-filename = addStampToFilename("CropCalv4_just_dates", "csv")
+filename = addStampToFilename("CropCalv5_just_dates", "csv")
 write.csv(cropcalv3, filename, row.names = F)
 
 #######################################
@@ -126,5 +131,5 @@ write.csv(cropcalv3, filename, row.names = F)
 # first save it
 setwd(datadir)
 filename = addStampToFilename("CropCalv2", "csv")
-write.csv(crops_cal, filename, row.names = F)
+#write.csv(crops_cal, filename, row.names = F)
 
