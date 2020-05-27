@@ -57,7 +57,7 @@ crops_cal = read.csv("CropCalv5_just_dates_20200526_1026.csv", colClasses=c(rep(
 
 # add USAID country names
 # use the newer version of sorting cols
-other_sorting_cols = fread("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200526_1348.csv", stringsAsFactors=T, header=T)
+other_sorting_cols = fread("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200527_1127.csv", stringsAsFactors=T, header=T)
 
 # merge with data in case we want to facet plot by these groups
 crops_cal = merge(other_sorting_cols, crops_cal, by.x = "GEOGLAM_Country", by.y = "country", all.y=T)
@@ -115,6 +115,13 @@ other_countries_list <- lapply(other_countries_list, function(x) droplevels(x))
 
 
 other_crop_plots = crop_plot_loop2(other_countries_list, other_countries, fontsize=9, linesize=4)
+
+# save these objects
+setwd(datadir)
+filename = addStampToFilename("SelectCountriesAllRegionsCropPlots", "Robj")
+saveRDS(crop_plots, filename)
+filename = addStampToFilename("OtherCountriesAllRegionsCropPlots", "Robj")
+saveRDS(other_crop_plots, filename)
 
 # print them
 # filename = addStampToFilename("OtherCountriesAllRegionsCropPlots", "pdf")

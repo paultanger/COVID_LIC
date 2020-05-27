@@ -68,7 +68,7 @@ setwd(datadir)
 # head(other_sorting_cols,2)
 
 # use the newer version of sorting cols
-other_sorting_cols = fread("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200526_1348.csv", stringsAsFactors=T, header=T)
+other_sorting_cols = fread("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200527_1127.csv", stringsAsFactors=T, header=T)
 
 # merge with data in case we want to facet plot by these groups
 subset.alls.plot = merge(other_sorting_cols, subset.alls.plot, by.x = "LSHTM_Country", by.y = "Country", all=T)
@@ -76,6 +76,10 @@ subset.alls.plot = merge(other_sorting_cols, subset.alls.plot, by.x = "LSHTM_Cou
 # set Country cols as factors
 subset.alls.plot[, LSHTM_Country:=as.factor(LSHTM_Country)]
 subset.alls.plot[, USAID_Country:=as.factor(USAID_Country)]
+
+# save object
+filename = addStampToFilename('subset.alls.plot', 'RObj')
+#saveRDS(subset.alls.plot, filename)
 
 ####### TEST WITH ONE ############
 # set titles
@@ -92,6 +96,10 @@ subset.alls.plot[, USAID_Country:=as.factor(USAID_Country)]
 # ggsave(filename, PlotObj)
 
 ############### DO ALL ##################
+
+# load file
+subset.alls.plot = readRDS("subset.alls.plot_20200527_1159.RObj")
+
 # define countries to include
 # TODO: adapt later to filter based on subset of other_sorting_cols
 #countries = c("afghanistan", "ethiopia")
@@ -108,6 +116,11 @@ subset.alls.plot = na.omit(subset.alls.plot, cols="Date_JHU")
 AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[LSHTM_Country %in% countries & compartment %in% compartments]
 AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll.SelectCountries)
 
+# save object
+filename = addStampToFilename('AllAllsData.7scens.AgeAll.SelectCountries', 'RObj')
+#saveRDS(AllAllsData.7scens.AgeAll.SelectCountries, filename)
+AllAllsData.7scens.AgeAll.SelectCountries = readRDS("AllAllsData.7scens.AgeAll.SelectCountries_20200527_1200.RObj")
+
 # make a list of the subsets for each country
 countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="USAID_Country")
 AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country = as.factor(AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country)
@@ -116,8 +129,9 @@ AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country = as.factor(AllAllsData.
 countries = levels(AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country)
 
 # TODO: maybe change this to a data table or apply function
-setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
-plots = plot_loop(countrieslist, countries, compartments, fontsize=10)
+#setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
+#plots = plot_loop(countrieslist, countries, compartments, fontsize=10)
+
 # print them
 # filename = addStampToFilename("AllCountriesAgeAllCasesDeaths_JHU50", "pdf")
 # 
@@ -129,6 +143,11 @@ plots = plot_loop(countrieslist, countries, compartments, fontsize=10)
 # or use this method:
 # run again with to get plot objects
 plots = plot_loop(countrieslist, countries, compartments, fontsize=9, CI=F)
+
+# save object
+filename = addStampToFilename('peak_plots_list', 'RObj')
+#saveRDS(plots, filename)
+
 setwd(datadir)
 mylegend = ggplotlegend(plots$afghanistan$death_o[[1]])
 #mylegend = mylegend + theme(legend.position = "right")

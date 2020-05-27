@@ -48,7 +48,7 @@ JHU_UK_Katie_USAIDv2 = JHU_UK_Katie_USAID[,c(2,3,4,14:16,1,5,6,10,12,8,7,13,9,17
 # export to check
 setwd(datadir)
 filename = addStampToFilename('JHU_UK_Katie_USAIDv2', 'csv')
-write.csv(JHU_UK_Katie_USAIDv2, filename, row.names = FALSE)
+#write.csv(JHU_UK_Katie_USAIDv2, filename, row.names = FALSE)
 
 # ok I made some edits after discussion with Katie so this is the official version:
 JHU_UK_Katie_USAIDv3 = fread("JHU_UK_Katie_USAIDv2_20200526_1150.csv", stringsAsFactors=T, header=T)
@@ -63,7 +63,7 @@ colnames(GEOGLAM_Countries) = "GEOGLAM_Countries"
 # export to check
 setwd(datadir)
 filename = addStampToFilename('GEOGLAM_Countries', 'csv')
-write.csv(GEOGLAM_Countries, filename, row.names = FALSE)
+#write.csv(GEOGLAM_Countries, filename, row.names = FALSE)
 
 # seems like merging with USAID_Country will match most, and we'll have to resolve the rest manually
 JHU_UK_Katie_USAIDv3_GEO = merge(GEOGLAM_Countries, JHU_UK_Katie_USAIDv3, by.x="GEOGLAM_Countries", by.y="USAID_Country", all=T)
