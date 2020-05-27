@@ -106,3 +106,25 @@ crop_plot_loop2 = function(other_countries_list, other_countries, fontsize=10, l
   }
   return (other_plots)
 }
+
+combine_plots_loop = function(plots_to_combine){
+  # returns a list of plot objects
+  i= 1
+  # initialize list to store results
+  combine_plots = vector(mode = "list", length = length(plots_to_combine))
+  names(combine_plots) = names(plots_to_combine)
+  # create plot objects and put in list
+  # go through countries
+  for(i in i:length(plots_to_combine)){
+    # define overall plot title - country
+    title <- ggdraw() + draw_label(names(plots_to_combine[i]), fontface='bold')
+    # if it has a crop plot... plot together
+    if (length(plots_to_combine[[i]]) > 1) {
+      # peak plots have names of [[1]].. I prob need to fix later
+      combine_plots[i] = list(plot_grid(title, plots_to_combine[[i]][[1]][[1]], plots_to_combine[[i]][[2]], align = "v", ncol = 1, rel_heights = c(0.2, 1, 1)) )
+    }
+  }
+  # maybe later plot something for countries without crops
+      #plots_to_combine[[i]]$cases
+  return (combine_plots)
+}
