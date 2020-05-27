@@ -36,7 +36,7 @@ plot_loop = function(countrieslist, countries, compartments, fontsize=12, points
       # make the plot
       PlotObj = mydotplotv1(tempdata, mytitle, myxlab, myylab, fontsize=fontsize, pointsize=4, CI=CI)
       # save into a list of plot objects
-      plots[[i]][[j]] = c(plots[[i]][[j]],list(PlotObj))
+      plots[[i]][j] = c(plots[[i]][j], list(PlotObj))
       # access like: plots$afghanistan$death_o[[1]]
       #ggsave(filename, PlotObj)
     }}
@@ -121,7 +121,7 @@ combine_plots_loop = function(plots_to_combine){
     # if it has a crop plot... plot together
     if (length(plots_to_combine[[i]]) > 1) {
       # peak plots have names of [[1]].. I prob need to fix later
-      combine_plots[i] = list(plot_grid(title, plots_to_combine[[i]][[1]][[1]], plots_to_combine[[i]][[2]], align = "v", ncol = 1, rel_heights = c(0.2, 1, 1)) )
+      combine_plots[i] = list(plot_grid(title, plots_to_combine[[i]][[1]], plots_to_combine[[i]][[2]], align = "v", ncol = 1, rel_heights = c(0.2, 1, 1)) )
     }
   }
   # maybe later plot something for countries without crops
