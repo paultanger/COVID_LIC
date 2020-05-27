@@ -126,7 +126,7 @@ countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="USAID_Count
 AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country = as.factor(AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country)
 # countries = levels(AllAllsData.7scens.AgeAll.SelectCountries$LSHTM_Country)
 # use USAID names (which will become the list names)
-countries = levels(AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country)
+countries = names(countrieslist)
 
 # TODO: maybe change this to a data table or apply function
 #setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")

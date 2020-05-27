@@ -128,3 +128,28 @@ combine_plots_loop = function(plots_to_combine){
       #plots_to_combine[[i]]$cases
   return (combine_plots)
 }
+
+combine_plots_loop_regions = function(plots_by_region){
+  # returns a list of plot objects
+  i= 1
+  j = 1
+  # initialize list to store results
+  combine_plots = vector(mode = "list", length = length(plots_by_region))
+  names(combine_plots) = names(plots_by_region)
+  # create plot objects and put in list
+  # go through countries
+  for(i in i:length(plots_by_region)){
+    # define overall plot title - country
+    title <- ggdraw() + draw_label(names(plots_by_region[i]), fontface='bold')
+    case_plot <- plots_by_region[[i]][1]
+    print(names(plots_by_region[i]))
+    print(names(plots_by_region[[i]][1]))
+    # for each region, create a plot
+    j = 1
+    for(j in j:length(plots_by_region[[i]][[2]])){ #test = plots_by_region[[i]][[2]][[j]][[1]]
+      print(names(plots_by_region[[i]][[2]][j]))
+      combine_plots[[i]][[j]] = list(plot_grid(title, case_plot[[1]], plots_by_region[[i]][[2]][[j]][[1]], align = "v", ncol = 1, rel_heights = c(0.2, 1, 1)) )
+    }
+  }
+  return (combine_plots)
+}

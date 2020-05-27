@@ -14,10 +14,10 @@ setwd(datadir)
 
 # load files
 crop_plots = readRDS("SelectCountriesAllRegionsCropPlots_20200527_1404.Robj")
-OtherCountriesAllRegionsCropPlots = readRDS("OtherCountriesAllRegionsCropPlots_20200527_1404.Robj")
+other_crop_plots = readRDS("OtherCountriesAllRegionsCropPlots_20200527_1404.Robj")
 
 # from plot_v1.R we should have a list object of ggplots = plots
-plots = readRDS("peak_plots_list_20200527_1421.RObj")
+plots = readRDS("peak_plots_list_20200527_1619.RObj")
 
 # the easier ones first, we'll take the list object from each and plot together
 # do this for the select countries - don't need to do by regions
@@ -33,12 +33,25 @@ plots_to_combine = plots
 # subset plots to combine for only countries with crop plots..
 peak_countries = names(plots_to_combine)
 crop_countries = names(crop_plots)
+crop_region_countries = names(other_crop_plots)
 
 combine_countries = intersect(peak_countries, crop_countries)
-just_peak = setdiff(peak_countries, crop_countries)
+combine_region_countries = intersect(peak_countries, crop_region_countries)
+just_peak = setdiff(peak_countries, c(crop_countries, crop_region_countries))
+just_GEOGLAM = setdiff(c(crop_countries, crop_region_countries), peak_countries)
+
+# combine into df for Katie
+venn_groups = list(combine_countries, combine_region_countries, just_peak, just_GEOGLAM)
+n.countries <- sapply(venn_groups, length)
+seq.max <- seq_len(max(n.countries))
+venn_groups_countries <- as.data.frame(sapply(venn_groups, "[", i = seq.max))
+colnames(venn_groups_countries) = c("combine_countries", "combine_region_countries", "just_peak", "just_GEOGLAM")
+filename = addStampToFilename("Country_Groups", "csv")
+write.csv(venn_groups_countries, filename, row.names = F, na="")
 
 # make sub-lists
 plots_separate = plots_to_combine[names(plots_to_combine) %in% just_peak]
+plots_by_region = plots_to_combine[names(plots_to_combine) %in% combine_region_countries]
 plots_to_combine = plots_to_combine[names(plots_to_combine) %in% combine_countries]
 
 # plot countries without crops on their own
@@ -106,6 +119,42 @@ for (i in combined_plots) {
 }
 dev.off()
 
+# now, combine plots_by_region with the "other countries" with one combined plot per region for each country
+
+# first subset crop plot list
+crop_plots_region_to_combine = other_crop_plots[names(other_crop_plots) %in% combine_region_countries]
+names(plots_by_region)
+names(crop_plots_region_to_combine)
+
+# order lists
+crop_plots_region_to_combine = crop_plots_region_to_combine[order(names(crop_plots_region_to_combine))]
+plots_by_region = plots_by_region[order(names(plots_by_region))]
+
+# combine plots into one big list
+i=1
+for(i in i:length(plots_by_region)){
+  if (names(plots_by_region)[[i]] == names(crop_plots_region_to_combine[i])){
+    print(paste0("crop_plots$", names(plots_by_region)[i]))
+    temp_country_name = names(plots_by_region)[[i]]
+    plots_by_region[[i]]$crop_plots <- crop_plots_region_to_combine[[temp_country_name]]
+  }
+}
+
+# save it
+setwd(datadir)
+filename = addStampToFilename("plots_by_region", "RObj")
+#saveRDS(plots_by_region, filename)
+
+# return a list of the combined plots
+combined_plots_regions = combine_plots_loop_regions(plots_by_region)
+
+# plot them
+setwd(plotdir)
+filename = addStampToFilename("CountriesRegionsPeakAndCropPlots", "pdf")
+pdf(filename, width=11, height=8.5)
+# unpack list
+do.call(c, unlist(combined_plots_regions, recursive=F))
+dev.off()
 
 #####################################
 
