@@ -1,5 +1,6 @@
 codedir = "~/Desktop/github/COVID_LIC"
 datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
+plotdir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/"
 
 setwd(codedir)
 source('functions.R')
@@ -11,7 +12,12 @@ setwd(datadir)
 # select countries (regions don't need to be separate) = crop_plots
 # other countries (regions need to be separate) = other_crop_plots
 
+# load files
+crop_plots = readRDS("SelectCountriesAllRegionsCropPlots_20200527_1404.Robj")
+OtherCountriesAllRegionsCropPlots = readRDS("OtherCountriesAllRegionsCropPlots_20200527_1404.Robj")
+
 # from plot_v1.R we should have a list object of ggplots = plots
+plots = readRDS("peak_plots_list_20200527_1421.RObj")
 
 # the easier ones first, we'll take the list object from each and plot together
 # do this for the select countries - don't need to do by regions
@@ -24,27 +30,73 @@ plots_to_combine = plots
 # TODO: fix with lapply?
 #lapply(seq_along(plots_to_combine), function(y) if (names(plots_to_combine)[[y]] %in% names(crop_plots)) {y$crop_plot <- crop_plots$names(plots_to_combine)[[y]] }) #, simplify = FALSE,USE.NAMES = TRUE)
 
+# subset plots to combine for only countries with crop plots..
+peak_countries = names(plots_to_combine)
+crop_countries = names(crop_plots)
+
+combine_countries = intersect(peak_countries, crop_countries)
+just_peak = setdiff(peak_countries, crop_countries)
+
+# make sub-lists
+plots_separate = plots_to_combine[names(plots_to_combine) %in% just_peak]
+plots_to_combine = plots_to_combine[names(plots_to_combine) %in% combine_countries]
+
+# plot countries without crops on their own
+setwd(plotdir)
+filename = addStampToFilename("Countries_No_GEOGLAM", "pdf")
+pdf(filename, width=11, height=8.5)
+# # unpack list
+for (i in plots_separate) {
+  print(i)
+  #crop_plots$i
+}
+dev.off()
+
+# test = sapply(plots_to_combine, "[", combine_countries)
+# test2 <- lapply(plots_to_combine, function(x) {names(x) %in% combine_countries})
+# or with reduce on the actual lists?
+
+# combine plots for countries with both peak and crop plots
+
+# first subset crop plot list
+crop_plots_to_combine = crop_plots[names(crop_plots) %in% combine_countries]
+plots_to_combine_backup = plots_to_combine
+#plots_to_combine = plots_to_combine_backup
+# maybe we could rewrite the loop to just match names in two separate lists
+# instead of combining into one..
+
+# order lists
+crop_plots_to_combine = crop_plots_to_combine[order(names(crop_plots_to_combine))]
+plots_to_combine = plots_to_combine[order(names(plots_to_combine))]
+
 i=1
 for(i in i:length(plots_to_combine)){
-  print(names(plots_to_combine)[[i]])
-  if (names(plots_to_combine)[[i]] %in% names(crop_plots)){
-    print(paste0("crop_plots$", names(plots_to_combine)[[i]]))
-    #plots_to_combine[[i]]$crop_plot <- list(paste0("crop_plots$", names(plots_to_combine)[[i]]))
+  if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
+    print(paste0("crop_plots$", names(plots_to_combine)[i]))
     temp_country_name = names(plots_to_combine)[[i]]
-    plots_to_combine[[i]]$crop_plot <- crop_plots[[temp_country_name]]
-    # or as nested list
-    #plots_to_combine[[i]]$crop_plot <- list(crop_plots[[temp_country_name]])
+    plots_to_combine[[i]]$crop_plot <- crop_plots_to_combine[[temp_country_name]]
   }
 }
 
-# outer loop is the country case peak plots (top)
-# inner loop is the country crop plots (for this group just 1 per country)
-# return a list of the combined plots
+### this is the part that I need to fix.. maybe %in% not working
+# i=1
+# for(i in i:length(plots_to_combine)){
+#   print(names(plots_to_combine)[[i]])
+#   if (names(plots_to_combine)[[i]] %in% names(crop_plots)){
+#     print(paste0("crop_plots$", names(plots_to_combine)[[i]]))
+#     #plots_to_combine[[i]]$crop_plot <- list(paste0("crop_plots$", names(plots_to_combine)[[i]]))
+#     temp_country_name = names(plots_to_combine)[[i]]
+#     plots_to_combine[[i]]$crop_plot <- crop_plots[[temp_country_name]]
+#     # or as nested list
+#     #plots_to_combine[[i]]$crop_plot <- list(crop_plots[[temp_country_name]])
+#   }
+# }
 
+# return a list of the combined plots
 combined_plots = combine_plots_loop(plots_to_combine)
 
 # print them
-setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
+setwd(plotdir)
 filename = addStampToFilename("SelectCountriesCombinedPlots", "pdf")
 pdf(filename, width=11, height=8.5)
 # unpack list
