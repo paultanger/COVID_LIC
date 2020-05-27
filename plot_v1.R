@@ -62,16 +62,20 @@ subset.alls.plot$Scenarios  <- factor(subset.alls.plot$Scenarios , levels = c(
 # here might be a good place to combine with other sorting variables like region?
 # use this file:
 setwd(datadir)
-other_sorting_cols = fread("country_folder_list_with_regions.csv", stringsAsFactors=T, drop=1, header=T)
+# other_sorting_cols = fread("country_folder_list_with_regions.csv", stringsAsFactors=T, drop=1, header=T)
+# 
+# head(subset.alls.plot,2)
+# head(other_sorting_cols,2)
 
-head(subset.alls.plot,2)
-head(other_sorting_cols,2)
+# use the newer version of sorting cols
+other_sorting_cols = fread("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200526_1348.csv", stringsAsFactors=T, header=T)
 
 # merge with data in case we want to facet plot by these groups
-subset.alls.plot = merge(other_sorting_cols, subset.alls.plot, by.x = "Country_OU", by.y = "Country", all=T)
+subset.alls.plot = merge(other_sorting_cols, subset.alls.plot, by.x = "LSHTM_Country", by.y = "Country", all=T)
 
-# set Country_OU as factor
-subset.alls.plot[, Country_OU:=as.factor(Country_OU)]
+# set Country cols as factors
+subset.alls.plot[, LSHTM_Country:=as.factor(LSHTM_Country)]
+subset.alls.plot[, USAID_Country:=as.factor(USAID_Country)]
 
 ####### TEST WITH ONE ############
 # set titles
@@ -91,34 +95,36 @@ subset.alls.plot[, Country_OU:=as.factor(Country_OU)]
 # define countries to include
 # TODO: adapt later to filter based on subset of other_sorting_cols
 #countries = c("afghanistan", "ethiopia")
-compartments = c("cases", "death_o")
+# compartments = c("cases", "death_o")
 compartments = c("cases")
-countries = c("afghanistan")
+# countries = c("afghanistan")
 
 # all countries
-countries = levels(subset.alls.plot$Country_OU)
+countries = levels(subset.alls.plot$LSHTM_Country)
 
 # drop countries without a JHU 50 date yet
 subset.alls.plot = na.omit(subset.alls.plot, cols="Date_JHU")
 
-AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[Country_OU %in% countries & compartment %in% compartments]
+AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[LSHTM_Country %in% countries & compartment %in% compartments]
 AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll.SelectCountries)
 
 # make a list of the subsets for each country
-countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="Country_OU")
-AllAllsData.7scens.AgeAll.SelectCountries$Country_OU = as.factor(AllAllsData.7scens.AgeAll.SelectCountries$Country_OU)
-countries = levels(AllAllsData.7scens.AgeAll.SelectCountries$Country_OU)
+countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="USAID_Country")
+AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country = as.factor(AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country)
+# countries = levels(AllAllsData.7scens.AgeAll.SelectCountries$LSHTM_Country)
+# use USAID names (which will become the list names)
+countries = levels(AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country)
 
 # TODO: maybe change this to a data table or apply function
 setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/plots/test/")
 plots = plot_loop(countrieslist, countries, compartments, fontsize=10)
 # print them
-filename = addStampToFilename("AllCountriesAgeAllCasesDeaths_JHU50", "pdf")
-
-pdf(filename, width=11, height=8.5)
-# unpack list
-do.call(c, unlist(plots, recursive=FALSE))
-dev.off()
+# filename = addStampToFilename("AllCountriesAgeAllCasesDeaths_JHU50", "pdf")
+# 
+# pdf(filename, width=11, height=8.5)
+# # unpack list
+# do.call(c, unlist(plots, recursive=FALSE))
+# dev.off()
 
 # or use this method:
 # run again with to get plot objects
@@ -134,51 +140,35 @@ case_death_plots = arrangeGrob(mylegend, nrow=2, heights=c(1,10), # makes a smal
 ggsave("test.pdf", case_death_plots)
 plots$afghanistan$cases[[1]]
 
-# try with CI
-# just with one scenario to get this working
-AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[Country_OU %in% countries & compartment %in% compartments & Scenarios == "Unmitigated"]
-# or with 4 scenarios
-AllAllsData.7scens.AgeAll.SelectCountries = AllAllsData.7scens.AgeAll.SelectCountries[Country_OU %in% countries & compartment %in% compartments & Scenarios %in% c("Unmitigated", "20% distancing", "50% distancing", "40/80 shielding")]
-countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="Country_OU")
-countries = levels(AllAllsData.7scens.AgeAll.SelectCountries$Country_OU)
-plots = plot_loop(countrieslist, countries, compartments, fontsize=10, CI=T)
-plots$afghanistan$cases[[1]]
-# ok this is weird... 
-# I think we need to get the diff between med and lo and med and hi to get CI
-plottest = AllAllsData.7scens.AgeAll.SelectCountries[compartment == "cases" & Country_OU == "afghanistan"]
-plottest$Country_OU = as.factor(plottest$Country_OU)
-countries = levels(plottest$Country_OU)
-plot(plottest$med ~ plottest$Date_JHU)
-lines(plottest$Date_JHU, plottest$lo, pch = 18, col = "blue", type = "b", lty = 2)
-lines(plottest$Date_JHU, plottest$hi, pch = 20, col = "red", type = "b", lty = 3)
-legend("topright", legend=c("med", "lo", "hi"),
-       col=c("black", "blue", "red"), lty = 1:3, cex=0.8)
+# # try with CI
+# # just with one scenario to get this working
+# AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[Country_OU %in% countries & compartment %in% compartments & Scenarios == "Unmitigated"]
+# # or with 4 scenarios
+# AllAllsData.7scens.AgeAll.SelectCountries = AllAllsData.7scens.AgeAll.SelectCountries[Country_OU %in% countries & compartment %in% compartments & Scenarios %in% c("Unmitigated", "20% distancing", "50% distancing", "40/80 shielding")]
+# countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="Country_OU")
+# countries = levels(AllAllsData.7scens.AgeAll.SelectCountries$Country_OU)
+# plots = plot_loop(countrieslist, countries, compartments, fontsize=10, CI=T)
+# plots$afghanistan$cases[[1]]
+# # ok this is weird... 
+# # I think we need to get the diff between med and lo and med and hi to get CI
+# plottest = AllAllsData.7scens.AgeAll.SelectCountries[compartment == "cases" & Country_OU == "afghanistan"]
+# plottest$Country_OU = as.factor(plottest$Country_OU)
+# countries = levels(plottest$Country_OU)
+# plot(plottest$med ~ plottest$Date_JHU)
+# lines(plottest$Date_JHU, plottest$lo, pch = 18, col = "blue", type = "b", lty = 2)
+# lines(plottest$Date_JHU, plottest$hi, pch = 20, col = "red", type = "b", lty = 3)
+# legend("topright", legend=c("med", "lo", "hi"),
+#        col=c("black", "blue", "red"), lty = 1:3, cex=0.8)
+# 
+# # try ggplot CI method..
+# countrieslist = split(plottest, by="Country_OU")
+# plots = plot_loop(countrieslist, countries, compartments, fontsize=10, CI=T)
+# plots$afghanistan$cases[[1]]
+# 
+# 
+# # or try cowplot?
+# plot_grid(p1, p2, labels = c('A', 'B'), label_size = 12)
+# ggdraw(p) + 
+#   draw_image(logo_file, x = 1, y = 1, hjust = 1, vjust = 1, width = 0.13, height = 0.2)
+# 
 
-# try ggplot CI method..
-countrieslist = split(plottest, by="Country_OU")
-plots = plot_loop(countrieslist, countries, compartments, fontsize=10, CI=T)
-plots$afghanistan$cases[[1]]
-
-
-# or try cowplot?
-plot_grid(p1, p2, labels = c('A', 'B'), label_size = 12)
-ggdraw(p) + 
-  draw_image(logo_file, x = 1, y = 1, hjust = 1, vjust = 1, width = 0.13, height = 0.2)
-
-# from covidm reports github intervention plots:
-# ggplotqs(meltquantiles(a.dt[age=="all"]), aes(
-#    color=factor(scen_id), group=variable, alpha=variable
-#  )) +
-#    facet_grid(compartment ~ scen_id, scale = "free_y", switch = "y", labeller = fct_labels(
-#    scen_id = { res <- levels(int.factorize(c(1, scens))); names(res) <- c(1, scens); res }
-#  )) + 
-#  scale_x_t() +
-#  scale_alpha_manual(guide = "none", values = c(lo.lo=0.25, lo=0.5, med=1, hi=0.5, hi.hi=0.25)) 
-
-# and from plotting support:
-# meltquantiles <- function(dt, probs = refprobs) {
-#   ky <- setdiff(names(dt), names(probs))
-#   setkeyv(melt(
-#     dt, measure.vars = names(probs)
-#   ), c(ky, "variable"))
-# }
