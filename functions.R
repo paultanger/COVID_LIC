@@ -44,18 +44,18 @@ plot_loop = function(countrieslist, countries, compartments, fontsize=12, points
 }
 
 # TODO: maybe change this to a data table or apply function
-crop_plot_loop = function(countrieslist, countries, fontsize=10, linesize=4, regions=T){
+crop_plot_loop = function(countrieslist, countries_, fontsize=10, linesize=4, regions=T){
   # returns a list of plot objects
   # access like: plots$afghanistan[[1]]
   i= 1
   # initialize list to store results
   plots = vector(mode = "list", length = length(countrieslist))
-  names(plots) = countries
+  names(plots) = countries_
   # create plot objects and put in list
   for(i in i:length(countrieslist)){
       print(paste0(names(countrieslist[i]), "_"))
       # name the file
-      filename = addStampToFilename(paste0(names(countrieslist[i]), "_Crops"), "pdf")
+      #filename = addStampToFilename(paste0(names(countrieslist[i]), "_Crops"), "pdf")
       # subset for compartment
       #tempdata = countrieslist[[i]]
       # setup names of things

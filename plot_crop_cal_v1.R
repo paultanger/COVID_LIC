@@ -82,7 +82,7 @@ countrieslist = split(crops_cal.SelectCountries, by="USAID_Country")
 #crops_cal.SelectCountries$Country_OU = as.factor(crops_cal.SelectCountries$Country_OU)
 
 # redefine countries here to become list names (to match up with other plots)
-countriesforplots = levels(crops_cal.SelectCountries$USAID_Country)
+countriesforplots = names(countrieslist)
 
 # run loop
 crop_plots = crop_plot_loop(countrieslist, countriesforplots, fontsize=9, regions=F)
@@ -113,6 +113,8 @@ other_countries_list = split(crops_cal.OtherCountries, by="USAID_Country")
 
 other_countries_list <- lapply(other_countries_list, function(x) droplevels(x))
 
+# redefine other country list to match other plots (using USAID names)
+other_countries = names(other_countries_list)
 
 other_crop_plots = crop_plot_loop2(other_countries_list, other_countries, fontsize=9, linesize=4)
 
