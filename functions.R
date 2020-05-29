@@ -12,31 +12,31 @@ ggplotlegend = function(plotobj){
   return(legend)}
 
 # TODO: maybe change this to a data table or apply function
-plot_loop = function(countrieslist, countries, compartments, fontsize=12, pointsize=4, CI=F){
+plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fontsize=12, pointsize=4, CI=F){
   # returns a list of plot objects
   # access like: plots$afghanistan$death_o[[1]]
   i= 1
   j = 1
   # initialize list to store results
-  plots = vector(mode = "list", length = length(countrieslist))
-  names(plots) = countries
+  plots = vector(mode = "list", length = length(countriesOrRegionslist))
+  names(plots) = countries_or_bin
   # create plot objects and put in list
-  for(i in i:length(countrieslist)){
-    for(j in levels(countrieslist[[i]]$compartment)){
+  for(i in i:length(countriesOrRegionslist)){
+    for(j in levels(countriesOrRegionslist[[i]]$compartment)){
       #print(countrieslist[[i]]$compartment[j])
-      print(paste0(names(countrieslist[i]), "_", j, "_AgeAll"))
+      print(paste0(names(countriesOrRegionslist[i]), "_", j, "_AgeAll"))
       # name the file
-      filename = addStampToFilename(paste0(names(countrieslist[i]), "_", j, "_AgeAll"), "pdf")
+      filename = addStampToFilename(paste0(names(countriesOrRegionslist[i]), "_", j, "_AgeAll"), "pdf")
       # subset for compartment
-      tempdata = countrieslist[[i]][compartment == j]
+      tempdata = countriesOrRegionslist[[i]][compartment == j]
       # setup names of things
-      mytitle = paste0(names(countrieslist[i]), " ", j, " over time")
+      mytitle = paste0(names(countriesOrRegionslist[i]), " ", j, " over time")
       myxlab = "Date (days since 50 confirmed cases)"
       myylab = paste0("Number of ", j)
       # make the plot
       PlotObj = mydotplotv1(tempdata, mytitle, myxlab, myylab, fontsize=fontsize, pointsize=4, CI=CI)
       # save into a list of plot objects
-      plots[[i]][j] = c(plots[[i]][j], list(PlotObj))
+      plots[[i]][[j]] = c(plots[[i]][[j]], list(PlotObj))
       # access like: plots$afghanistan$death_o[[1]]
       #ggsave(filename, PlotObj)
     }}
