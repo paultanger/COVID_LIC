@@ -159,6 +159,56 @@ case_death_plots = arrangeGrob(mylegend, nrow=2, heights=c(1,10), # makes a smal
 ggsave("test.pdf", case_death_plots)
 plots$afghanistan$cases[[1]]
 
+# plot with points for peak deaths date
+# will need data for both cases and deaths, so need to re-run
+# load file
+subset.alls.plot = readRDS("subset.alls.plot_20200527_1159.RObj")
+compartments = c("cases", "death_o")
+countries = levels(subset.alls.plot$LSHTM_Country)
+AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[LSHTM_Country %in% countries & compartment %in% compartments]
+AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll.SelectCountries)
+countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="USAID_Country")
+AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country = as.factor(AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country)
+countries = names(countrieslist)
+
+plots = plot_loop_together(countrieslist, countries, compartments, fontsize=9, CI=F, deaths_on_cases=F, linesize=.5)
+
+test = plots$Afghanistan$case_death
+testdf = test$data
+pointsize = 3
+#test <- test + stat_summary(data = testdf[testdf$compartment=="death_o",], aes(Date_JHU, med, color=Scenarios, fill=Scenarios, group=Scenarios), fun.max = max, geom="point", size=pointsize, show.legend = F) # color=Scenarios, fill=Scenarios)
+testdfdeaths = testdf[testdf$compartment=="death_o",]
+#testformax = testdfdeaths[which.max(testdfdeaths$med),]
+testformax = testdfdeaths[with(testdfdeaths, ave(med, Scenarios, FUN=max)==med)]
+names(testformax)[names(testformax) == "med"] = "med2"
+#test <- test + stat_summary(data = testformax, fun.max = max, geom="point", size=pointsize, show.legend = F) # color=Scenarios, fill=Scenarios)
+#test <- test + scale_y_continuous(breaks = waiver(), n.breaks=10, labels = comma, sec.axis = ~ . / 100)
+# test <- test + scale_y_continuous(breaks = waiver(), n.breaks=10, labels = comma, sec.axis = sec_axis(~ (. /100), name = "Deaths"))
+# test <- test + geom_point(data = testformax, aes(Date_JHU, med2), size=pointsize, show.legend = F)
+# #test <- test + geom_point(data = testformax, size=pointsize, show.legend = F)
+# test
+# test <- test + stat_summary(aes(label=round(..y..,2)), fun=max, geom="text", size=6, hjust = -0.3)
+
+
+### closest here...
+test = plots$Afghanistan$case_death
+test
+test <- test + geom_point(data = testformax, mapping = aes(y=med2*100, group=Scenarios), size=pointsize, show.legend = F)
+test
+test <- test + scale_y_continuous(breaks = waiver(), n.breaks=10, labels = comma, sec.axis = sec_axis(~ (. /100), name = "Deaths"))
+test
+test <- test + geom_text(data = testformax, aes(x=testformax$Date_JHU, y=testformax$med2*100, label=round(testformax$med2)), hjust = -0.25, show.legend = F)
+test
+test <- test + geom_line(data = testformax, mapping = aes(Date_JHU, med), size=pointsize, show.legend = F)
+test
+
+# try with lines..
+linesize=0.5
+test = plots$Afghanistan$case_death
+test
+test <- test + geom_vline(data = testformax, aes(xintercept=Date_JHU, group=Scenarios, color=Scenarios), size=linesize+.5, linetype=5, show.legend = F)
+test
+
 # # try with CI
 # # just with one scenario to get this working
 # AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[Country_OU %in% countries & compartment %in% compartments & Scenarios == "Unmitigated"]

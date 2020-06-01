@@ -12,7 +12,7 @@ ggplotlegend = function(plotobj){
   return(legend)}
 
 # TODO: maybe change this to a data table or apply function
-plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fontsize=12, pointsize=4, CI=F){
+plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F){
   # returns a list of plot objects
   # access like: plots$afghanistan$death_o[[1]]
   i= 1
@@ -34,12 +34,38 @@ plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fon
       myxlab = "Date (days since 50 confirmed cases)"
       myylab = paste0("Number of ", j)
       # make the plot
-      PlotObj = mydotplotv1(tempdata, mytitle, myxlab, myylab, fontsize=fontsize, pointsize=4, CI=CI)
+      PlotObj = mydotplotv1(tempdata, mytitle, myxlab, myylab, fontsize=fontsize, pointsize=4, CI=CI, deaths_on_cases)
       # save into a list of plot objects
       plots[[i]][[j]] = c(plots[[i]][[j]], list(PlotObj))
       # access like: plots$afghanistan$death_o[[1]]
       #ggsave(filename, PlotObj)
     }}
+  return (plots)
+}
+
+plot_loop_together = function(countriesOrRegionslist, countries_or_bin, compartments, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F, linesize=1.2){
+  # returns a list of plot objects
+  i= 1
+  # initialize list to store results
+  plots = vector(mode = "list", length = length(countriesOrRegionslist))
+  names(plots) = countries_or_bin
+  # create plot objects and put in list
+  for(i in i:length(countriesOrRegionslist)){
+      print(paste0(names(countriesOrRegionslist[i]), "_", "cases, deaths", "_AgeAll"))
+      # subset for compartment
+      tempdata = countriesOrRegionslist[[i]]
+      # setup names of things
+      mytitle = paste0(names(countriesOrRegionslist[i]), " ", "cases", " over time")
+      myxlab = "Date (days since 50 confirmed cases)"
+      myylab = paste0("Number of ", "cases")
+      # make the plot
+      PlotObj = mydotplotv1(tempdata, mytitle, myxlab, myylab, fontsize=fontsize, pointsize=4, CI=CI, deaths_on_cases, linesize=linesize)
+      # save into a list of plot objects
+      plots[[i]] = c(plots[[i]], list(PlotObj))
+      names(plots[[i]]) = "case_death"
+      # access like: plots$afghanistan$death_o[[1]]
+      #ggsave(filename, PlotObj)
+    }
   return (plots)
 }
 

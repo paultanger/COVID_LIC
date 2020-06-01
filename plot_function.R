@@ -4,16 +4,25 @@ require(scales)
 
 cbPalette2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
-mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4, CI=F){
+mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F, linesize=1.2){
   # lines for each scenario
   dotplot <- ggplot(mydata, aes(x=Date_JHU, y= med, group=Scenarios, color=Scenarios)) +
-    geom_line(size = 1.2)
+    geom_line(data=mydata[mydata[["compartment"]] == "cases",], size = linesize)
   # add CI
     if(CI==T){
       dotplot <- dotplot + geom_ribbon(aes(ymin=mydata$lo, ymax=mydata$hi, fill=Scenarios), linetype=2, alpha=0.1, show.legend = F, color=mydata$Scenarios)}
   
     # add points for values
     # geom_point(aes(shape=scen_id, color=scen_id, fill=scen_id),   size=pointsize)
+  
+  # 
+  if(deaths_on_cases == T) {
+    # or this?
+    dotplot <- dotplot + stat_summary(fun.data = mydata[mydata$compartment=="death_o",], fun = max, geom="point", shape=Scenarios, color=Scenarios, fill=Scenarios, size=pointsize)
+    #stat_summary(aes(label=round(..y..,2)), fun.y=min,geom="text", size=6, hjust = -0.3)
+    #dotplot <- dotplot + geom_point(aes(data=mydata[mydata$compartment=="death_o",], x = Date_JHU, y = which.max(med), shape=Scenarios, color=Scenarios, fill=Scenarios),   size=pointsize)
+    
+  }
   
   # use custom colors
   dotplot <- dotplot + scale_fill_manual(values=cbPalette2)
