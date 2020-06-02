@@ -12,7 +12,7 @@ ggplotlegend = function(plotobj){
   return(legend)}
 
 # TODO: maybe change this to a data table or apply function
-plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F){
+plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F, regions_plotting=F){
   # returns a list of plot objects
   # access like: plots$afghanistan$death_o[[1]]
   i= 1
@@ -36,7 +36,12 @@ plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fon
       # make the plot
       PlotObj = mydotplotv1(tempdata, mytitle, myxlab, myylab, fontsize=fontsize, pointsize=4, CI=CI, deaths_on_cases)
       # save into a list of plot objects
+      if(regions_plotting==T){
       plots[[i]][[j]] = c(plots[[i]][[j]], list(PlotObj))
+      }
+      if(regions_plotting==F){
+        plots[[i]][j] = c(plots[[i]][j], list(PlotObj))
+      }
       # access like: plots$afghanistan$death_o[[1]]
       #ggsave(filename, PlotObj)
     }}
@@ -147,7 +152,7 @@ combine_plots_loop = function(plots_to_combine){
     # if it has a crop plot... plot together
     if (length(plots_to_combine[[i]]) > 1) {
       # peak plots have names of [[1]].. I prob need to fix later
-      combine_plots[i] = list(plot_grid(title, plots_to_combine[[i]][[1]], plots_to_combine[[i]][[2]], align = "v", ncol = 1, rel_heights = c(0.2, 1, 1)) )
+      combine_plots[i] = list(plot_grid(title, plots_to_combine[[i]][[1]], plots_to_combine[[i]][[2]], align = "v", ncol = 1, rel_heights = c(0.2, 1.3, .7)) )
     }
   }
   # maybe later plot something for countries without crops
@@ -174,7 +179,7 @@ combine_plots_loop_regions = function(plots_by_region){
     j = 1
     for(j in j:length(plots_by_region[[i]][[2]])){ #test = plots_by_region[[i]][[2]][[j]][[1]]
       print(names(plots_by_region[[i]][[2]][j]))
-      combine_plots[[i]][[j]] = list(plot_grid(title, case_plot[[1]], plots_by_region[[i]][[2]][[j]][[1]], align = "v", ncol = 1, rel_heights = c(0.2, 1, 1)) )
+      combine_plots[[i]][[j]] = list(plot_grid(title, case_plot[[1]], plots_by_region[[i]][[2]][[j]][[1]], align = "v", ncol = 1, rel_heights = c(0.2, 1, .7)) )
     }
   }
   return (combine_plots)

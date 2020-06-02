@@ -46,7 +46,15 @@ mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4
   dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b", limits=c(as.Date("2020-04-15"), as.Date("2021-04-01")))
   # this would change legend title
   #scale_colour_discrete("Continents"),
-  dotplot <- dotplot + scale_y_continuous(breaks = waiver(), n.breaks=10, labels = comma)
+  # dotplot <- dotplot + scale_y_continuous(breaks = waiver(), n.breaks=10, labels = comma)
+  # try to force same number of breaks for everything (even if this might look bad, requested by client)
+  breaky=9
+  breaks = seq(min(mydata$med),round(max(mydata$med),-5), length.out = breaky)
+  dotplot <- dotplot + scale_y_continuous(breaks = breaks, labels = comma)
+  #breaky=100
+  #dotplot <- dotplot + scale_y_continuous( breaks = round(  (seq(0, max(mydata$med)+breaky, by = breaky)/breaky)) * breaky) # limits= c(0, max(mydata$med)+breaky),
+  #dotplot <- dotplot + scale_y_continuous(breaks= pretty_breaks(), labels = comma)
+  
   
   dotplot <- dotplot + theme( # add elements to theme
     plot.margin = unit(c(1,1,1,1), "lines"), # make margins a little bigger so y axis label fits
@@ -60,7 +68,8 @@ mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4
     #axis.ticks.x = element_line(size=1, color="black"),
     #axis.ticks.length = unit(.25, "cm"),
     panel.grid.major.x = element_blank(), # switch off major gridlines
-    panel.grid.major.y = element_line(color="grey", size=1), # grid line size is 1... a bit smaller than error bars
+    panel.grid.major.y = element_line(color="grey", size=.3), # grid line size is 1... a bit smaller than error bars
+    #panel.grid.major.y = element_blank(), # grid line size is 1... a bit smaller than error bars
     #panel.grid.minor = element_blank(), # switch off minor gridlines
     #legend.key = element_rect(color=NULL),
     legend.position = "top",

@@ -68,7 +68,7 @@ setwd(datadir)
 # head(other_sorting_cols,2)
 
 # use the newer version of sorting cols
-other_sorting_cols = fread("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200527_1127.csv", stringsAsFactors=T, header=T)
+other_sorting_cols = fread("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200529_1529.csv", stringsAsFactors=T, header=T)
 
 # merge with data in case we want to facet plot by these groups
 subset.alls.plot = merge(other_sorting_cols, subset.alls.plot, by.x = "LSHTM_Country", by.y = "Country", all=T)
@@ -119,7 +119,7 @@ AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll
 # save object
 filename = addStampToFilename('AllAllsData.7scens.AgeAll.SelectCountries', 'RObj')
 #saveRDS(AllAllsData.7scens.AgeAll.SelectCountries, filename)
-AllAllsData.7scens.AgeAll.SelectCountries = readRDS("AllAllsData.7scens.AgeAll.SelectCountries_20200527_1200.RObj")
+AllAllsData.7scens.AgeAll.SelectCountries = readRDS("AllAllsData.7scens.AgeAll.SelectCountries_20200602_1552.RObj")
 
 # make a list of the subsets for each country
 countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="USAID_Country")
@@ -142,7 +142,8 @@ countries = names(countrieslist)
 
 # or use this method:
 # run again with to get plot objects
-plots = plot_loop(countrieslist, countries, compartments, fontsize=9, CI=F)
+plots = plot_loop(countrieslist, countries, compartments, fontsize=9, CI=F, regions_plotting=F)
+plots$Afghanistan$cases
 
 # save object
 filename = addStampToFilename('peak_plots_list', 'RObj')
@@ -208,6 +209,25 @@ test = plots$Afghanistan$case_death
 test
 test <- test + geom_vline(data = testformax, aes(xintercept=Date_JHU, group=Scenarios, color=Scenarios), size=linesize+.5, linetype=5, show.legend = F)
 test
+
+# what is death rate?
+death.dt = as.data.table(AllAllsData.7scens.AgeAll.SelectCountries)
+death.dt = death.dt[,c(2,33,38,42)]
+# dcast
+death.dt.wide = dcast(death.dt, USAID_Country + Scenarios ~ compartment, value.var = "med", fun.aggregate = sum)
+death.dt.wide$death_rate = (death.dt.wide$death_o / death.dt.wide$cases) * 100
+# death.dt.wide = as.data.table(death.dt.wide)
+# calculate
+# death_rate = death.dt.wide[, as.list(summary(death.dt.wide$death_rate)), by=c('USAID_Country', 'Scenarios')]
+# death_rate <- aggregate(.~Scenarios, death.dt.wide, FUN=c(min, median, max))
+
+death.dt.wide = death.dt.wide[,c(1,2,5)]
+death_rate2 <- aggregate(death_rate ~ Scenarios, data=death.dt.wide, FUN=function(x) c(min(x), median(x), max(x)))
+death_rate2 <- cbind(death_rate2[,1], as.data.frame(death_rate2[,2]))
+names(death_rate2) <- c("Scenario", "min", "median", "max")
+
+# get diff between peak case and peak death day for each country and then get range
+
 
 # # try with CI
 # # just with one scenario to get this working

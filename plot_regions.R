@@ -120,7 +120,7 @@ filename = addStampToFilename('regionslist', 'RObj')
 regions = names(regionslist)
 
 # TODO: maybe change this to a data table or apply function
-plots = plot_loop(regionslist, regions, compartments, fontsize=9, CI=F)
+plots = plot_loop(regionslist, regions, compartments, fontsize=9, CI=F, regions_plotting=T)
 
 # print them
 setwd(plotdir)

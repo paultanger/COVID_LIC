@@ -18,6 +18,7 @@ other_crop_plots = readRDS("OtherCountriesAllRegionsCropPlots_20200527_1404.Robj
 
 # from plot_v1.R we should have a list object of ggplots = plots
 plots = readRDS("peak_plots_list_20200527_1619.RObj")
+plots = readRDS("peak_plots_list_20200602_1706.RObj")
 
 # the easier ones first, we'll take the list object from each and plot together
 # do this for the select countries - don't need to do by regions
@@ -57,7 +58,7 @@ plots_to_combine = plots_to_combine[names(plots_to_combine) %in% combine_countri
 # plot countries without crops on their own
 setwd(plotdir)
 filename = addStampToFilename("Countries_No_GEOGLAM", "pdf")
-pdf(filename, width=11, height=8.5)
+pdf(filename, width=8.5, height=11)
 # # unpack list
 for (i in plots_separate) {
   print(i)
@@ -111,7 +112,7 @@ combined_plots = combine_plots_loop(plots_to_combine)
 # print them
 setwd(plotdir)
 filename = addStampToFilename("SelectCountriesCombinedPlots", "pdf")
-pdf(filename, width=11, height=8.5)
+pdf(filename, width=8.5, height=11)
 # unpack list
 for (i in combined_plots) {
   print(i)
