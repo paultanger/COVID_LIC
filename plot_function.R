@@ -46,11 +46,11 @@ mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4
   dotplot <- dotplot + scale_x_date(date_breaks = "1 month", date_labels="%b", limits=c(as.Date("2020-04-15"), as.Date("2021-04-01")))
   # this would change legend title
   #scale_colour_discrete("Continents"),
-  # dotplot <- dotplot + scale_y_continuous(breaks = waiver(), n.breaks=10, labels = comma)
+  dotplot <- dotplot + scale_y_continuous(breaks = waiver(), n.breaks=10, labels = comma)
   # try to force same number of breaks for everything (even if this might look bad, requested by client)
-  breaky=9
-  breaks = seq(min(mydata$med),round(max(mydata$med),-5), length.out = breaky)
-  dotplot <- dotplot + scale_y_continuous(breaks = breaks, labels = comma)
+  # breaky=9
+  # breaks = seq(min(mydata$med),round(max(mydata$med),-5), length.out = breaky)
+  # dotplot <- dotplot + scale_y_continuous(breaks = breaks, labels = comma)
   #breaky=100
   #dotplot <- dotplot + scale_y_continuous( breaks = round(  (seq(0, max(mydata$med)+breaky, by = breaky)/breaky)) * breaky) # limits= c(0, max(mydata$med)+breaky),
   #dotplot <- dotplot + scale_y_continuous(breaks= pretty_breaks(), labels = comma)

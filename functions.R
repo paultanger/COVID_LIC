@@ -152,7 +152,10 @@ combine_plots_loop = function(plots_to_combine){
     # if it has a crop plot... plot together
     if (length(plots_to_combine[[i]]) > 1) {
       # peak plots have names of [[1]].. I prob need to fix later
-      combine_plots[i] = list(plot_grid(title, plots_to_combine[[i]][[1]], plots_to_combine[[i]][[2]], align = "v", ncol = 1, rel_heights = c(0.2, 1.3, .7)) )
+      #combine_plots[i] = list(plot_grid(title, plots_to_combine[[i]][[1]], plots_to_combine[[i]][[2]], align = "v", ncol = 1, rel_heights = c(0.2, 1.3, .7)) )
+      # try force left alignment of plots
+      combine_plots[i] = list(plot_grid(title, plots_to_combine[[i]][[1]], plots_to_combine[[i]][[2]], align = "v", axis = "r", greedy = T, ncol = 1, rel_heights = c(0.2, 1.3, .7)) )
+      
     }
   }
   # maybe later plot something for countries without crops
