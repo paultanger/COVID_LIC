@@ -13,12 +13,15 @@ setwd(datadir)
 # other countries (regions need to be separate) = other_crop_plots
 
 # load files
-crop_plots = readRDS("SelectCountriesAllRegionsCropPlots_20200527_1404.Robj")
-other_crop_plots = readRDS("OtherCountriesAllRegionsCropPlots_20200527_1404.Robj")
+crop_plots = readRDS("SelectCountriesAllRegionsCropPlots_20200603_1429.Robj")
+other_crop_plots = readRDS("OtherCountriesAllRegionsCropPlots_20200603_1429.Robj")
 
 # from plot_v1.R we should have a list object of ggplots = plots
 plots = readRDS("peak_plots_list_20200527_1619.RObj")
 plots = readRDS("peak_plots_list_20200602_1706.RObj")
+# version with pretty breaks
+plots = readRDS("peak_plots_list_20200602_1712.RObj")
+
 
 # the easier ones first, we'll take the list object from each and plot together
 # do this for the select countries - don't need to do by regions
@@ -42,13 +45,13 @@ just_peak = setdiff(peak_countries, c(crop_countries, crop_region_countries))
 just_GEOGLAM = setdiff(c(crop_countries, crop_region_countries), peak_countries)
 
 # combine into df for Katie
-venn_groups = list(combine_countries, combine_region_countries, just_peak, just_GEOGLAM)
-n.countries <- sapply(venn_groups, length)
-seq.max <- seq_len(max(n.countries))
-venn_groups_countries <- as.data.frame(sapply(venn_groups, "[", i = seq.max))
-colnames(venn_groups_countries) = c("combine_countries", "combine_region_countries", "just_peak", "just_GEOGLAM")
-filename = addStampToFilename("Country_Groups", "csv")
-write.csv(venn_groups_countries, filename, row.names = F, na="")
+# venn_groups = list(combine_countries, combine_region_countries, just_peak, just_GEOGLAM)
+# n.countries <- sapply(venn_groups, length)
+# seq.max <- seq_len(max(n.countries))
+# venn_groups_countries <- as.data.frame(sapply(venn_groups, "[", i = seq.max))
+# colnames(venn_groups_countries) = c("combine_countries", "combine_region_countries", "just_peak", "just_GEOGLAM")
+# filename = addStampToFilename("Country_Groups", "csv")
+# write.csv(venn_groups_countries, filename, row.names = F, na="")
 
 # make sub-lists
 plots_separate = plots_to_combine[names(plots_to_combine) %in% just_peak]
@@ -65,6 +68,79 @@ for (i in plots_separate) {
   #crop_plots$i
 }
 dev.off()
+
+# TODO: move this into the loop or a separate script?
+# integrate country and region maps into plots
+# they are stored here as EPS:
+setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/")
+
+# this reads it
+test = readLines("GIN_North.eps", n=10)
+# this creates an xml version
+PostScriptTrace("ETH_Afar.eps")
+# this reads into variable
+ETH_Afar <- readPicture("ETH_Afar.eps.xml")
+# this prints it (slow)
+grid.picture(ETH_Afar)
+# It delimits the figure region, which includes those margins.  The idea is
+# that you do choose width and height appropriately, and use paper="special"
+# turn into a grob
+ETH_Afar_grob <- pictureGrob(ETH_Afar)
+ETH_Afar_ggobj = as.ggplot(ETH_Afar_grob)
+# test = ggimage(mat)
+# test combine with other plots
+title <- ggdraw() + draw_label(names(plots_by_region[8]), fontface='bold')
+# just combine with title?
+combined_title = plot_grid(title, ETH_Afar_ggobj, align = "h", ncol = 2, nrows = 1, rel_widths = c(.3, 1) )
+combined_title
+# then see what it looks like all together
+combinedtest = plot_grid(combined_title, plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], align = "v", ncol = 1, rel_heights = c(0.5, 1.3, .7))
+combinedtest
+# or maybe something like this?
+# combinedpeaktest = plot_grid(title, ETH_Afar_ggobj, plots_by_region$Ethiopia$cases, NULL, other_crop_plots$Ethiopia$Afar[[1]], NULL, ncol = 2, nrows = 3, rel_heights = c(0.2, 1.3, .7), rel_widths = c(1, 2, 2))
+# combinedpeaktest
+bottom <- plot_grid(plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+bottom
+together = plot_grid(combined_title, bottom, ncol=1, align="v", axis = "l", rel_heights = c(1, 2))
+together
+
+# try with arrange grob
+############# this is the best so far I think
+combinedtest2 = grid.arrange(title,ETH_Afar_ggobj,plots_by_region$Ethiopia$cases,other_crop_plots$Ethiopia$Afar[[1]], layout_matrix = cbind(c(1,3,4), c(2,3,4)))
+# maybe force the two plots to align first (using bottom from above)
+bottom <- plot_grid(plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+combinedtest4 = grid.arrange(title, ETH_Afar_ggobj, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
+combinedtest4
+setwd(plotdir)
+filename = addStampToFilename("MapTest4", "pdf")
+ggsave(filename, combinedtest4, width=8.5, height=11, units="in")
+############# 
+
+combinedtest3 = grid.arrange(arrangeGrob(title, ETH_Afar_ggobj, ncols=2, widths = c(1, 1.5)), plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], 
+                             nrows = 3, heights = c(.2, .5, .3))
+combinedtest3
+
+
+
+# try with raster image
+setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/TIFF")
+
+img <- image_read("GHA_North.tif")
+
+combinedtest5 = ggdraw() + draw_plot(bottom) + draw_image(img, x=1, y=0, hjust=.7, vjust=-.2, scale=.3)
+setwd(plotdir)
+filename = addStampToFilename("MapTest5", "pdf")
+ggsave(filename, combinedtest5, width=8.5, height=11, units="in")
+
+# save it
+setwd(plotdir)
+filename = addStampToFilename("MapTest", "pdf")
+ggsave(filename, combinedtest2, width=8.5, height=11, units="in")
+
+filename = addStampToFilename("MapTest", "pdf")
+ggsave(filename, combinedtest3, width=8.5, height=11, units="in")
+
+# grid.arrange(p, arrangeGrob(p,p,p, heights=c(3/4, 1/4, 1/4), ncol=1), ncol=2)
 
 # test = sapply(plots_to_combine, "[", combine_countries)
 # test2 <- lapply(plots_to_combine, function(x) {names(x) %in% combine_countries})
@@ -152,7 +228,7 @@ combined_plots_regions = combine_plots_loop_regions(plots_by_region)
 # plot them
 setwd(plotdir)
 filename = addStampToFilename("CountriesRegionsPeakAndCropPlots", "pdf")
-pdf(filename, width=11, height=8.5)
+pdf(filename, width=8.5, height=11)
 # unpack list
 do.call(c, unlist(combined_plots_regions, recursive=F))
 dev.off()
