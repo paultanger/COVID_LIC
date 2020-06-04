@@ -82,16 +82,43 @@ PostScriptTrace("ETH_Afar.eps")
 ETH_Afar <- readPicture("ETH_Afar.eps.xml")
 # this prints it (slow)
 grid.picture(ETH_Afar)
+# or use a tiff version
+testimg = image_read("KEN_West_96dpi.tif")
+# with base R
+testimg1 = as.raster("KEN_West_96dpi.tif")
+print(testimg1)
+# with raster
+require(raster)
+require(rgdal)
+testimg2 = raster("KEN_West_96dpi.tif")
+testimg2 = readTIFF("KEN_West_96dpi.tif")
+
+testimg5 = rasterGrob(testimg2, interpolate=TRUE)
+testimg2 = as.ggplot(testimg2)
+testimg5 = grid.raster(testimg2)
+
+# with tiff
+require(tiff)
+testimg3 = readTIFF("KEN_West_96dpi.tif")
+testimg4 = rasterGrob(testimg3) # just=c("left","bottom"))
+testimg5 = as.ggplot(testimg4)
+
+# with png
+testimg6 = readPNG("KEN_WestTEST.png")
+testimg6 = rasterGrob(testimg6) # just=c("left","bottom"))
+
 # It delimits the figure region, which includes those margins.  The idea is
 # that you do choose width and height appropriately, and use paper="special"
 # turn into a grob
 ETH_Afar_grob <- pictureGrob(ETH_Afar)
 ETH_Afar_ggobj = as.ggplot(ETH_Afar_grob)
+
 # test = ggimage(mat)
 # test combine with other plots
 title <- ggdraw() + draw_label(names(plots_by_region[8]), fontface='bold')
 # just combine with title?
 combined_title = plot_grid(title, ETH_Afar_ggobj, align = "h", ncol = 2, nrows = 1, rel_widths = c(.3, 1) )
+combined_title = plot_grid(title, testimg5, align = "h", ncol = 2, nrows = 1, rel_widths = c(.3, 1) )
 combined_title
 # then see what it looks like all together
 combinedtest = plot_grid(combined_title, plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], align = "v", ncol = 1, rel_heights = c(0.5, 1.3, .7))
@@ -107,13 +134,23 @@ together
 # try with arrange grob
 ############# this is the best so far I think
 combinedtest2 = grid.arrange(title,ETH_Afar_ggobj,plots_by_region$Ethiopia$cases,other_crop_plots$Ethiopia$Afar[[1]], layout_matrix = cbind(c(1,3,4), c(2,3,4)))
+combinedtest2 = grid.arrange(title,ETH_Afar_ggobj,plots_by_region$Ethiopia$cases,other_crop_plots$Ethiopia$Afar[[1]], layout_matrix = cbind(c(1,3,4), c(2,3,4)))
+combinedtest2 = grid.arrange(title,ETH_Afar_ggobj,plots_by_region$Ethiopia$cases,other_crop_plots$Ethiopia$Afar[[1]], layout_matrix = cbind(c(1,3,4), c(2,3,4)))
+
 # maybe force the two plots to align first (using bottom from above)
+top <- plot_grid(title, testimg5, align = "b", ncol = 2, nrows = 1) #, rel_widths = c(.3, 1))
+top
 bottom <- plot_grid(plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
-combinedtest4 = grid.arrange(title, ETH_Afar_ggobj, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
+combinedtest4 = grid.arrange(top, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
+combinedtest4tiff = grid.arrange(title, testimg5, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
+combinedtest4png = grid.arrange(title, testimg6, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
+#combinedtest4 = grid.arrange(title, testimg5, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
 combinedtest4
+combinedtestbottom = grid.arrange(title, bottom, testimg6, layout_matrix = cbind(c(1,2,2,3), c(1,2,2,3)), heights=c(.5,2,2,1.5))
+combinedtestbottom
 setwd(plotdir)
-filename = addStampToFilename("MapTest4", "pdf")
-ggsave(filename, combinedtest4, width=8.5, height=11, units="in")
+filename = addStampToFilename("MapTestpngbottom", "pdf")
+ggsave(filename, combinedtestbottom, width=8.5, height=11, units="in")
 ############# 
 
 combinedtest3 = grid.arrange(arrangeGrob(title, ETH_Afar_ggobj, ncols=2, widths = c(1, 1.5)), plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], 
