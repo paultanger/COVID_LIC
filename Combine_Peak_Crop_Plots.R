@@ -17,8 +17,8 @@ crop_plots = readRDS("SelectCountriesAllRegionsCropPlots_20200603_1429.Robj")
 other_crop_plots = readRDS("OtherCountriesAllRegionsCropPlots_20200603_1429.Robj")
 
 # from plot_v1.R we should have a list object of ggplots = plots
-plots = readRDS("peak_plots_list_20200527_1619.RObj")
-plots = readRDS("peak_plots_list_20200602_1706.RObj")
+#plots = readRDS("peak_plots_list_20200527_1619.RObj")
+#plots = readRDS("peak_plots_list_20200602_1706.RObj")
 # version with pretty breaks
 plots = readRDS("peak_plots_list_20200602_1712.RObj")
 
@@ -74,114 +74,139 @@ dev.off()
 # they are stored here as EPS:
 setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/")
 
-# this reads it
-test = readLines("GIN_North.eps", n=10)
-# this creates an xml version
-PostScriptTrace("ETH_Afar.eps")
-# this reads into variable
-ETH_Afar <- readPicture("ETH_Afar.eps.xml")
-# this prints it (slow)
-grid.picture(ETH_Afar)
-# or use a tiff version
-testimg = image_read("KEN_West_96dpi.tif")
-# with base R
-testimg1 = as.raster("KEN_West_96dpi.tif")
-print(testimg1)
-# with raster
-require(raster)
-require(rgdal)
-testimg2 = raster("KEN_West_96dpi.tif")
-testimg2 = readTIFF("KEN_West_96dpi.tif")
+################## FINAL VERSION OF THIS FOR LOOP #######################
 
-testimg5 = rasterGrob(testimg2, interpolate=TRUE)
-testimg2 = as.ggplot(testimg2)
-testimg5 = grid.raster(testimg2)
-
-# with tiff
-require(tiff)
-testimg3 = readTIFF("KEN_West_96dpi.tif")
-testimg4 = rasterGrob(testimg3) # just=c("left","bottom"))
-testimg5 = as.ggplot(testimg4)
-
-# with png
 testimg6 = readPNG("KEN_WestTEST.png")
 testimg6 = rasterGrob(testimg6) # just=c("left","bottom"))
-
-# It delimits the figure region, which includes those margins.  The idea is
-# that you do choose width and height appropriately, and use paper="special"
-# turn into a grob
-ETH_Afar_grob <- pictureGrob(ETH_Afar)
-ETH_Afar_ggobj = as.ggplot(ETH_Afar_grob)
-
-# test = ggimage(mat)
-# test combine with other plots
 title <- ggdraw() + draw_label(names(plots_by_region[8]), fontface='bold')
-# just combine with title?
-combined_title = plot_grid(title, ETH_Afar_ggobj, align = "h", ncol = 2, nrows = 1, rel_widths = c(.3, 1) )
-combined_title = plot_grid(title, testimg5, align = "h", ncol = 2, nrows = 1, rel_widths = c(.3, 1) )
-combined_title
-# then see what it looks like all together
-combinedtest = plot_grid(combined_title, plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], align = "v", ncol = 1, rel_heights = c(0.5, 1.3, .7))
-combinedtest
-# or maybe something like this?
-# combinedpeaktest = plot_grid(title, ETH_Afar_ggobj, plots_by_region$Ethiopia$cases, NULL, other_crop_plots$Ethiopia$Afar[[1]], NULL, ncol = 2, nrows = 3, rel_heights = c(0.2, 1.3, .7), rel_widths = c(1, 2, 2))
-# combinedpeaktest
+title
+# add text with the days between peak cases and deaths for each country
+# load file with peak dates
+setwd(datadir)
+PeakCasesDeathsDates = read.csv("PeakCaseDeathDatesAllCountries_20200602_1354.csv")
+PeaksbyCountry.wide.plots = read.csv("PeakCaseDeathDatesAllCountriesForPlots_20200604_1525.csv")
+colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
+
+# within loop subset data for country
+mydata1 = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == "Ethiopia", ]
+
+# countrytext = ggplot(mydata1)
+#countrytext = ggdraw() + draw_label(paste0("Data: Model projections of COVID-19 cases and deaths over time, https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html. Crop calendars: https://cropmonitor.org/index.php/eodatatools/baseline-data. Date of the 50th confirmed COVID-19 case: https://coronavirus.jhu.edu. In ", mydata1$USAID_Country, ", based on the model estimates for the scenarios presented here,\n the peak cases and peak deaths are expected:"), 
+                                    # size = 7, x = 0.1, y = 1, hjust=0)
+countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"), 
+                                    size = 7, x = 0.1, y = .9, hjust=0)
+countrytext
+mytheme <- ttheme_default(base_size = 8)
+countrytext = countrytext + annotation_custom(tableGrob(mydata1[,c(3:5)], rows = NULL, theme = mytheme), xmin = 0, ymin = -0.5)
+countrytext
 bottom <- plot_grid(plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
 bottom
-together = plot_grid(combined_title, bottom, ncol=1, align="v", axis = "l", rel_heights = c(1, 2))
-together
-
-# try with arrange grob
-############# this is the best so far I think
-combinedtest2 = grid.arrange(title,ETH_Afar_ggobj,plots_by_region$Ethiopia$cases,other_crop_plots$Ethiopia$Afar[[1]], layout_matrix = cbind(c(1,3,4), c(2,3,4)))
-combinedtest2 = grid.arrange(title,ETH_Afar_ggobj,plots_by_region$Ethiopia$cases,other_crop_plots$Ethiopia$Afar[[1]], layout_matrix = cbind(c(1,3,4), c(2,3,4)))
-combinedtest2 = grid.arrange(title,ETH_Afar_ggobj,plots_by_region$Ethiopia$cases,other_crop_plots$Ethiopia$Afar[[1]], layout_matrix = cbind(c(1,3,4), c(2,3,4)))
-
-# maybe force the two plots to align first (using bottom from above)
-top <- plot_grid(title, testimg5, align = "b", ncol = 2, nrows = 1) #, rel_widths = c(.3, 1))
-top
-bottom <- plot_grid(plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
-combinedtest4 = grid.arrange(top, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
-combinedtest4tiff = grid.arrange(title, testimg5, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
-combinedtest4png = grid.arrange(title, testimg6, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
-#combinedtest4 = grid.arrange(title, testimg5, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
-combinedtest4
-combinedtestbottom = grid.arrange(title, bottom, testimg6, layout_matrix = cbind(c(1,2,2,3), c(1,2,2,3)), heights=c(.5,2,2,1.5))
+combinedtestbottom = grid.arrange(title, bottom, countrytext, testimg6, layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
 combinedtestbottom
+
 setwd(plotdir)
-filename = addStampToFilename("MapTestpngbottom", "pdf")
+filename = addStampToFilename("MapTestpngbottomtable", "pdf")
 ggsave(filename, combinedtestbottom, width=8.5, height=11, units="in")
-############# 
-
-combinedtest3 = grid.arrange(arrangeGrob(title, ETH_Afar_ggobj, ncols=2, widths = c(1, 1.5)), plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], 
-                             nrows = 3, heights = c(.2, .5, .3))
-combinedtest3
 
 
+######################## MAKE PLOTS ##################################
 
-# try with raster image
-setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/TIFF")
+# convert region names to match filenames for maps
+# get the file to make a new col to translate these
+setwd(datadir)
+sorting_cols = read.csv("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200529_1529.csv")
+geoglam = read.csv("GEOGLAM_crop_calendars_v3.csv")
+geoglam = geoglam[,c(1,2)]
+# put regions, countries and codes together
+sorting_cols = sorting_cols[,c(1,3,9)]
+map_filenames = merge(geoglam, sorting_cols, by.x = "country", by.y = "GEOGLAM_Country", all.x=T)
+map_filenames$region = gsub(" ", "_", map_filenames$region)
+map_filenames$region = gsub("_-_", "_", map_filenames$region)
+# default is just country code and png
+map_filenames$map_filename = paste0(map_filenames$Country_Code, ".png")
+# determine if we are plotting regions
+map_filenames$plot_regions = F
+map_filenames$plot_regions[map_filenames$USAID_Country %in% combine_region_countries] = T
+# redo the filenames for these
+#map_filenames$map_filename2[map_filenames$plot_regions == T] = paste0(map_filenames$Country_Code, "_", map_filenames$region, ".png")
+map_filenames$map_filename = ifelse(map_filenames$plot_regions == T, paste0(map_filenames$Country_Code, "_", map_filenames$region, ".png"), map_filenames$map_filename)
 
-img <- image_read("GHA_North.tif")
+filename = addStampToFilename("map_filenames", "csv")
+# write.csv(map_filenames, filename, row.names = F, na="")
 
-combinedtest5 = ggdraw() + draw_plot(bottom) + draw_image(img, x=1, y=0, hjust=.7, vjust=-.2, scale=.3)
-setwd(plotdir)
-filename = addStampToFilename("MapTest5", "pdf")
-ggsave(filename, combinedtest5, width=8.5, height=11, units="in")
+# subset into two
+map_filenames.countries = unique(map_filenames[map_filenames$plot_regions == F, c(3,5)])
+map_filenames.regions = unique(map_filenames[map_filenames$plot_regions == T, c(3,5)])
 
-# save it
-setwd(plotdir)
-filename = addStampToFilename("MapTest", "pdf")
-ggsave(filename, combinedtest2, width=8.5, height=11, units="in")
+map_filenames.countries = map_filenames.countries[map_filenames.countries$USAID_Country %in% combine_countries,]
 
-filename = addStampToFilename("MapTest", "pdf")
-ggsave(filename, combinedtest3, width=8.5, height=11, units="in")
+# make plots
+setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/")
 
-# grid.arrange(p, arrangeGrob(p,p,p, heights=c(3/4, 1/4, 1/4), ncol=1), ncol=2)
+i=1
+map.plots = vector(mode = "list", length = length(combine_countries))
+names(map.plots) = combine_countries
 
-# test = sapply(plots_to_combine, "[", combine_countries)
-# test2 <- lapply(plots_to_combine, function(x) {names(x) %in% combine_countries})
-# or with reduce on the actual lists?
+for(i in i:length(map.plots)){
+  # if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
+  #get file from directory
+  filename = map_filenames.countries$map_filename[names(map.plots)[i] == map_filenames.countries$USAID_Country]
+  paste(names(map.plots)[i], " ", filename)
+  mapimg = readPNG(filename)
+  mapimg = rasterGrob(mapimg)
+  map.plots[[i]]$map_plot <- mapimg
+}
+
+# for regions
+i=1
+map.plots.regions = vector(mode = "list", length = length(combine_region_countries))
+names(map.plots.regions) = combine_region_countries
+
+for(i in i:length(map.plots.regions)){
+  # if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
+  #get file from directory
+  filename = map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country]
+  paste(names(map.plots.regions)[i], " ", filename)
+  mapimg = readPNG(filename)
+  mapimg = rasterGrob(mapimg)
+  map.plots.regions[[i]]$map_plot <- mapimg
+}
+
+# now create text objects
+setwd(datadir)
+PeakCasesDeathsDates = read.csv("PeakCaseDeathDatesAllCountries_20200602_1354.csv")
+PeaksbyCountry.wide.plots = read.csv("PeakCaseDeathDatesAllCountriesForPlots_20200604_1525.csv")
+colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
+
+mytheme <- ttheme_default(base_size = 7)
+
+i = 1
+for(i in i:length(map.plots)){
+  # subset data for each country
+  mydata1 = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == names(map.plots)[i], ]
+  paste(names(map.plots)[i], " ", filename)
+  countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"), 
+                                      size = 7, x = 0.1, y = .95, hjust=0)
+  countrytext = countrytext + annotation_custom(tableGrob(mydata1[,c(3:5)], rows = NULL, theme = mytheme), xmin = 0, ymin = -0.15)
+  map.plots[[i]]$map_text <- countrytext
+}
+
+# for regions
+i = 1
+for(i in i:length(map.plots.regions)){
+  # subset data for each country
+  mydata1 = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == names(map.plots.regions)[i], ]
+  paste(names(map.plots.regions)[i], " ", filename)
+  countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"), 
+                                      size = 7, x = 0.1, y = .95, hjust=0)
+  countrytext = countrytext + annotation_custom(tableGrob(mydata1[,c(3:5)], rows = NULL, theme = mytheme), xmin = 0, ymin = -0.15)
+  map.plots.regions[[i]]$map_text <- countrytext
+}
+
+# big loop to make the whole figures
+# or use code below.. or the resultant lists:
+# for countries: plots_to_combine
+# for regions: plots_by_region
 
 # combine plots for countries with both peak and crop plots
 
@@ -205,19 +230,93 @@ for(i in i:length(plots_to_combine)){
   }
 }
 
-### this is the part that I need to fix.. maybe %in% not working
-# i=1
-# for(i in i:length(plots_to_combine)){
-#   print(names(plots_to_combine)[[i]])
-#   if (names(plots_to_combine)[[i]] %in% names(crop_plots)){
-#     print(paste0("crop_plots$", names(plots_to_combine)[[i]]))
-#     #plots_to_combine[[i]]$crop_plot <- list(paste0("crop_plots$", names(plots_to_combine)[[i]]))
-#     temp_country_name = names(plots_to_combine)[[i]]
-#     plots_to_combine[[i]]$crop_plot <- crop_plots[[temp_country_name]]
-#     # or as nested list
-#     #plots_to_combine[[i]]$crop_plot <- list(crop_plots[[temp_country_name]])
-#   }
-# }
+i = 1
+for(i in i:length(map.plots)){
+  if (names(map.plots)[[i]] == names(plots_to_combine[i])){
+    map.plots[[i]]$title <- ggdraw() + draw_label(names(map.plots[i]), fontface='bold')
+    bottom <- plot_grid(plots_to_combine[[i]]$cases, plots_to_combine[[i]]$crop_plot, ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+    map.plots[[i]]$bottom <- bottom
+  }
+}
+
+###############
+# first subset crop plot list
+crop_plots_region_to_combine = other_crop_plots[names(other_crop_plots) %in% combine_region_countries]
+names(plots_by_region)
+names(crop_plots_region_to_combine)
+
+# order lists
+crop_plots_region_to_combine = crop_plots_region_to_combine[order(names(crop_plots_region_to_combine))]
+plots_by_region = plots_by_region[order(names(plots_by_region))]
+
+# combine plots into one big list
+i=1
+for(i in i:length(plots_by_region)){
+  if (names(plots_by_region)[[i]] == names(crop_plots_region_to_combine[i])){
+    print(paste0("crop_plots$", names(plots_by_region)[i]))
+    temp_country_name = names(plots_by_region)[[i]]
+    plots_by_region[[i]]$crop_plots <- crop_plots_region_to_combine[[temp_country_name]]
+  }
+}
+
+
+# regions
+i = 1
+for(i in i:length(map.plots.regions)){
+  if (names(map.plots.regions)[[i]] == names(plots_by_region[i])){
+    map.plots.regions[[i]]$title <- ggdraw() + draw_label(names(map.plots.regions[i]), fontface='bold')
+    bottom <- plot_grid(plots_by_region[[i]]$cases, plots_by_region[[i]]$crop_plot, ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+    map.plots.regions[[i]]$bottom <- bottom
+  }
+}
+
+# put into big list
+allplots = vector(mode = "list", length = length(map.plots) + length(map.plots.regions))
+i = 1
+for(i in i:length(map.plots)){
+  if (names(map.plots)[[i]] == names(plots_to_combine[i])){
+  allplots[[i]] = arrangeGrob(map.plots[[i]]$title, map.plots[[i]]$bottom, map.plots[[i]]$map_text, map.plots[[i]]$map_plot, layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
+  }
+}
+
+# test it - then go back and add regions
+setwd(plotdir)
+filename = addStampToFilename("CountryPlots", "pdf")
+pdf(filename, width=8.5, height=11)
+# unpack list
+#do.call(c, unlist(allplots, recursive=F))
+for (i in allplots) {
+  grid.arrange(i)
+}
+dev.off()
+
+
+# add the region plots
+
+
+######################################################################
+
+# combine plots for countries with both peak and crop plots
+
+# first subset crop plot list
+crop_plots_to_combine = crop_plots[names(crop_plots) %in% combine_countries]
+plots_to_combine_backup = plots_to_combine
+#plots_to_combine = plots_to_combine_backup
+# maybe we could rewrite the loop to just match names in two separate lists
+# instead of combining into one..
+
+# order lists
+crop_plots_to_combine = crop_plots_to_combine[order(names(crop_plots_to_combine))]
+plots_to_combine = plots_to_combine[order(names(plots_to_combine))]
+
+i=1
+for(i in i:length(plots_to_combine)){
+  if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
+    print(paste0("crop_plots$", names(plots_to_combine)[i]))
+    temp_country_name = names(plots_to_combine)[[i]]
+    plots_to_combine[[i]]$crop_plot <- crop_plots_to_combine[[temp_country_name]]
+  }
+}
 
 # return a list of the combined plots
 combined_plots = combine_plots_loop(plots_to_combine)
@@ -269,6 +368,153 @@ pdf(filename, width=8.5, height=11)
 # unpack list
 do.call(c, unlist(combined_plots_regions, recursive=F))
 dev.off()
+
+#########################################################################
+# # this reads it
+# test = readLines("GIN_North.eps", n=10)
+# # this creates an xml version
+# PostScriptTrace("ETH_Afar.eps")
+# # this reads into variable
+# ETH_Afar <- readPicture("ETH_Afar.eps.xml")
+# # this prints it (slow)
+# grid.picture(ETH_Afar)
+# # or use a tiff version
+# testimg = image_read("KEN_West_96dpi.tif")
+# # with base R
+# testimg1 = as.raster("KEN_West_96dpi.tif")
+# print(testimg1)
+# # with raster
+# require(raster)
+# require(rgdal)
+# testimg2 = raster("KEN_West_96dpi.tif")
+# testimg2 = readTIFF("KEN_West_96dpi.tif")
+# 
+# testimg5 = rasterGrob(testimg2, interpolate=TRUE)
+# testimg2 = as.ggplot(testimg2)
+# testimg5 = grid.raster(testimg2)
+# 
+# # with tiff
+# require(tiff)
+# testimg3 = readTIFF("KEN_West_96dpi.tif")
+# testimg4 = rasterGrob(testimg3) # just=c("left","bottom"))
+# testimg5 = as.ggplot(testimg4)
+# 
+# # with png
+# testimg6 = readPNG("KEN_WestTEST.png")
+# testimg6 = rasterGrob(testimg6) # just=c("left","bottom"))
+# 
+# # It delimits the figure region, which includes those margins.  The idea is
+# # that you do choose width and height appropriately, and use paper="special"
+# # turn into a grob
+# ETH_Afar_grob <- pictureGrob(ETH_Afar)
+# ETH_Afar_ggobj = as.ggplot(ETH_Afar_grob)
+# 
+# # test = ggimage(mat)
+# # test combine with other plots
+# title <- ggdraw() + draw_label(names(plots_by_region[8]), fontface='bold')
+# # just combine with title?
+# combined_title = plot_grid(title, ETH_Afar_ggobj, align = "h", ncol = 2, nrows = 1, rel_widths = c(.3, 1) )
+# combined_title = plot_grid(title, testimg5, align = "h", ncol = 2, nrows = 1, rel_widths = c(.3, 1) )
+# combined_title
+# # then see what it looks like all together
+# combinedtest = plot_grid(combined_title, plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], align = "v", ncol = 1, rel_heights = c(0.5, 1.3, .7))
+# combinedtest
+# # or maybe something like this?
+# # combinedpeaktest = plot_grid(title, ETH_Afar_ggobj, plots_by_region$Ethiopia$cases, NULL, other_crop_plots$Ethiopia$Afar[[1]], NULL, ncol = 2, nrows = 3, rel_heights = c(0.2, 1.3, .7), rel_widths = c(1, 2, 2))
+# # combinedpeaktest
+# bottom <- plot_grid(plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+# bottom
+# together = plot_grid(combined_title, bottom, ncol=1, align="v", axis = "l", rel_heights = c(1, 2))
+# together
+# 
+# # try with arrange grob
+# ############# this is the best so far I think
+# combinedtest2 = grid.arrange(title,ETH_Afar_ggobj,plots_by_region$Ethiopia$cases,other_crop_plots$Ethiopia$Afar[[1]], layout_matrix = cbind(c(1,3,4), c(2,3,4)))
+# combinedtest2 = grid.arrange(title,ETH_Afar_ggobj,plots_by_region$Ethiopia$cases,other_crop_plots$Ethiopia$Afar[[1]], layout_matrix = cbind(c(1,3,4), c(2,3,4)))
+# combinedtest2 = grid.arrange(title,ETH_Afar_ggobj,plots_by_region$Ethiopia$cases,other_crop_plots$Ethiopia$Afar[[1]], layout_matrix = cbind(c(1,3,4), c(2,3,4)))
+# 
+# # maybe force the two plots to align first (using bottom from above)
+# top <- plot_grid(title, testimg5, align = "b", ncol = 2, nrows = 1) #, rel_widths = c(.3, 1))
+# top
+# bottom <- plot_grid(plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+# 
+# # add text with the days between peak cases and deaths for each country
+# # load file with peak dates
+# setwd(datadir)
+# PeakCasesDeathsDates = read.csv("PeakCaseDeathDatesAllCountries_20200602_1354.csv")
+# PeaksbyCountry.wide.plots = read.csv("PeakCaseDeathDatesAllCountriesForPlots_20200604_1525.csv")
+# colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases", "Peak Deaths")
+# 
+# # within loop subset data for country
+# mydata1 = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == "Ethiopia", ]
+# 
+# # countrytext = ggplot(mydata1)
+# countrytext = ggdraw() + draw_label(paste0("In ", mydata1$USAID_Country, ", based on the model estimates for the scenarios \n presented here,\n the peak cases and peak deaths are expected:"), size = 9)
+# # theme for table
+# mytheme <- ttheme_default(base_size = 8)
+# countrytext = countrytext + annotation_custom(tableGrob(mydata1[,c(3:5)], rows = NULL, theme = mytheme), xmin = 0, ymin = -0.5)
+# # countrytext = countrytext + annotate(geom = "table", x = 37, y = -0.8, label = list(mydata1[,c(3:5)]), vjust = 1, hjust = 0)
+# countrytext
+# 
+# combinedtest4 = grid.arrange(top, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
+# combinedtest4tiff = grid.arrange(title, testimg5, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
+# combinedtest4png = grid.arrange(title, testimg6, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
+# #combinedtest4 = grid.arrange(title, testimg5, bottom, layout_matrix = cbind(c(1,3,3), c(2,3,3)), heights=c(1,2,2))
+# combinedtest4
+# combinedtestbottom = grid.arrange(title, bottom, countrytext, testimg6, layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
+# combinedtestbottom
+# setwd(plotdir)
+# filename = addStampToFilename("MapTestpngbottomtable", "pdf")
+# ggsave(filename, combinedtestbottom, width=8.5, height=11, units="in")
+# ############# 
+# 
+# combinedtest3 = grid.arrange(arrangeGrob(title, ETH_Afar_ggobj, ncols=2, widths = c(1, 1.5)), plots_by_region$Ethiopia$cases, other_crop_plots$Ethiopia$Afar[[1]], 
+#                              nrows = 3, heights = c(.2, .5, .3))
+# combinedtest3
+# 
+# 
+# 
+# # try with raster image
+# setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/TIFF")
+# 
+# img <- image_read("GHA_North.tif")
+# 
+# combinedtest5 = ggdraw() + draw_plot(bottom) + draw_image(img, x=1, y=0, hjust=.7, vjust=-.2, scale=.3)
+# setwd(plotdir)
+# filename = addStampToFilename("MapTest5", "pdf")
+# ggsave(filename, combinedtest5, width=8.5, height=11, units="in")
+# 
+# # save it
+# setwd(plotdir)
+# filename = addStampToFilename("MapTest", "pdf")
+# ggsave(filename, combinedtest2, width=8.5, height=11, units="in")
+# 
+# filename = addStampToFilename("MapTest", "pdf")
+# ggsave(filename, combinedtest3, width=8.5, height=11, units="in")
+
+# grid.arrange(p, arrangeGrob(p,p,p, heights=c(3/4, 1/4, 1/4), ncol=1), ncol=2)
+
+# test = sapply(plots_to_combine, "[", combine_countries)
+# test2 <- lapply(plots_to_combine, function(x) {names(x) %in% combine_countries})
+# or with reduce on the actual lists?
+
+
+
+### this is the part that I need to fix.. maybe %in% not working
+# i=1
+# for(i in i:length(plots_to_combine)){
+#   print(names(plots_to_combine)[[i]])
+#   if (names(plots_to_combine)[[i]] %in% names(crop_plots)){
+#     print(paste0("crop_plots$", names(plots_to_combine)[[i]]))
+#     #plots_to_combine[[i]]$crop_plot <- list(paste0("crop_plots$", names(plots_to_combine)[[i]]))
+#     temp_country_name = names(plots_to_combine)[[i]]
+#     plots_to_combine[[i]]$crop_plot <- crop_plots[[temp_country_name]]
+#     # or as nested list
+#     #plots_to_combine[[i]]$crop_plot <- list(crop_plots[[temp_country_name]])
+#   }
+# }
+
+
 
 #####################################
 

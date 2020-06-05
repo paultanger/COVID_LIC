@@ -64,6 +64,16 @@ write.csv(deaths.summary.region, filename, row.names = F)
 # make wide to calc day diff
 PeaksbyCountry.wide = dcast.data.table(PeakMedAllCntryAllScensCases2, USAID_Country + region_abbrev ~ Scenarios + compartment, value.var = "Date_JHU")
 
+# make it wide, but keep two cols so we can put into plots
+PeaksbyCountry.wide.plots = dcast.data.table(PeakMedAllCntryAllScensCases2, USAID_Country + region_abbrev + Scenarios ~ compartment, value.var = "Date_JHU")
+
+# renam cols to make it pretty
+colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases", "Peak Deaths")
+
+setwd(datadir)
+filename = addStampToFilename("PeakCaseDeathDatesAllCountriesForPlots", "csv")
+write.csv(PeaksbyCountry.wide.plots, filename, row.names = F)
+
 # save this
 setwd(datadir)
 filename = addStampToFilename("PeakCaseDeathDatesAllCountries", "csv")
