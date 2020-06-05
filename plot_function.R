@@ -7,7 +7,9 @@ cbPalette2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"
 mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F, linesize=1.2){
   # lines for each scenario
   dotplot <- ggplot(mydata, aes(x=Date_JHU, y= med, group=Scenarios, color=Scenarios)) +
-    geom_line(data=mydata[mydata[["compartment"]] == "cases",], size = linesize)
+    # I think this was a version plotting death on cases? it is breaking things like region plots now.. resolve
+    #geom_line(data=mydata[mydata[["compartment"]] == "cases",], size = linesize)
+    geom_line(size = linesize)
   # add CI
     if(CI==T){
       dotplot <- dotplot + geom_ribbon(aes(ymin=mydata$lo, ymax=mydata$hi, fill=Scenarios), linetype=2, alpha=0.1, show.legend = F, color=mydata$Scenarios)}

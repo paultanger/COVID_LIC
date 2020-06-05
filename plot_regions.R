@@ -66,6 +66,7 @@ other_sorting_cols = fread("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200527_1127.csv", s
 
 # use verion with IDs to add later
 other_sorting_cols = fread("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200528_1700.csv", stringsAsFactors=T, header=T)
+other_sorting_cols = fread("JHU_UK_Katie_USAIDv4_GEO_FINAL_20200529_1529.csv", stringsAsFactors=T, header=T)
 
 # merge with data in case we want to facet plot by these groups
 subset.alls.plot = merge(other_sorting_cols, subset.alls.plot, by.x = "LSHTM_Country", by.y = "Country", all=T)
@@ -98,19 +99,25 @@ AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll
 
 # just keep key cols
 #as.data.frame(colnames(AllAllsData.7scens.AgeAll.SelectCountries))
-RegionPeak = AllAllsData.7scens.AgeAll.SelectCountries[,c(8,34,43,46,39)]
+#RegionPeak = AllAllsData.7scens.AgeAll.SelectCountries[,c(8,34,43,46,39)]
+RegionPeak = AllAllsData.7scens.AgeAll.SelectCountries[,c(7,36,41,45,48)]
+
 #head(RegionPeak,3)
 # we need to do something like for each day, sum the med for all countries by region
-RegionPeakSumsPerDay = setDT(RegionPeak)[, .(.N, med=sum(med)), by=c('region_abbrev', 'compartment', 'Scenarios', 'Date_JHU')]
+RegionPeakSumsPerDay = setDT(RegionPeak)[, .(.N, med=sum(med)), by=c('region_name', 'compartment', 'Scenarios', 'Date_JHU')]
 
 # summarize which countries
-RegionCountries = as.data.frame(AllAllsData.7scens.AgeAll.SelectCountries[,c(8,3)])
+#RegionCountries = as.data.frame(AllAllsData.7scens.AgeAll.SelectCountries[,c(8,3)])
+RegionCountries = as.data.frame(AllAllsData.7scens.AgeAll.SelectCountries[,c(7,2)])
+
 RegionCountries = unique(RegionCountries)
 RegionCountries = as.data.table(RegionCountries)
-RegionsSummary = setDT(RegionCountries)[, .(Countries=USAID_Country), by=c('region_abbrev')]
+# RegionsSummary = setDT(RegionCountries)[, .(Countries=USAID_Country), by=c('region_abbrev')]
+RegionsSummary = setDT(RegionCountries)[, .(Countries=USAID_Country), by=c('region_name')]
+
 
 # make a list of the subsets for each country
-regionslist = split(RegionPeakSumsPerDay, by="region_abbrev")
+regionslist = split(RegionPeakSumsPerDay, by="region_name")
 
 # save object
 filename = addStampToFilename('regionslist', 'RObj')
