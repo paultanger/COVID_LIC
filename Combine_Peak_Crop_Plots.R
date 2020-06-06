@@ -162,15 +162,16 @@ i=1
 map.plots.regions = vector(mode = "list", length = length(combine_region_countries))
 names(map.plots.regions) = combine_region_countries
 
-for(i in i:length(map.plots.regions)){
-  # if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
-  #get file from directory
-  filename = map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country]
-  paste(names(map.plots.regions)[i], " ", filename)
-  mapimg = readPNG(filename)
-  mapimg = rasterGrob(mapimg)
-  map.plots.regions[[i]]$map_plot <- mapimg
-}
+# for(i in i:length(map.plots.regions)){
+#   # if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
+#   #get file from directory
+#   filename = map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country]
+#   paste(names(map.plots.regions)[i], " ", filename)
+#   mapimg = readPNG(filename)
+#   mapimg = rasterGrob(mapimg)
+#   map.plots.regions[[i]]$map_plot <- mapimg
+# }
+
 
 # now create text objects
 setwd(datadir)
@@ -261,23 +262,131 @@ for(i in i:length(plots_by_region)){
 
 
 # regions
+# backup test
+# map.plots.regions.backup = map.plots.regions
+# map.plots.regions = map.plots.regions.backup
+# i = 1
+# j = 1
+# for(i in i:length(map.plots.regions)){
+#   if (names(map.plots.regions)[[i]] == names(plots_by_region[i])){
+#     map.plots.regions[[i]]$title <- ggdraw() + draw_label(names(map.plots.regions[i]), fontface='bold')
+#     # bottom and map_plot will need to be sublists..
+#     for(j in length(plots_by_region[[i]]$crop_plots)){
+#       temp_region_name = names(plots_by_region[[i]][[2]][j])
+#       bottom <- plot_grid(plots_by_region[[i]]$cases, plots_by_region[[i]][[2]][j][[1]][[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+#       map.plots.regions[[i]]$bottom_plots[temp_region_name] =  list(bottom)
+#       #map.plots.regions[[i]][[temp_region_name]] = c(map.plots.regions[[i]][[temp_region_name]] , list(bottom))
+#     }
+#   }
+# }
+
 i = 1
+j = 1
+# map.plots.regions.list = vector(mode = "list", length = length(map.plots.regions))
+# names(map.plots.regions.list) = names(map.plots.regions)
+# for(j in levels(other_countries_list[[i]]$region)){
+
+
+map.plots.regions = map.plots.regions[order(names(map.plots.regions))]
+
+
 for(i in i:length(map.plots.regions)){
   if (names(map.plots.regions)[[i]] == names(plots_by_region[i])){
     map.plots.regions[[i]]$title <- ggdraw() + draw_label(names(map.plots.regions[i]), fontface='bold')
-    bottom <- plot_grid(plots_by_region[[i]]$cases, plots_by_region[[i]]$crop_plot, ncol=1, align="v", axis="l", rel_heights = c(2, 1))
-    map.plots.regions[[i]]$bottom <- bottom
+    # bottom and map_plot will need to be sublists..
+    print(names(map.plots.regions[i]))
+    j=1
+    for(j in j:length(plots_by_region[[i]]$crop_plots)){
+      temp_region_name = names(plots_by_region[[i]]$crop_plots[j])
+      print(temp_region_name)
+      bottom <- plot_grid(plots_by_region[[i]]$cases, plots_by_region[[i]]$crop_plots[j][[1]][[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+      map.plots.regions[[i]]$bottom_plots[temp_region_name] =  list(bottom)
+      #map.plots.regions[[i]][[temp_region_name]] = c(map.plots.regions[[i]][[temp_region_name]] , list(bottom))
+    }
   }
 }
+
+# redo the map plots - one for each region
+# for(i in i:length(map.plots.regions)){
+#   # if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
+#   #get file from directory
+#   filename = map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country]
+#   paste(names(map.plots.regions)[i], " ", filename)
+#   mapimg = readPNG(filename)
+#   mapimg = rasterGrob(mapimg)
+#   map.plots.regions[[i]]$map_plot <- mapimg
+# }
+setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/")
+i=1
+for(i in i:length(map.plots.regions)){
+    j=1
+    for(j in j:length(map.plots.regions[[i]]$bottom_plots)){
+      filename = map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country][j]
+      print(filename)
+      #paste(names(map.plots.regions)[i], " ", filename)
+      # test = map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country]
+      # print(test[j])
+      # #print(map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country][j])
+      mapimg = readPNG(filename)
+      mapimg = rasterGrob(mapimg)
+      temp_region_name = names(map.plots.regions[[i]]$bottom_plots[j])
+      map.plots.regions[[i]]$map_plot[temp_region_name] = list(mapimg)
+    }
+  }
+
+# save it
+setwd(datadir)
+filename = addStampToFilename("map.plots.regions", "RDS")
+saveRDS(map.plots.regions, filename)
+map.plots.regions = readRDS("map.plots.regions_20200605_1906.RDS")
+# for now, just print the region ones on their own
+region.plots = vector(mode = "list", length = length(map.plots.regions))
+i = 1
+for(i in i:length(map.plots.regions)){
+  j = 1
+  for(j in j:length(map.plots.regions[[i]]$bottom_plots)){
+    #region.plots[[i]][[ names(map.plots.regions[[i]]$bottom_plots[j]) ]]  = grid.arrange(map.plots.regions[[i]]$title, map.plots.regions[[i]]$bottom_plots[[j]], map.plots.regions[[i]]$map_text, map.plots.regions[[i]]$map_plot[[j]], layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
+    arrange.grob(map.plots.regions[[i]]$title, map.plots.regions[[i]]$bottom_plots[[j]], map.plots.regions[[i]]$map_text, map.plots.regions[[i]]$map_plot[[j]], layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
+  }
+}
+
+unpacked = unlist(region.plots, recursive = F)
+unpacked2 = unlist(unpacked, recursive = F)
+
+# print it
+setwd(plotdir)
+filename = addStampToFilename("CountryRegionPlots", "pdf")
+i = 1
+j = 1
+pdf(filename, width=8.5, height=11)
+
+i = 1
+for(i in i:length(map.plots.regions)){
+  j = 1
+  for(j in j:length(map.plots.regions[[i]]$bottom_plots)){
+    grid.arrange(map.plots.regions[[i]]$title, map.plots.regions[[i]]$bottom_plots[[j]], map.plots.regions[[i]]$map_text, map.plots.regions[[i]]$map_plot[[j]], layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
+  }
+}
+# unpack list
+#do.call("grid.arrange", unpacked2)
+# for (i in i:length(unpacked)) {
+#   grid.arrange(unpacked[i])
+# #   }
+# }
+dev.off()
+
 
 # put into big list
 allplots = vector(mode = "list", length = length(map.plots) + length(map.plots.regions))
 i = 1
 for(i in i:length(map.plots)){
   if (names(map.plots)[[i]] == names(plots_to_combine[i])){
-  allplots[[i]] = arrangeGrob(map.plots[[i]]$title, map.plots[[i]]$bottom, map.plots[[i]]$map_text, map.plots[[i]]$map_plot, layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
+    allplots[[names(map.plots)[[i]]]]  = arrangeGrob(map.plots[[i]]$title, map.plots[[i]]$bottom, map.plots[[i]]$map_text, map.plots[[i]]$map_plot, layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
   }
 }
+
+# order it
+allplots = allplots[order(names(allplots))]
 
 # test it - then go back and add regions
 setwd(plotdir)
