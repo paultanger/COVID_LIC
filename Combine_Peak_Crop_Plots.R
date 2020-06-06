@@ -280,15 +280,15 @@ for(i in i:length(plots_by_region)){
 #   }
 # }
 
-i = 1
-j = 1
+
 # map.plots.regions.list = vector(mode = "list", length = length(map.plots.regions))
 # names(map.plots.regions.list) = names(map.plots.regions)
 # for(j in levels(other_countries_list[[i]]$region)){
 
-
+i = 1
+j = 1
 map.plots.regions = map.plots.regions[order(names(map.plots.regions))]
-
+map_filenames.regions = map_filenames.regions[with(map_filenames.regions, order(USAID_Country, map_filename)),]
 
 for(i in i:length(map.plots.regions)){
   if (names(map.plots.regions)[[i]] == names(plots_by_region[i])){
@@ -338,20 +338,39 @@ for(i in i:length(map.plots.regions)){
 setwd(datadir)
 filename = addStampToFilename("map.plots.regions", "RDS")
 saveRDS(map.plots.regions, filename)
-map.plots.regions = readRDS("map.plots.regions_20200605_1906.RDS")
+map.plots.regions = readRDS("map.plots.regions_20200606_0904.RDS")
 # for now, just print the region ones on their own
 region.plots = vector(mode = "list", length = length(map.plots.regions))
 i = 1
 for(i in i:length(map.plots.regions)){
   j = 1
   for(j in j:length(map.plots.regions[[i]]$bottom_plots)){
-    #region.plots[[i]][[ names(map.plots.regions[[i]]$bottom_plots[j]) ]]  = grid.arrange(map.plots.regions[[i]]$title, map.plots.regions[[i]]$bottom_plots[[j]], map.plots.regions[[i]]$map_text, map.plots.regions[[i]]$map_plot[[j]], layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
-    arrange.grob(map.plots.regions[[i]]$title, map.plots.regions[[i]]$bottom_plots[[j]], map.plots.regions[[i]]$map_text, map.plots.regions[[i]]$map_plot[[j]], layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
+    region.plots[[i]][[ names(map.plots.regions[[i]]$bottom_plots[j]) ]]  = arrangeGrob(map.plots.regions[[i]]$title, map.plots.regions[[i]]$bottom_plots[[j]], map.plots.regions[[i]]$map_text, map.plots.regions[[i]]$map_plot[[j]], layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
+    #arrangeGrob(map.plots.regions[[i]]$title, map.plots.regions[[i]]$bottom_plots[[j]], map.plots.regions[[i]]$map_text, map.plots.regions[[i]]$map_plot[[j]], layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
   }
 }
+names(region.plots) = names(map.plots.regions)
+# unpacked = unlist(region.plots, recursive = F)
+# unpacked2 = unlist(unpacked, recursive = F)
 
-unpacked = unlist(region.plots, recursive = F)
-unpacked2 = unlist(unpacked, recursive = F)
+# try printing from list
+setwd(plotdir)
+filename = addStampToFilename("CountryRegionPlots", "pdf")
+i = 1
+
+pdf(filename, width=8.5, height=11)
+#grid.draw(region.plots[[1]]$Central)
+# unpack list
+#do.call(c, unlist(region.plots, recursive=F))
+#do.call("grid.draw", region.plots)
+for (i in i:length(region.plots)) {
+  j = 1
+  for (j in j:length(region.plots[[i]])) {
+    grid.newpage()
+    grid.draw(region.plots[[i]][[j]])
+  }
+}
+dev.off()
 
 # print it
 setwd(plotdir)
@@ -367,12 +386,6 @@ for(i in i:length(map.plots.regions)){
     grid.arrange(map.plots.regions[[i]]$title, map.plots.regions[[i]]$bottom_plots[[j]], map.plots.regions[[i]]$map_text, map.plots.regions[[i]]$map_plot[[j]], layout_matrix = cbind(c(1,2,2,3), c(1,2,2,4)), heights=c(.4,3,1,1))
   }
 }
-# unpack list
-#do.call("grid.arrange", unpacked2)
-# for (i in i:length(unpacked)) {
-#   grid.arrange(unpacked[i])
-# #   }
-# }
 dev.off()
 
 
