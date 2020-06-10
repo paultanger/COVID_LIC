@@ -8,3 +8,5 @@ scenarios_overview.rds
 alls.qs
 afghanistan_peak.csv
 data/
+figure/
+rsconnect/
