@@ -18,12 +18,17 @@ This is a work in progress and some files need to be cleaned up but the key plac
   * ConsolidateQSfiles.R
   * organize_crop_calendar.R
   * Organize_JHU_50confirmedcase.R
+  * Organize_USAID_sorting_cols.R
 
 * These produce various outputs (summary and graphics):
   * get_stats.R
   * plot_crop_cal_v1.R
   * plot_v1.R
   * Combine_Peak_Crop_Plots.R
+  * plot_regions.R
+
+Development is in progress for a markdown output (rather than pdf outputs):
+  * Combined_Plots_Md.Rmd
 
 Supporting files (best to just source them):
 * load_libs.R
