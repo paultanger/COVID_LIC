@@ -3,25 +3,25 @@ title: "COVID Modeling and the Crop Cycle"
 author: "Prepared May/June 2020 by the Data, Monitoring, and Analytics Team at USAID/RFS"
 date: "`r format(Sys.time(), '%d %B, %Y, %H:%M:%S %Z')`"
 output:
-  pdf_document:
-    toc: true
-    toc_depth: 3
-    highlight: tango
-    latex_engine: xelatex
-    keep_tex: true
-  # html_document:
+  # pdf_document:
   #   toc: true
-  #   #toc_float: true
   #   toc_depth: 3
-  #   #number_sections: true
-  #   theme: cosmo
   #   highlight: tango
+  #   latex_engine: xelatex
+  #   keep_tex: true
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 2
+    #number_sections: true
+    theme: cosmo
+    highlight: tango
 # header-includes:
 #   - \usepackage{fontspec}
-fontsize: 10pt
-geometry: margin= 0.75in
+#fontsize: 10pt
+#geometry: margin= 0.75in
 # https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
-mainfont: Latin Modern Sans #Arial #Helvetica
+#mainfont: Latin Modern Sans #Arial #Helvetica
 ---
 
 ```{r setup, include=FALSE}
@@ -34,15 +34,15 @@ map.plots = readRDS(paste0(datadir, "map.plots_20200611_1057.RDS"))
 PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
 colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
 ```
-\newpage
-# Cover Page
-## Introduction:
+
+# Overview
+## Introduction
 The effects of COVID-19 go well beyond the initial acute health impacts into prolonged secondary repercussions on the economy, employment, poverty levels, safe water access, food security status, crop production, and much more.  In this analysis, we looked at whether projections of COVID-19 case totals in low-and-middle-income countries (LMICs) overlapped with key phases in the crop production cycle to understand where, when, and on which important crops COVID-19 could take a toll.  From this work, we can better inform our thinking on where to focus our programming, estimate which areas will be hit hardest next, and whether COVID-19 impacts will affect crops that are significant food sources, income generators, or both.  Combined with data on the demographics of value chain actors involved in each affected crop, we could also see whether the impacts are projected to disproportionately impact women, smallholder farmers, small businesses, and other already-marginalized groups. 
 
-## Methodology:
+## Methodology
 We began with time series projections of COVID-19 case totals from a model developed by the Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM)^[Data source for Model projections of COVID-19 cases and deaths over time:  Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html], and overlaid those data with the calendar/timing of phases of the crop cycles in various countries from the Crop Monitor initiative of the Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM)^[Data source for Crop calendars:  Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/] to observe if peaks in the number of cases for a country were projected to occur at the same time as a key phase in the cycle of production for crops important to that country.
 
-## The LSHTM model:
+## The LSHTM model
 * This model provides simulation-based estimates for COVID-19 epidemic scenarios in many low-and-middle-income countries.  The model starts with the date a country reached 50 cases (i.e. “Day 0”), and then projects the totals of several variables (cases, deaths, hospitalizations, etc.) each day over time for an ‘unmitigated’ scenario (i.e. the country takes no action to contain COVID-19 spread), as well as in six different COVID-19 containment strategies involving social distancing, shielding, or a combined approach.  The projections estimate how different containment strategies could have different outcomes on the spread and intensity of the disease in a country.  
 
 * While you can see the full results of the LSHTM research for each country here, the line graphs in this document plot the model’s projections for each country’s case totals across time for the seven scenarios (unmitigated plus six containment strategies) for all age groups combined.  
@@ -51,7 +51,7 @@ We began with time series projections of COVID-19 case totals from a model devel
 
 * Refer to the LSHTM link in the footnotes for more details on the model, including the definition of the different scenarios, their methodologies for determining transmission rates, etc.
 
-## The GEOGLAM crop calendars:
+## The GEOGLAM crop calendars
 * For each country, the timing of crop production phases was plotted for significant staple crops, and for each sub-national area where production occurs in a country.  In the case of multiple crop seasons such as maize 1 and maize 2, the more significant season in terms of total production will be labeled as the first crop, e.g, maize 1.
 
 * The phases of the crop production cycle reflected in this analysis were defined as:
@@ -63,26 +63,8 @@ We began with time series projections of COVID-19 case totals from a model devel
 
 * For the crop calendars displayed in this document, each sub-national area is represented where the timing of the crop production cycle differs.  In cases where crop cycles followed the same timing throughout the country, only one crop calendar is shown for that country.
 
-## How to read the analysis:
-In the following pages, each country’s analysis contains:  
 
-1. a graph of the LSHTM projections of COVID-19 case totals over times (all age groups combined) for an unmitigated scenario plus six disease containment scenarios;
-2. a crop calendar showing when the crop production phases of key staple crops occur throughout the year (with multiple crop calendars in cases where variation in timing occurs);
-3. a map of the country, with the sub-national area highlighted in cases where there are multiple crop calendars per country (due to variation in timing by area);
-4. a table listing the estimated dates of when peak COVID-19 cases and peak COVID-19 deaths are projected to occur in the country, according to the LSHTM model.
-
-The countries are listed in alphabetical order.  Following the analysis pages for each country, we have included the LSHTM COVID-19 case totals projections across time, summarized by geographic region.
-
-## Caveats/Notes:
-* These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted here.
-* As noted above, the ‘Day 0’ used for the graphs here likely occurred later than the actual ‘Day 0’, and these graphs will be updated once we obtain more accurate estimates of when a country reached 50 cases.
-* The crop calendars do not include all crops grown in the country, nor all those that are important as a food source or for income generation.
-Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
-
-<div style="page-break-after: always;"></div>
-\newpage
-# Country Specific Information
-\newpage
+# Country Specific Information {.tabset .tabset-fade}
 
 ```{r run_loop, echo=FALSE}
 # options for results are asis - passthrough.. hold - put all results below code
@@ -96,3 +78,6 @@ for(i in seq(map.plots)){
 
 `r paste(knit(text = out), collapse = '\n')`
 
+Data sources:
+Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
+Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. Date of the 50th confirmed COVID-19 case: Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/. Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.

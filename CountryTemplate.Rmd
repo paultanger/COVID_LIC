@@ -1,13 +1,29 @@
 
 ## {{names(map.plots[i])}}
 
+### How to read the analysis
+In the following pages, each country’s analysis contains:  
+
+1. a graph of the LSHTM projections of COVID-19 case totals over times (all age groups combined) for an unmitigated scenario plus six disease containment scenarios;
+2. a crop calendar showing when the crop production phases of key staple crops occur throughout the year (with multiple crop calendars in cases where variation in timing occurs);
+3. a map of the country, with the sub-national area highlighted in cases where there are multiple crop calendars per country (due to variation in timing by area);
+4. a table listing the estimated dates of when peak COVID-19 cases and peak COVID-19 deaths are projected to occur in the country, according to the LSHTM model.
+
+The countries are listed in alphabetical order.  Following the analysis pages for each country, we have included the LSHTM COVID-19 case totals projections across time, summarized by geographic region.
+
+### Caveats/Notes
+* These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted here.
+* As noted above, the ‘Day 0’ used for the graphs here likely occurred later than the actual ‘Day 0’, and these graphs will be updated once we obtain more accurate estimates of when a country reached 50 cases.
+* The crop calendars do not include all crops grown in the country, nor all those that are important as a food source or for income generation.
+Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
+
 ```{r country-plots-{{names(map.plots[i])}}, echo = FALSE}
   # right now, setup to use combined figs, but might want to do them separately so we can change things in them
   country = "{{names(map.plots[i])}}"
   grid.arrange(map.plots[[country]][['bottom']])
 ```
 
-```{r country-table-{{names(map.plots[i])}}, results='asis', echo = FALSE}
+```{r country-table-{{names(map.plots[i])}}, results='asis', echo = FALSE, include = FALSE}
   # little table of key dates
   # can use kable or pander
   # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
@@ -20,7 +36,7 @@
 
 ```
 
-```{r country-maps-{{names(map.plots[i])}}, results='asis', fig.width = 2.5, echo = FALSE}
+```{r country-maps-{{names(map.plots[i])}}, results='asis', out.width = "60%", fig.align = 'center', echo = FALSE}
   # these are the country maps
 
   # align them? https://stackoverflow.com/questions/32780320/consistent-figures-size-with-gridextra-in-rmarkdown-knitr-html
@@ -34,8 +50,8 @@
   grid.arrange(map.plots[[country]][['map_plot']])
 ```
 
-Data sources^[
-Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
-Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. Date of the 50th confirmed COVID-19 case: Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/. Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.]
+<!-- Data sources^[ -->
+<!-- Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html -->
+<!-- Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. Date of the 50th confirmed COVID-19 case: Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/. Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.] -->
 
 \newpage
