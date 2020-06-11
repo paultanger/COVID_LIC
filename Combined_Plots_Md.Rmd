@@ -1,32 +1,37 @@
 ---
 title: "COVID Modeling and the Crop Cycle"
 author: "Prepared May/June 2020 by the Data, Monitoring, and Analytics Team at USAID/RFS"
-#date: "6/10/2020"
 date: "`r format(Sys.time(), '%d %B, %Y, %H:%M:%S %Z')`"
 output:
-#   pdf_document: 
-#     toc: true
-#     toc_depth: 3
-#     highlight: tango
-#     #latex_engine: xelatex
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    highlight: tango
+    latex_engine: xelatex
+    keep_tex: true
 # geometry: margin= 0.75in
-    #fontsize: 11pt
-    html_document:
-      toc: true
-      #toc_float: true
-      toc_depth: 3
-      #number_sections: true
-      theme: cosmo
-      highlight: tango
+# https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
+mainfont: Latin Modern Sans #Arial #Helvetica
+# header-includes:
+#   - \usepackage{fontspec}
+#fontsize: 11pt
+  # html_document:
+    #   toc: true
+    #   #toc_float: true
+    #   toc_depth: 3
+    #   #number_sections: true
+    #   theme: cosmo
+    #   highlight: tango
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 source('functions.R')
-source('load_libs.R')
-source('plot_crop_cal_function.R')
+suppressPackageStartupMessages(source('load_libs.R'))
+datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
+map.plots = readRDS(paste0(datadir, "map.plots_20200610_1641.RDS"))
 ```
-
+\newpage
 # Cover Page
 ## Introduction:
 The effects of COVID-19 go well beyond the initial acute health impacts into prolonged secondary repercussions on the economy, employment, poverty levels, safe water access, food security status, crop production, and much more.  In this analysis, we looked at whether projections of COVID-19 case totals in low-and-middle-income countries (LMICs) overlapped with key phases in the crop production cycle to understand where, when, and on which important crops COVID-19 could take a toll.  From this work, we can better inform our thinking on where to focus our programming, estimate which areas will be hit hardest next, and whether COVID-19 impacts will affect crops that are significant food sources, income generators, or both.  Combined with data on the demographics of value chain actors involved in each affected crop, we could also see whether the impacts are projected to disproportionately impact women, smallholder farmers, small businesses, and other already-marginalized groups. 
@@ -39,7 +44,7 @@ We began with time series projections of COVID-19 case totals from a model devel
 
 * While you can see the full results of the LSHTM research for each country here, the line graphs in this document plot the model’s projections for each country’s case totals across time for the seven scenarios (unmitigated plus six containment strategies) for all age groups combined.  
 
-* ‘Day 0’ is defined as the date the country reached 50 confirmed cases, according to the Johns Hopkins Coronavirus Resource Center^[Data source for Date of the 50th confirmed COVID-19 case:  Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/].  Note that the date of 50 confirmed cases likely occurs after the date a country actually had 50 cases.  Since the model is based on the latter, this means the true peaks of the different scenarios are likely to occur earlier in time than shown here, i.e. the peaks would shift to the left.  A future update of this analysis will incorporate a more accurate estimate of the true ‘Day 0’,.
+* ‘Day 0’ is defined as the date the country reached 50 confirmed cases, according to the Johns Hopkins Coronavirus Resource Center^[Data source for Date of the 50th confirmed COVID-19 case:  Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/].  Note that the date of 50 confirmed cases likely occurs after the date a country actually had 50 cases.  Since the model is based on the latter, this means the true peaks of the different scenarios are likely to occur earlier in time than shown here, i.e. the peaks would shift to the left.  A future update of this analysis will incorporate a more accurate estimate of the true ‘Day 0’.
 
 * Refer to the LSHTM link in the footnotes for more details on the model, including the definition of the different scenarios, their methodologies for determining transmission rates, etc.
 
@@ -47,15 +52,17 @@ We began with time series projections of COVID-19 case totals from a model devel
 * For each country, the timing of crop production phases was plotted for significant staple crops, and for each sub-national area where production occurs in a country.  In the case of multiple crop seasons such as maize 1 and maize 2, the more significant season in terms of total production will be labeled as the first crop, e.g, maize 1.
 
 * The phases of the crop production cycle reflected in this analysis were defined as:
-Planting: Start of Planting through the Early Vegetative stage
-Idle (represents the dormancy stage of winter wheat where applicable)
-Vegetative: Start of Vegetative period through the Reproductive period (Period of peak weeding)
-Harvest: Ripening through Harvest
+
+  + Planting: Start of Planting through the Early Vegetative stage
+  + Idle (represents the dormancy stage of winter wheat where applicable)
+  + Vegetative: Start of Vegetative period through the Reproductive period (Period of peak weeding)
+  + Harvest: Ripening through Harvest
 
 * For the crop calendars displayed in this document, each sub-national area is represented where the timing of the crop production cycle differs.  In cases where crop cycles followed the same timing throughout the country, only one crop calendar is shown for that country.
 
 ## How to read the analysis:
-In the following pages, each country’s analysis contains:
+In the following pages, each country’s analysis contains:  
+
 1. a graph of the LSHTM projections of COVID-19 case totals over times (all age groups combined) for an unmitigated scenario plus six disease containment scenarios;
 2. a crop calendar showing when the crop production phases of key staple crops occur throughout the year (with multiple crop calendars in cases where variation in timing occurs);
 3. a map of the country, with the sub-national area highlighted in cases where there are multiple crop calendars per country (due to variation in timing by area);
@@ -71,79 +78,63 @@ Maps, area names, and borders do not necessarily reflect the concurrence of the 
 
 <div style="page-break-after: always;"></div>
 
-# A function that generates country sections
+# Country Specific Information
 
-## Text for beginning of country sections
-Data sources:
+```{r setup_sec_function, results='asis', include=FALSE}
+# results='asis'
+# setup function to create country sections
+# can't figure out how to get names as section titles.. pandoc is complicated
 
-* Model projections of COVID-19 cases and deaths over time:  Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
-
-* Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/
-
-* Date of the 50th confirmed COVID-19 case: Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/
-
-Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.
-
-
-## To Test later
-```{r to test later}
-library(pander)
-
-create_section <- function() {
-
+create_section <- function(i) {
    # Inserts "## Title (auto)"
-   pander::pandoc.header('Title (auto)', level = 2)
-
+   pander::pandoc.header(names(map.plots[i]), level = 2) #cat(names(map.plots[i]))
+  
    # Section contents
    # e.g. a random plot
-   plot(sample(1000, 10))
+   #plot(sample(1000, 10))
+  # get the item in the country list to plot
+  #print(grid.draw(map.plots[[names(map.plots[i])]][['map_plot']]))
+  #grid.arrange(all.plots[[names(map.plots[i])]][['map_plot']])
+  grid.arrange(map.plots[[names(map.plots[i])]][['map_plot']])
+  
+  # text at end
+   pander::pandoc.p('')
+   pander::pandoc.p('Data sources:
 
-   # a list, formatted as Markdown
-   # adding also empty lines, to be sure that this is valid Markdown
+  * Model projections of COVID-19 cases and deaths over time:  Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
+  * Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/
+  * Date of the 50th confirmed COVID-19 case: Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/
+  Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.')
    pander::pandoc.p('')
-   pander::pandoc.list(letters[1:3])
-   pander::pandoc.p('')
+   #pander::pandoc.p(\newpage)
 }
 ```
 
-## Generate sections
-
-```{r, results='asis'}
-n_sections <- 3
-
-for (i in seq(n_sections)) {
-   create_section()
-}
-```
-
-
-## Third attempt
-Automate Chunks of Analysis in R Markdown 
-========================================================
-
-```{r run-numeric-md, include=FALSE}
+```{r peak_plots, results='asis', echo=FALSE}
+# options for results are asis - passthrough.. hold - put all results below code
+# consider moving this to a child template if it gets unwieldy.
+# in that case, it would work like:
+# put this in loop: out = c(out, knit_expand('template.rmd'))
+# Then have your 'template.rmd' be: ### Species = {{i}}
 # out = NULL
-# for (i in as.character(unique(iris$Species))) {
-#   out = c(out, knit_expand(text='#### Species = {{i}}'))
-# }
-# this would go outside.. `r paste(knit(text = out), collapse = '\n')`
+# or check this: https://stackoverflow.com/questions/58189760/print-ggplot2-and-lm-objects-in-a-loop-in-rmarkdown
+
+for(i in seq(map.plots)){
+  #print(names(map.plots[i]))
+  #out = c(out, knit_expand('template.rmd')) # this is for child template option
+  #out = c(out, knit_expand(text='## {{names(map.plots[i])}}'))
+  create_section(i)
+  
+  # add other stuff to section
+  #cat(paste0("\n\n## ", i, "\n"))
+  #print(grid.draw(map.plots[[names(map.plots[i])]][['map_plot']]))
+  #print(grid.arrange(map.plots[[names(map.plots[i])]][['map_plot']]))
+  #grid.arrange(map.plots[[names(map.plots[i])]][['map_plot']])
+}
+
+# move this below to test
+#`r paste(knit(text = out), collapse = '\n')`
 ```
 
 
 
-You can also create a template file like 'child.rmd' and put this in your for loop so you don't have to put a complicated analysis in quotes:
-
-out = c(out, knit_expand('template.rmd'))
-Then have your 'template.rmd' be:
-
-### Species = {{i}}
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-# plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
