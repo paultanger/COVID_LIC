@@ -9,27 +9,30 @@ output:
     highlight: tango
     latex_engine: xelatex
     keep_tex: true
-# geometry: margin= 0.75in
-# https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
-mainfont: Latin Modern Sans #Arial #Helvetica
+  # html_document:
+  #   toc: true
+  #   #toc_float: true
+  #   toc_depth: 3
+  #   #number_sections: true
+  #   theme: cosmo
+  #   highlight: tango
 # header-includes:
 #   - \usepackage{fontspec}
-#fontsize: 11pt
-  # html_document:
-    #   toc: true
-    #   #toc_float: true
-    #   toc_depth: 3
-    #   #number_sections: true
-    #   theme: cosmo
-    #   highlight: tango
+fontsize: 10pt
+geometry: margin= 0.75in
+# https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
+mainfont: Latin Modern Sans #Arial #Helvetica
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 source('functions.R')
 suppressPackageStartupMessages(source('load_libs.R'))
+# get data files we need
 datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
-map.plots = readRDS(paste0(datadir, "map.plots_20200610_1641.RDS"))
+map.plots = readRDS(paste0(datadir, "map.plots_20200611_1057.RDS"))
+PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
+colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
 ```
 \newpage
 # Cover Page
@@ -77,53 +80,79 @@ The countries are listed in alphabetical order.  Following the analysis pages fo
 Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
 
 <div style="page-break-after: always;"></div>
-
+\newpage
 # Country Specific Information
-
-```{r setup_sec_function, results='asis', include=FALSE}
+\newpage
+```{r setup_sec_function, results='asis', include=FALSE} 
+# outwidth is for pdf
 # results='asis'
 # setup function to create country sections
-# can't figure out how to get names as section titles.. pandoc is complicated
 
 create_section <- function(i) {
-   # Inserts "## Title (auto)"
-   pander::pandoc.header(names(map.plots[i]), level = 2) #cat(names(map.plots[i]))
+  # Inserts "## Title (auto)"
+  pander::pandoc.header(names(map.plots[i]), level = 2) #cat(names(map.plots[i]))
+  pander::pandoc.p('')
+  pander::pandoc.p('This is the beginning of the section')
+  pander::pandoc.p('')
+  # get the items in the country list to plot
+  # plots side by side
+  # https://bookdown.org/yihui/rmarkdown-cookbook/figures-side.html
+  # https://sebastiansauer.github.io/two-plots-rmd/
+  # https://stackoverflow.com/questions/37115276/control-alignment-of-two-side-by-side-plots-in-knitr
   
-   # Section contents
-   # e.g. a random plot
-   #plot(sample(1000, 10))
-  # get the item in the country list to plot
-  #print(grid.draw(map.plots[[names(map.plots[i])]][['map_plot']]))
-  #grid.arrange(all.plots[[names(map.plots[i])]][['map_plot']])
+  # the peak plot and crop plots (combined)
+  # if want to separate, for example, to rearrange, go back and use: 
+  # plots_to_combine[[i]]$cases, plots_to_combine[[i]]$crop_plot
+  grid.arrange(map.plots[[names(map.plots[i])]][['bottom']])
+
+  
+  # little table of key dates
+  # can use kable or pander
+  # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
+  tabledata = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == names(map.plots)[i], ]
+  print(tabledata[,c(3:5)] %>%
+      kable(caption = "Estimates of key dates") %>%
+      kable_styling(bootstrap_options = c("striped", "hover", "condensed", full_width=F, position = "left"))) # font_size = 7
+
+  # the actual maps
   grid.arrange(map.plots[[names(map.plots[i])]][['map_plot']])
   
+  #panderOptions("digits", 2)
+  #pander(tabledata[,c(3:5)])
+
   # text at end
    pander::pandoc.p('')
    pander::pandoc.p('Data sources:
-
   * Model projections of COVID-19 cases and deaths over time:  Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
   * Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/
   * Date of the 50th confirmed COVID-19 case: Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/
   Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.')
    pander::pandoc.p('')
-   #pander::pandoc.p(\newpage)
+   #pander::pandoc.p('\\newpage')
 }
 ```
 
-```{r peak_plots, results='asis', echo=FALSE}
+```{r run_loop, echo=FALSE}
 # options for results are asis - passthrough.. hold - put all results below code
+# METHOD 2
+#out = NULL
+# METHOD 3
+out = NULL
 # consider moving this to a child template if it gets unwieldy.
 # in that case, it would work like:
 # put this in loop: out = c(out, knit_expand('template.rmd'))
 # Then have your 'template.rmd' be: ### Species = {{i}}
-# out = NULL
 # or check this: https://stackoverflow.com/questions/58189760/print-ggplot2-and-lm-objects-in-a-loop-in-rmarkdown
 
 for(i in seq(map.plots)){
-  #print(names(map.plots[i]))
-  #out = c(out, knit_expand('template.rmd')) # this is for child template option
+  # METHOD 1 (with function in above code chunk)
+  #create_section(i)
+  #cat('\\pagebreak')
+  
+  # METHOD 2
   #out = c(out, knit_expand(text='## {{names(map.plots[i])}}'))
-  create_section(i)
+  # METHOD 3
+  out = c(out, knit_expand('CountryTemplate.Rmd')) # this is for child template option
   
   # add other stuff to section
   #cat(paste0("\n\n## ", i, "\n"))
@@ -132,9 +161,11 @@ for(i in seq(map.plots)){
   #grid.arrange(map.plots[[names(map.plots[i])]][['map_plot']])
 }
 
-# move this below to test
+# METHOD 2 and 3 move this below to test
 #`r paste(knit(text = out), collapse = '\n')`
+# or this:
+#`r knitr::knit(text = unlist(src))`
 ```
 
-
+`r paste(knit(text = out), collapse = '\n')`
 

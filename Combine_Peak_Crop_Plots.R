@@ -178,6 +178,10 @@ setwd(datadir)
 PeakCasesDeathsDates = read.csv("PeakCaseDeathDatesAllCountries_20200602_1354.csv")
 PeaksbyCountry.wide.plots = read.csv("PeakCaseDeathDatesAllCountriesForPlots_20200604_1525.csv")
 colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
+# save this for markdown access
+setwd(datadir)
+filename = addStampToFilename("PeaksbyCountry.wide.plots", "csv")
+#write.csv(PeaksbyCountry.wide.plots[,c(2:6)], filename, row.names = F)
 
 mytheme <- ttheme_default(base_size = 7)
 
@@ -239,6 +243,10 @@ for(i in i:length(map.plots)){
     map.plots[[i]]$bottom <- bottom
   }
 }
+# save this version with "bottom" plots
+setwd(datadir)
+filename = addStampToFilename("map.plots", "RDS")
+# saveRDS(map.plots, filename)
 
 ###############
 # first subset crop plot list
