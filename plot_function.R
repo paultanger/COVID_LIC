@@ -2,11 +2,11 @@
 require(ggplot2)
 require(scales)
 
-cbPalette2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cbPalette2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999", "midnightblue", "tan4")
 
 mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F, linesize=1.2){
   # lines for each scenario
-  dotplot <- ggplot(mydata, aes(x=Date_JHU, y= med, group=Scenarios, color=Scenarios)) +
+  dotplot <- ggplot(mydata, aes(x=Date_UK, y= med, group=Scenarios, color=Scenarios)) +
     # I think this was a version plotting death on cases? it is breaking things like region plots now.. resolve
     #geom_line(data=mydata[mydata[["compartment"]] == "cases",], size = linesize)
     geom_line(size = linesize)
