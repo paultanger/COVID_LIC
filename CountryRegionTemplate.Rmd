@@ -1,0 +1,48 @@
+## {{names(map.plots[i])}}
+
+### How to read the analysis
+In the following pages, each country’s analysis contains:  
+
+1. a graph of the LSHTM projections of COVID-19 case totals over times (all age groups combined) for an unmitigated scenario plus six disease containment scenarios;
+2. a crop calendar showing when the crop production phases of key staple crops occur throughout the year (with multiple crop calendars in cases where variation in timing occurs);
+3. a map of the country, with the sub-national area highlighted in cases where there are multiple crop calendars per country (due to variation in timing by area);
+4. a table listing the estimated dates of when peak COVID-19 cases and peak COVID-19 deaths are projected to occur in the country, according to the LSHTM model.
+
+The countries are listed in alphabetical order.  Following the analysis pages for each country, we have included the LSHTM COVID-19 case totals projections across time, summarized by geographic region.
+
+### Caveats/Notes
+* These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted here.
+* As noted above, the ‘Day 0’ used for the graphs here likely occurred later than the actual ‘Day 0’, and these graphs will be updated once we obtain more accurate estimates of when a country reached 50 cases.
+* The crop calendars do not include all crops grown in the country, nor all those that are important as a food source or for income generation.
+Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
+
+### {{names(map.plots.regions[[i]]$map_plot[j])}}
+
+```{r country-plots-{{i}}-regions-{{names(map.plots.regions[[i]]$map_plot[j])}}, fig.align='center', fig.width=6, echo = FALSE, warning=FALSE}
+  # wanted to have chunk names with country names but it doesn't work with cote d'ivoire
+  country = "{{names(map.plots.regions[i])}}"
+  region = "{{names(map.plots.regions[[i]][['map_plot']][j])}}"
+  #print(region)
+  # try separate.. need to align them
+  cases = map.plots.regions[[country]]$cases
+  crop_plot = map.plots.regions[[country]][['crop_plots']][[region]][[1]]
+  # adjust legend
+  cases = cases + theme(legend.position = "top", legend.spacing = unit(0.5, 'cm'), legend.key.width = unit(0.4, "cm")) + guides(color=guide_legend(nrow=3)) # ,label.position = "bottom"
+  # #cases
+  # remove title from crop_plot
+  #crop_plot = crop_plot + theme(plot.title = element_blank())
+  # with plot grid
+  together <- plot_grid(cases, crop_plot, ncol=1, align="v", rel_heights = c(2, 1))
+  # together
+  grid.arrange(together)
+  
+```
+
+```{r country-maps-{{i}}-regions-{{names(map.plots.regions[[i]]$map_plot[j])}}, results='asis', fig.width=6, fig.align = 'center', echo = FALSE}
+  country = "{{names(map.plots.regions[i])}}"
+  region = "{{names(map.plots.regions[[i]][['map_plot']][j])}}"
+  #print(region)
+  # these are the country region maps
+  # the actual maps
+  grid.arrange(map.plots.regions[[country]][['map_plot']][[region]])
+```

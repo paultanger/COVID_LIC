@@ -226,6 +226,21 @@ plots_to_combine_backup = plots_to_combine
 crop_plots_to_combine = crop_plots_to_combine[order(names(crop_plots_to_combine))]
 plots_to_combine = plots_to_combine[order(names(plots_to_combine))]
 
+# for the markdown approach, add the map plots to plots to combine
+for(i in seq(map.plots)){
+  # if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
+  #get file from directory
+  filename = map_filenames.countries$map_filename[names(map.plots)[i] == map_filenames.countries$USAID_Country]
+  paste(names(map.plots)[i], " ", filename)
+  mapimg = readPNG(filename)
+  mapimg = rasterGrob(mapimg)
+  plots_to_combine[[i]]$map_plot <- mapimg
+}
+# save this
+setwd(datadir)
+filename = addStampToFilename("country_plots_for_markdown", "RDS")
+# saveRDS(plots_to_combine, filename)
+
 i=1
 for(i in i:length(plots_to_combine)){
   if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
@@ -346,9 +361,24 @@ for(i in i:length(map.plots.regions)){
       temp_region_name = names(map.plots.regions[[i]]$bottom_plots[j])
       map.plots.regions[[i]]$map_plot[temp_region_name] = list(mapimg)
     }
+}
+
+# markdown approach, add maps to plots_by_region
+for(i in seq(plots_by_region)){
+  for(j in seq(plots_by_region[[i]]$crop_plots)){
+    filename = map_filenames.regions$map_filename[names(plots_by_region)[i] == map_filenames.regions$USAID_Country][j]
+    print(filename)
+    mapimg = readPNG(filename)
+    mapimg = rasterGrob(mapimg)
+    temp_region_name = names(plots_by_region[[i]]$crop_plots[j])
+    plots_by_region[[i]]$map_plot[temp_region_name] = list(mapimg)
   }
+}
 
 # save it
+setwd(datadir)
+filename = addStampToFilename("plots_by_region", "RDS")
+# saveRDS(plots_by_region, filename)
 setwd(datadir)
 filename = addStampToFilename("map.plots", "RDS")
 # saveRDS(map.plots, filename)

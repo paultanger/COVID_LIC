@@ -17,10 +17,25 @@ The countries are listed in alphabetical order.  Following the analysis pages fo
 * The crop calendars do not include all crops grown in the country, nor all those that are important as a food source or for income generation.
 Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
 
-```{r country-plots-{{names(map.plots[i])}}, echo = FALSE}
+```{r country-plots-{{names(map.plots[i])}}, fig.align='center', fig.width=6, echo = FALSE, warning=FALSE}
   # right now, setup to use combined figs, but might want to do them separately so we can change things in them
   country = "{{names(map.plots[i])}}"
-  grid.arrange(map.plots[[country]][['bottom']])
+  #grid.arrange(map.plots[[country]][['bottom']])
+  # try separate.. need to align them
+  cases = map.plots[[country]][['cases']]
+  crop_plot = map.plots[[country]][['crop_plot']]
+  # adjust legend
+  cases = cases + theme(legend.position = "top", legend.spacing = unit(0.5, 'cm'), legend.key.width = unit(0.4, "cm")) + guides(color=guide_legend(nrow=3)) # ,label.position = "bottom"
+  #cases
+  # remove title from crop_plot
+  crop_plot = crop_plot + theme(plot.title = element_blank())
+  #grid.arrange(cases)
+  #grid.arrange(crop_plot)
+  # with plot grid
+  together <- plot_grid(cases, crop_plot, ncol=1, align="v", rel_heights = c(2, 1))
+  together
+  #grid.arrange(together)
+  
 ```
 
 ```{r country-table-{{names(map.plots[i])}}, results='asis', echo = FALSE, include = FALSE}
@@ -36,7 +51,8 @@ Maps, area names, and borders do not necessarily reflect the concurrence of the 
 
 ```
 
-```{r country-maps-{{names(map.plots[i])}}, results='asis', out.width = "60%", fig.align = 'center', echo = FALSE}
+```{r country-maps-{{names(map.plots[i])}}, results='asis', fig.width=6, fig.align = 'center', echo = FALSE}
+  #out.width = "60%", 
   # these are the country maps
 
   # align them? https://stackoverflow.com/questions/32780320/consistent-figures-size-with-gridextra-in-rmarkdown-knitr-html
@@ -53,5 +69,3 @@ Maps, area names, and borders do not necessarily reflect the concurrence of the 
 <!-- Data sources^[ -->
 <!-- Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html -->
 <!-- Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. Date of the 50th confirmed COVID-19 case: Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/. Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.] -->
-
-\newpage
