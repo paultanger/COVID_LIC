@@ -78,11 +78,28 @@ for(i in seq(map.plots)){
   # METHOD 3
   out = c(out, knit_expand('CountryTemplate.Rmd')) # this is for child template option
 }
-# `r paste(knit(text = out), collapse = '\n')`
+#`r paste(knit(text = out), collapse = '\n')`
 
+# out2 = NULL
+# # maybe move this inside the other loop - not sure how we want to display regions
+# for(i in seq(map.plots.regions)){
+#   for(j in seq(map.plots.regions[[i]]$crop_plots)){
+#     out2 = c(out2, knit_expand('CountryRegionTemplate.Rmd')) # this is for child template option
+#   }
+# }
+#`r paste(knit(text = out2), collapse = '\n')`
+```
+
+`r paste(knit(text = out), collapse = '\n')`
+
+# Countries with Regions {.tabset .tabset-fade}
+
+```{r run_region_loop, echo=FALSE, results='asis'}
 out2 = NULL
 # maybe move this inside the other loop - not sure how we want to display regions
 for(i in seq(map.plots.regions)){
+  # try to output this as markdown within the loop to give the country headings
+  cat("## {{names(map.plots.regions[i])}}")
   for(j in seq(map.plots.regions[[i]]$crop_plots)){
     out2 = c(out2, knit_expand('CountryRegionTemplate.Rmd')) # this is for child template option
   }
@@ -90,7 +107,6 @@ for(i in seq(map.plots.regions)){
 
 ```
 
-`r paste(knit(text = out), collapse = '\n')`
 `r paste(knit(text = out2), collapse = '\n')`
 
 Data sources:
