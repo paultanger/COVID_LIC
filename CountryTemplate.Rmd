@@ -1,21 +1,40 @@
 
 ## {{names(map.plots[i])}}
 
-### How to read the analysis
-In the following pages, each country’s analysis contains:  
+### How to read the analysis {.unlisted .unnumbered}
+Below, each country’s analysis contains:  
 
-1. a graph of the LSHTM projections of COVID-19 case totals over times (all age groups combined) for an unmitigated scenario plus six disease containment scenarios;
+1. a graph of the LSHTM projections of COVID-19 case totals over times (all age groups combined) for an unmitigated scenario plus ten disease containment scenarios (see explanation below);
 2. a crop calendar showing when the crop production phases of key staple crops occur throughout the year (with multiple crop calendars in cases where variation in timing occurs);
 3. a map of the country, with the sub-national area highlighted in cases where there are multiple crop calendars per country (due to variation in timing by area);
-4. a table listing the estimated dates of when peak COVID-19 cases and peak COVID-19 deaths are projected to occur in the country, according to the LSHTM model.
+4. a legend listing the different containment scenarios included in the LSHTM model.
 
-The countries are listed in alphabetical order.  Following the analysis pages for each country, we have included the LSHTM COVID-19 case totals projections across time, summarized by geographic region.
+### Scenario descriptions
 
-### Caveats/Notes
-* These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted here.
-* As noted above, the ‘Day 0’ used for the graphs here likely occurred later than the actual ‘Day 0’, and these graphs will be updated once we obtain more accurate estimates of when a country reached 50 cases.
+In the LSHTM model, the researchers identify an unmitigated scenario (i.e. the government takes no action to contain the spread of COVID-19), as well as a variety of different containment scenarios.  They model the impacts and timing of the spread of COVID-19 for each scenario, as a way to estimate which approach could have the largest impact on reducing and/or delaying the cases, deaths, and other effects of COVID-19.
+
+The ten containment scenarios involve social distancing, shielding, and/or a combination of these strategies.  The different strategies and selected scenarios are described below: 
+
+* Greenzone shielding (GZ) was implemented in the model by stratifying the population in one shielded and one unshielded compartment. The GZ applies to those aged 60+ years. We assume shielding of this population has a coverage fraction, and reduction fraction; we refer to GZ interventions by coverage / reduction, so “80C80R shielding” is 80% coverage with 80% contact reduction to the shielded group.
+
+* Basic Public Health & Social Measures (PHSM) was implemented as a 20% reduction in general contacts outside the home and a 25% reduction in transmission from symptomatic individuals corresponding to symptomatic people being encouraged to self isolate.
+
+```{r scenario-table-{{names(map.plots[i])}}, results='asis', echo = FALSE}
+  # can use kable or pander
+  # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
+  tabledata = tabledata
+  print(tabledata %>%
+      kable( row.names = F, booktabs = T) %>% #caption = "Scenario Descriptions",
+      kable_styling(position = "center", bootstrap_options = c("striped", "hover", "condensed", full_width=F, position = "center"), latex_options = c("striped", "hold_position")))
+
+```
+
+
+### Caveats/Notes {.unlisted .unnumbered}
+* These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted [here](https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html).
+* As noted above, the ‘Day 0’ used for the graphs here is an estimation of when a country reached a date with 50 active infections.
 * The crop calendars do not include all crops grown in the country, nor all those that are important as a food source or for income generation.
-Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
+* Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
 
 ```{r country-plots-{{names(map.plots[i])}}, fig.align='center', fig.width=6, echo = FALSE, warning=FALSE}
   # right now, setup to use combined figs, but might want to do them separately so we can change things in them
@@ -42,16 +61,16 @@ Maps, area names, and borders do not necessarily reflect the concurrence of the 
   # little table of key dates
   # can use kable or pander
   # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
-  country = "{{names(map.plots[i])}}"
-
-  tabledata = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == country, ]
-  print(tabledata[,c(3:5)] %>%
-      kable( row.names = F, booktabs = T) %>% #caption = "Estimates of key dates",
-      kable_styling(font_size=9, position = "left", bootstrap_options = c("striped", "hover", "condensed", full_width=F, position = "left"), latex_options = c("striped", "hold_position")))
+  # country = "{{names(map.plots[i])}}"
+  # 
+  # tabledata = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == country, ]
+  # print(tabledata[,c(3:5)] %>%
+  #     kable( row.names = F, booktabs = T) %>% #caption = "Estimates of key dates",
+  #     kable_styling(font_size=9, position = "left", bootstrap_options = c("striped", "hover", "condensed", full_width=F, position = "left"), latex_options = c("striped", "hold_position")))
 
 ```
 
-```{r country-maps-{{names(map.plots[i])}}, results='asis', fig.width=6, fig.align = 'center', echo = FALSE}
+```{r country-maps-{{names(map.plots[i])}}, results='asis', fig.width=5, fig.align = 'center', echo = FALSE}
   #out.width = "60%", 
   # these are the country maps
 
@@ -64,8 +83,5 @@ Maps, area names, and borders do not necessarily reflect the concurrence of the 
   country = "{{names(map.plots[i])}}"
   # the actual maps
   grid.arrange(map.plots[[country]][['map_plot']])
+  cat("  \n")
 ```
-
-<!-- Data sources^[ -->
-<!-- Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html -->
-<!-- Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. Date of the 50th confirmed COVID-19 case: Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/. Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.] -->

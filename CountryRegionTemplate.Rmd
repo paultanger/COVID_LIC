@@ -1,4 +1,3 @@
-### {{names(map.plots.regions[[i]]$map_plot[j])}}
 
 ```{r country-plots-{{i}}-regions-{{names(map.plots.regions[[i]]$map_plot[j])}}, fig.align='center', fig.width=6, echo = FALSE, warning=FALSE}
   # wanted to have chunk names with country names but it doesn't work with cote d'ivoire
@@ -17,14 +16,16 @@
   together <- plot_grid(cases, crop_plot, ncol=1, align="v", rel_heights = c(2, 1))
   # together
   grid.arrange(together)
-  
+  cat("  \n")
+
 ```
 
-```{r country-maps-{{i}}-regions-{{names(map.plots.regions[[i]]$map_plot[j])}}, results='asis', fig.width=6, fig.align = 'center', echo = FALSE}
+```{r fig.width=4, fig.align = 'center', echo = FALSE}
   country = "{{names(map.plots.regions[i])}}"
   region = "{{names(map.plots.regions[[i]][['map_plot']][j])}}"
   #print(region)
   # these are the country region maps
   # the actual maps
   grid.arrange(map.plots.regions[[country]][['map_plot']][[region]])
+  cat("  \n")
 ```

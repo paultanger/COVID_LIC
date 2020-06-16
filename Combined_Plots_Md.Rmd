@@ -34,8 +34,10 @@ datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
 # cleaner version
 map.plots = readRDS(paste0(datadir, "country_plots_for_markdown_20200612_1023.RDS"))
 map.plots.regions = readRDS(paste0(datadir, "plots_by_region_20200612_1125.RDS"))
-PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
-colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
+#PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
+#colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
+tabledata = read.csv(paste0(datadir, "LSHTM_v3_scenarios.csv"))
+colnames(tabledata) = c("Scenario Abbreviation", "Scenario Name", "Description")
 ```
 
 # Overview
@@ -43,16 +45,22 @@ colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "
 The effects of COVID-19 go well beyond the initial acute health impacts into prolonged secondary repercussions on the economy, employment, poverty levels, safe water access, food security status, crop production, and much more.  In this analysis, we looked at whether projections of COVID-19 case totals in low-and-middle-income countries (LMICs) overlapped with key phases in the crop production cycle to understand where, when, and on which important crops COVID-19 could take a toll.  From this work, we can better inform our thinking on where to focus our programming, estimate which areas will be hit hardest next, and whether COVID-19 impacts will affect crops that are significant food sources, income generators, or both.  Combined with data on the demographics of value chain actors involved in each affected crop, we could also see whether the impacts are projected to disproportionately impact women, smallholder farmers, small businesses, and other already-marginalized groups. 
 
 ## Methodology
-We began with time series projections of COVID-19 case totals from a model developed by the Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM)^[Data source for Model projections of COVID-19 cases and deaths over time:  Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html], and overlaid those data with the calendar/timing of phases of the crop cycles in various countries from the Crop Monitor initiative of the Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM)^[Data source for Crop calendars:  Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/] to observe if peaks in the number of cases for a country were projected to occur at the same time as a key phase in the cycle of production for crops important to that country.
+We began with time series projections of COVID-19 case totals from a model developed by the Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM), and overlaid those data with the calendar/timing of phases of the crop cycles in various countries from the Crop Monitor initiative of the Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) to observe if peaks in the number of cases for a country were projected to occur at the same time as a key phase in the cycle of production for crops important to that country.
 
 ## The LSHTM model
-* This model provides simulation-based estimates for COVID-19 epidemic scenarios in many low-and-middle-income countries.  The model starts with the date a country reached 50 cases (i.e. “Day 0”), and then projects the totals of several variables (cases, deaths, hospitalizations, etc.) each day over time for an ‘unmitigated’ scenario (i.e. the country takes no action to contain COVID-19 spread), as well as in six different COVID-19 containment strategies involving social distancing, shielding, or a combined approach.  The projections estimate how different containment strategies could have different outcomes on the spread and intensity of the disease in a country.  
+* This model provides simulation-based estimates for COVID-19 epidemic scenarios in many low-and-middle-income countries.  The model starts with the date a country reached 50 active infections (i.e. “Day 0”), and then projects the totals of several variables (cases, deaths, hospitalizations, etc.) each day over time for an ‘unmitigated’ scenario (i.e. the country takes no action to contain COVID-19 spread), as well as in ten different COVID-19 containment strategies involving social distancing, shielding, lockdowns, or combined approaches.  The projections estimate how different containment strategies could have different outcomes on the spread and intensity of the disease in a country.  
 
-* While you can see the full results of the LSHTM research for each country here, the line graphs in this document plot the model’s projections for each country’s case totals across time for the seven scenarios (unmitigated plus six containment strategies) for all age groups combined.  
+* While you can see the full results and more granularity of the LSHTM research for each country [here](https://ln2.sync.com/dl/b3fc9ebc0?sync_id=1394099258#36ipcgk3-5mghvhh4-vi29b9yy-8e688twu), the line graphs in this document utilize a loess smoothing function over a 10% window to plot the model’s projections for each country’s case totals across time for the eleven scenarios (unmitigated plus ten containment strategies) for all age groups combined.
 
-* ‘Day 0’ is defined as the date the country reached 50 confirmed cases, according to the Johns Hopkins Coronavirus Resource Center^[Data source for Date of the 50th confirmed COVID-19 case:  Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/].  Note that the date of 50 confirmed cases likely occurs after the date a country actually had 50 cases.  Since the model is based on the latter, this means the true peaks of the different scenarios are likely to occur earlier in time than shown here, i.e. the peaks would shift to the left.  A future update of this analysis will incorporate a more accurate estimate of the true ‘Day 0’.
+* ‘Day 0’ in the LSHTM model is defined as the date the country has 50 active infections. Note that this is different from the date the country reaches 50 total (cumulative) infections. While the true date of ‘Day 0’ is unknown, the model estimates this date for each country by looking at reported cases and adjusting that number based on a few factors, including:
 
-* Refer to the LSHTM link in the footnotes for more details on the model, including the definition of the different scenarios, their methodologies for determining transmission rates, etc.
+  + An estimate of the difference between the number of actual infections and the number of reported cases (not all infections are reported);
+  + An estimate of what portion of cases are asymptomatic (since many cases, especially in young people, may be asymptomatic and thus not ever reported/tested/known to the medical community);
+  + An estimate of the delay between initial infection to onset of symptoms, and then the lag between onset of symptoms to accessing a test and getting results to be counted as a ‘confirmed case’.
+  + Note: some countries do not yet meet the criteria of having had a ‘Day 0’ (i.e., a day with 50 active infections).
+
+
+Refer to the LSHTM link below for more details on the model, including the definition of the different scenarios and methodologies for determining transmission rates, etc.
 
 ## The GEOGLAM crop calendars
 * For each country, the timing of crop production phases was plotted for significant staple crops, and for each sub-national area where production occurs in a country.  In the case of multiple crop seasons such as maize 1 and maize 2, the more significant season in terms of total production will be labeled as the first crop, e.g, maize 1.
@@ -66,6 +74,11 @@ We began with time series projections of COVID-19 case totals from a model devel
 
 * For the crop calendars displayed in this document, each sub-national area is represented where the timing of the crop production cycle differs.  In cases where crop cycles followed the same timing throughout the country, only one crop calendar is shown for that country.
 
+## Data sources
+* Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
+* Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  
+
+For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.
 
 # Country Specific Information {.tabset .tabset-fade}
 
@@ -92,23 +105,29 @@ for(i in seq(map.plots)){
 
 `r paste(knit(text = out), collapse = '\n')`
 
-# Countries with Regions {.tabset .tabset-fade}
+# Regional Country Crop Analysis  {.tabset .tabset-fade}
 
 ```{r run_region_loop, echo=FALSE, results='asis'}
+library(pander)
+
 out2 = NULL
-# maybe move this inside the other loop - not sure how we want to display regions
 for(i in seq(map.plots.regions)){
-  # try to output this as markdown within the loop to give the country headings
-  cat("## {{names(map.plots.regions[i])}}")
+  cat("  \n")
+  cat("## ", {{names(map.plots.regions[i])}}, "  \n")
+  # cat("  \n")
+  cat("  \n")
+
+  #pander::pandoc.header({{names(map.plots.regions[i])}}, level = 2)
   for(j in seq(map.plots.regions[[i]]$crop_plots)){
-    out2 = c(out2, knit_expand('CountryRegionTemplate.Rmd')) # this is for child template option
+    cat("### ", {{names(map.plots.regions[i])}}, "-", {{names(map.plots.regions[[i]]$map_plot[j])}}, "  \n")
+    out2 = c(out2, knit_expand('CountryRegionTemplate.Rmd'))
+    cat("  \n")
   }
 }
+#pander::pandoc.p('')
+#pander::pandoc.p('')
+# `r paste(knit(text = out2), collapse = '\n')`
 
 ```
 
 `r paste(knit(text = out2), collapse = '\n')`
-
-Data sources:
-Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
-Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. Date of the 50th confirmed COVID-19 case: Johns Hopkins University Coronavirus Resource Center; https://coronavirus.jhu.edu/. Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.

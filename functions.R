@@ -12,7 +12,7 @@ ggplotlegend = function(plotobj){
   return(legend)}
 
 # TODO: maybe change this to a data table or apply function
-plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F, regions_plotting=F){
+plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F, regions_plotting=F, smoothing=F){
   # returns a list of plot objects
   # access like: plots$afghanistan$death_o[[1]]
   i= 1
@@ -34,7 +34,7 @@ plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fon
       myxlab = "Date (days since UK estimated day 0)"
       myylab = paste0("Number of ", j)
       # make the plot
-      PlotObj = mydotplotv1(tempdata, mytitle, myxlab, myylab, fontsize=fontsize, pointsize=4, CI=CI, deaths_on_cases)
+      PlotObj = mydotplotv1(tempdata, mytitle, myxlab, myylab, fontsize=fontsize, pointsize=4, CI=CI, deaths_on_cases, smoothing=smoothing)
       # save into a list of plot objects
       if(regions_plotting==T){
       plots[[i]][[j]] = c(plots[[i]][[j]], list(PlotObj))

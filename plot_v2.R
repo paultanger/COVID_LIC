@@ -15,14 +15,14 @@ subset.alls.plot$Scenarios = ""
 subset.alls.plot[scen_id == 1,11] <- "Unmitigated"
 subset.alls.plot[scen_id == 2,11] <- "20% distancing"
 subset.alls.plot[scen_id == 14,11] <- "60% distancing"
-subset.alls.plot[scen_id == 27,11] <- "40% in-home"
-subset.alls.plot[scen_id == 42,11] <- "40C-80R GZ"
-subset.alls.plot[scen_id == 39,11] <- "60C-60R GZ"
-subset.alls.plot[scen_id == 44,11] <- "80C-80R GZ"
-subset.alls.plot[scen_id == 45,11] <- "basic PHSM"
-subset.alls.plot[scen_id == 49,11] <- "30 day 50%"
-subset.alls.plot[scen_id == 50,11] <- "60 day 50%"
-subset.alls.plot[scen_id == 51,11] <- "90 day 50%"
+subset.alls.plot[scen_id == 27,11] <- "40% in-home elder shielding"
+subset.alls.plot[scen_id == 42,11] <- "40% shielding, 80% reduction"
+subset.alls.plot[scen_id == 39,11] <- "60% shielding, 60% reduction"
+subset.alls.plot[scen_id == 44,11] <- "80% shielding, 80% reduction"
+subset.alls.plot[scen_id == 45,11] <- "PHSM, school closure, lockdowns"
+subset.alls.plot[scen_id == 49,11] <- "30 day 50% lockdown, PHSM"
+subset.alls.plot[scen_id == 50,11] <- "60 day 50% lockdown, PHSM"
+subset.alls.plot[scen_id == 51,11] <- "90 day 50% lockdown, PHSM"
 
 subset.alls.plot[, Scenarios:=as.factor(Scenarios)]
 subset.alls.plot[, Country:=as.factor(Country)]
@@ -62,14 +62,14 @@ subset.alls.plot$Scenarios  <- factor(subset.alls.plot$Scenarios , levels = c(
                                   "Unmitigated",
                                   "20% distancing",
                                   "60% distancing",
-                                  "40% in-home",
-                                  "40C-80R GZ",
-                                  "60C-60R GZ",
-                                  "80C-80R GZ",
-                                  "basic PHSM",
-                                  "30 day 50%",
-                                  "60 day 50%",
-                                   "90 day 50%"))
+                                  "40% in-home elder shielding",
+                                  "40% shielding, 80% reduction",
+                                  "60% shielding, 60% reduction",
+                                  "80% shielding, 80% reduction",
+                                  "PHSM, school closure, lockdowns",
+                                  "30 day 50% lockdown, PHSM",
+                                  "60 day 50% lockdown, PHSM",
+                                  "90 day 50% lockdown, PHSM"))
 
 # here might be a good place to combine with other sorting variables like region?
 # use this file:
@@ -111,9 +111,9 @@ AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[Country_Code %in% c
 AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll.SelectCountries)
 
 # save object
-filename = addStampToFilename('AllAllsData.11scens.AgeAll.SelectCountries', 'RObj')
+filename = addStampToFilename('AllAllsData.11scens.AgeAll.SelectCountries.WithUKdate', 'RObj')
 #saveRDS(AllAllsData.7scens.AgeAll.SelectCountries, filename)
-AllAllsData.7scens.AgeAll.SelectCountries = readRDS("AllAllsData.7scens.AgeAll.SelectCountries_20200602_1552.RObj")
+AllAllsData.7scens.AgeAll.SelectCountries = readRDS("AllAllsData.11scens.AgeAll.SelectCountries.WithUKdate_20200615_1350.RObj")
 
 # make a list of the subsets for each country
 countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="USAID_Country")
@@ -123,7 +123,7 @@ AllAllsData.7scens.AgeAll.SelectCountries$USAID_Country = as.factor(AllAllsData.
 countries = names(countrieslist)
 
 # run again with to get plot objects
-plots = plot_loop(countrieslist, countries, compartments, fontsize=9, CI=F, regions_plotting=F)
+plots = plot_loop(countrieslist, countries, compartments, fontsize=9, CI=F, regions_plotting=F, smoothing=T)
 plots$Afghanistan$cases
 
 # save object
@@ -131,12 +131,14 @@ filename = addStampToFilename('peak_plots_listJHU', 'RObj')
 #saveRDS(plots, filename)
 
 # with UK dates
-plotsUK = plot_loop(countrieslist, countries, compartments, fontsize=9, CI=F, regions_plotting=F)
+plotsUK = plot_loop(countrieslist, countries, compartments, fontsize=9, CI=F, regions_plotting=F, smoothing=T)
 plotsUK$Afghanistan$cases
 
 # save object
-filename = addStampToFilename('peak_plots_listUK', 'RObj')
+setwd(datadir)
+filename = addStampToFilename('peak_plots_listUKSmooth', 'RObj')
 #saveRDS(plots, filename)
+plotsUK = readRDS("peak_plots_listUKSmooth.RObj")
 
 # print them
 setwd(plotdir)
@@ -147,7 +149,7 @@ for (i in plots) {
 }
 dev.off()
 
-filename = addStampToFilename("PeakPlotsUK", "pdf")
+filename = addStampToFilename("PeakPlotsUKsmooth", "pdf")
 pdf(filename, width=11, height=8.5)
 for (i in plotsUK) {
   print(i)

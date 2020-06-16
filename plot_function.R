@@ -4,12 +4,18 @@ require(scales)
 
 cbPalette2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999", "midnightblue", "tan4")
 
-mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F, linesize=1.2){
+mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4, CI=F, deaths_on_cases=F, linesize=1.2, smoothing=F){
   # lines for each scenario
   dotplot <- ggplot(mydata, aes(x=Date_UK, y= med, group=Scenarios, color=Scenarios)) +
     # I think this was a version plotting death on cases? it is breaking things like region plots now.. resolve
     #geom_line(data=mydata[mydata[["compartment"]] == "cases",], size = linesize)
-    geom_line(size = linesize)
+    if(smoothing == T){
+      geom_smooth(method="loess", se=F, fullrange=F, span=0.12) # formula = y ~ s(x, bs = "cs"), span=0.1, , span=0.12
+    }
+    else {
+      geom_line(size = linesize)
+    }
+  
   # add CI
     if(CI==T){
       dotplot <- dotplot + geom_ribbon(aes(ymin=mydata$lo, ymax=mydata$hi, fill=Scenarios), linetype=2, alpha=0.1, show.legend = F, color=mydata$Scenarios)}
@@ -25,6 +31,7 @@ mydotplotv1 = function(mydata, mytitle, myxlab, myylab, fontsize=12, pointsize=4
     #dotplot <- dotplot + geom_point(aes(data=mydata[mydata$compartment=="death_o",], x = Date_JHU, y = which.max(med), shape=Scenarios, color=Scenarios, fill=Scenarios),   size=pointsize)
     
   }
+
   
   # use custom colors
   dotplot <- dotplot + scale_fill_manual(values=cbPalette2)
