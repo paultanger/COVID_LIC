@@ -31,7 +31,7 @@ plot_loop = function(countriesOrRegionslist, countries_or_bin, compartments, fon
       tempdata = countriesOrRegionslist[[i]][compartment == j]
       # setup names of things
       mytitle = paste0(names(countriesOrRegionslist[i]), " ", j, " over time")
-      myxlab = "Date (days since UK estimated day 0)"
+      myxlab = "Date (days after estimated day 0)"
       myylab = paste0("Number of ", j)
       # make the plot
       PlotObj = mydotplotv1(tempdata, mytitle, myxlab, myylab, fontsize=fontsize, pointsize=4, CI=CI, deaths_on_cases, smoothing=smoothing)
