@@ -1,4 +1,5 @@
 ---
+pagetitle: "COVID Modeling and the Crop Cycle" 
 title: |  
   <center> ![logo](Horizontal_RGB_294.png){width='50%'}  
   COVID Modeling and the Crop Cycle  </center>  
@@ -39,18 +40,13 @@ datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
 #map.plots = readRDS(paste0(datadir, "country_plots_for_markdown_20200612_1023.RDS"))
 #map.plots.regions = readRDS(paste0(datadir, "plots_by_region_20200612_1125.RDS"))
 combined.plots = readRDS(paste0(datadir, "combined.plots.for.markdown_20200617_1132.RDS"))
+# for testing
+#combined.plots = readRDS(paste0(datadir, "combined.plots.for.testing.RDS"))
+
 #PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
 #colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
 tabledata = read.csv(paste0(datadir, "LSHTM_v3_scenarios.csv"))
 colnames(tabledata) = c("Scenario Abbreviation", "Scenario Name", "Description")
-```
-
-```{r header-image, out.width="30%"}
-# htmltools::img(src = knitr::image_uri(paste0(datadir, "Horizontal_RGB_294.png")), 
-#                alt = 'logo', 
-#                style = 'position:absolute; top:0; right:0; padding:10px;')
-# knitr::include_graphics("path/to/image.png")
-
 ```
 
 # Overview
@@ -96,7 +92,6 @@ Refer to the LSHTM link below for more details on the model, including the defin
 
 ```{r run_loop, echo=FALSE, results='asis'}
 # options for results are asis - passthrough.. hold - put all results below code
-# maybe try this? ## {.unlisted .unnumbered}
 out = NULL
 for(i in seq(combined.plots)){
   out = c(out, knit_expand('CountryTemplate.Rmd'))
