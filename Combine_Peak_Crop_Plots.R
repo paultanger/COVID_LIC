@@ -139,6 +139,16 @@ filename = addStampToFilename("map_filenames", "csv")
 map_filenames.countries = unique(map_filenames[map_filenames$plot_regions == F, c(3,5)])
 map_filenames.regions = unique(map_filenames[map_filenames$plot_regions == T, c(3,5)])
 
+# get list of region countries that are new (not in old list)
+new.map_filenames.regions = map_filenames.regions
+old.map_filenames.regions = map_filenames.regions
+
+
+missing.map.regions = setdiff(new.map_filenames.regions$map_filename, old.map_filenames.regions$map_filename)
+setwd(datadir)
+filename = addStampToFilename("missing.map.regions", "csv")
+# write.csv(missing.map.regions, filename, row.names = F)
+
 map_filenames.countries = map_filenames.countries[map_filenames.countries$USAID_Country %in% combine_countries,]
 
 # make plots
@@ -155,7 +165,8 @@ for(i in i:length(map.plots)){
   paste(names(map.plots)[i], " ", filename)
   mapimg = readPNG(filename)
   mapimg = rasterGrob(mapimg)
-  map.plots[[i]]$map_plot <- mapimg
+  #map.plots[[i]]$map_plot <- mapimg
+  map.plots[[i]]$map_plot <- list(mapimg)
 }
 
 # for regions
@@ -175,39 +186,39 @@ names(map.plots.regions) = combine_region_countries
 
 
 # now create text objects
-setwd(datadir)
-PeakCasesDeathsDates = read.csv("PeakCaseDeathDatesAllCountries_20200602_1354.csv")
-PeaksbyCountry.wide.plots = read.csv("PeakCaseDeathDatesAllCountriesForPlots_20200604_1525.csv")
-colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
-# save this for markdown access
-setwd(datadir)
-filename = addStampToFilename("PeaksbyCountry.wide.plots", "csv")
-#write.csv(PeaksbyCountry.wide.plots[,c(2:6)], filename, row.names = F)
-
-mytheme <- ttheme_default(base_size = 7)
-
-i = 1
-for(i in i:length(map.plots)){
-  # subset data for each country
-  mydata1 = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == names(map.plots)[i], ]
-  paste(names(map.plots)[i], " ", filename)
-  countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"), 
-                                      size = 7, x = 0.1, y = .95, hjust=0)
-  countrytext = countrytext + annotation_custom(tableGrob(mydata1[,c(3:5)], rows = NULL, theme = mytheme), xmin = 0, ymin = -0.15)
-  map.plots[[i]]$map_text <- countrytext
-}
-
-# for regions
-i = 1
-for(i in i:length(map.plots.regions)){
-  # subset data for each country
-  mydata1 = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == names(map.plots.regions)[i], ]
-  paste(names(map.plots.regions)[i], " ", filename)
-  countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"), 
-                                      size = 7, x = 0.1, y = .95, hjust=0)
-  countrytext = countrytext + annotation_custom(tableGrob(mydata1[,c(3:5)], rows = NULL, theme = mytheme), xmin = 0, ymin = -0.15)
-  map.plots.regions[[i]]$map_text <- countrytext
-}
+# setwd(datadir)
+# PeakCasesDeathsDates = read.csv("PeakCaseDeathDatesAllCountries_20200602_1354.csv")
+# PeaksbyCountry.wide.plots = read.csv("PeakCaseDeathDatesAllCountriesForPlots_20200604_1525.csv")
+# colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
+# # save this for markdown access
+# setwd(datadir)
+# filename = addStampToFilename("PeaksbyCountry.wide.plots", "csv")
+# #write.csv(PeaksbyCountry.wide.plots[,c(2:6)], filename, row.names = F)
+# 
+# mytheme <- ttheme_default(base_size = 7)
+# 
+# i = 1
+# for(i in i:length(map.plots)){
+#   # subset data for each country
+#   mydata1 = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == names(map.plots)[i], ]
+#   paste(names(map.plots)[i], " ", filename)
+#   countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"), 
+#                                       size = 7, x = 0.1, y = .95, hjust=0)
+#   countrytext = countrytext + annotation_custom(tableGrob(mydata1[,c(3:5)], rows = NULL, theme = mytheme), xmin = 0, ymin = -0.15)
+#   map.plots[[i]]$map_text <- countrytext
+# }
+# 
+# # for regions
+# i = 1
+# for(i in i:length(map.plots.regions)){
+#   # subset data for each country
+#   mydata1 = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == names(map.plots.regions)[i], ]
+#   paste(names(map.plots.regions)[i], " ", filename)
+#   countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"), 
+#                                       size = 7, x = 0.1, y = .95, hjust=0)
+#   countrytext = countrytext + annotation_custom(tableGrob(mydata1[,c(3:5)], rows = NULL, theme = mytheme), xmin = 0, ymin = -0.15)
+#   map.plots.regions[[i]]$map_text <- countrytext
+# }
 
 # big loop to make the whole figures
 # or use code below.. or the resultant lists:
@@ -235,7 +246,7 @@ for(i in seq(map.plots)){
   paste(names(map.plots)[i], " ", filename)
   mapimg = readPNG(filename)
   mapimg = rasterGrob(mapimg)
-  map.plots[[i]]$map_plot <- mapimg
+  plots_to_combine[[i]]$map_plot <- list(mapimg)
 }
 # save this
 setwd(datadir)
@@ -243,23 +254,22 @@ filename = addStampToFilename("country_plots_for_markdown", "RDS")
 # saveRDS(plots_to_combine, filename)
 # saveRDS(map.plots, filename)
 
-i=1
-for(i in i:length(plots_to_combine)){
+for(i in seq(plots_to_combine)){
   if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
     print(paste0("crop_plots$", names(plots_to_combine)[i]))
     temp_country_name = names(plots_to_combine)[[i]]
-    plots_to_combine[[i]]$crop_plot <- crop_plots_to_combine[[temp_country_name]]
+    plots_to_combine[[i]]$crop_plot <- list(crop_plots_to_combine[[temp_country_name]])
   }
 }
 
-i = 1
-for(i in i:length(map.plots)){
-  if (names(map.plots)[[i]] == names(plots_to_combine[i])){
-    map.plots[[i]]$title <- ggdraw() + draw_label(names(map.plots[i]), fontface='bold')
-    bottom <- plot_grid(plots_to_combine[[i]]$cases, plots_to_combine[[i]]$crop_plot, ncol=1, align="v", axis="l", rel_heights = c(2, 1))
-    map.plots[[i]]$bottom <- bottom
-  }
-}
+# i = 1
+# for(i in i:length(map.plots)){
+#   if (names(map.plots)[[i]] == names(plots_to_combine[i])){
+#     map.plots[[i]]$title <- ggdraw() + draw_label(names(map.plots[i]), fontface='bold')
+#     bottom <- plot_grid(plots_to_combine[[i]]$cases, plots_to_combine[[i]]$crop_plot, ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+#     map.plots[[i]]$bottom <- bottom
+#   }
+# }
 # save this version with "bottom" plots
 setwd(datadir)
 filename = addStampToFilename("map.plots", "RDS")
@@ -387,7 +397,7 @@ filename = addStampToFilename("plots_by_region", "RDS")
 # saveRDS(plots_by_region, filename)
 setwd(datadir)
 filename = addStampToFilename("map.plots", "RDS")
-# saveRDS(map.plots, filename)
+# saveRDS(plots_to_combine, filename)
 filename = addStampToFilename("map.plots.regions", "RDS")
 # saveRDS(map.plots.regions, filename)
 
@@ -443,8 +453,8 @@ dev.off()
 # dev.off()
 
 # do with the temp files for markdown approach
-map.plots = readRDS("country_plots_for_markdown_20200616_2003.RDS")
-region.plots = readRDS("plots_by_region_20200616_1936.RDS")
+map.plots = readRDS("map.plots_20200617_1128.RDS")
+region.plots = readRDS("plots_by_region_20200616_1936.RDS") 
 combined.plots = c(map.plots, region.plots)
 combined.plots = combined.plots[order(names(combined.plots))]
 filename = addStampToFilename("combined.plots.for.markdown", "RDS")

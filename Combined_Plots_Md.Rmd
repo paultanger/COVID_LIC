@@ -1,7 +1,11 @@
 ---
-title: "COVID Modeling and the Crop Cycle"
-author: "Prepared May/June 2020 by the Data, Monitoring, and Analytics Team at USAID/RFS"
-date: "`r format(Sys.time(), '%d %B, %Y, %H:%M:%S %Z')`"
+title: |  
+  <center> ![logo](Horizontal_RGB_294.png){width='50%'}  
+  COVID Modeling and the Crop Cycle  </center>  
+author: |  
+  <center>  Prepared May/June 2020 by the Data, Monitoring, and Analytics Team at USAID/RFS </center>  
+date: |  
+  <center> `r format(Sys.time(), '%d %B %Y, %H:%M:%S %Z')` </center> 
 output:
   # pdf_document:
   #   toc: true
@@ -25,20 +29,28 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning= FALSE, message = FALSE)
 source('functions.R')
 suppressPackageStartupMessages(source('load_libs.R'))
 # get data files we need
 datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
 #map.plots = readRDS(paste0(datadir, "map.plots_20200611_1057.RDS"))
 # cleaner version
-map.plots = readRDS(paste0(datadir, "country_plots_for_markdown_20200612_1023.RDS"))
-map.plots.regions = readRDS(paste0(datadir, "plots_by_region_20200612_1125.RDS"))
-combined.plots = readRDS(paste0(datadir, "combined.plots.for.markdown_20200616_2009.RDS"))
+#map.plots = readRDS(paste0(datadir, "country_plots_for_markdown_20200612_1023.RDS"))
+#map.plots.regions = readRDS(paste0(datadir, "plots_by_region_20200612_1125.RDS"))
+combined.plots = readRDS(paste0(datadir, "combined.plots.for.markdown_20200617_1132.RDS"))
 #PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
 #colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
 tabledata = read.csv(paste0(datadir, "LSHTM_v3_scenarios.csv"))
 colnames(tabledata) = c("Scenario Abbreviation", "Scenario Name", "Description")
+```
+
+```{r header-image, out.width="30%"}
+# htmltools::img(src = knitr::image_uri(paste0(datadir, "Horizontal_RGB_294.png")), 
+#                alt = 'logo', 
+#                style = 'position:absolute; top:0; right:0; padding:10px;')
+# knitr::include_graphics("path/to/image.png")
+
 ```
 
 # Overview
@@ -77,58 +89,18 @@ Refer to the LSHTM link below for more details on the model, including the defin
 
 ## Data sources
 * Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
-* Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  
+* Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. 
+* Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.
 
-For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.
+# Country Specific Information  {.tabset .tabset-fade}
 
-# Country Specific Information {.tabset .tabset-fade}
-
-```{r run_loop, echo=FALSE}
+```{r run_loop, echo=FALSE, results='asis'}
 # options for results are asis - passthrough.. hold - put all results below code
 # maybe try this? ## {.unlisted .unnumbered}
-# METHOD 3
 out = NULL
-for(i in seq(map.plots)){
-  # METHOD 3
-  out = c(out, knit_expand('CountryTemplate.Rmd')) # this is for child template option
+for(i in seq(combined.plots)){
+  out = c(out, knit_expand('CountryTemplate.Rmd'))
 }
-#`r paste(knit(text = out), collapse = '\n')`
-
-# out2 = NULL
-# # maybe move this inside the other loop - not sure how we want to display regions
-# for(i in seq(map.plots.regions)){
-#   for(j in seq(map.plots.regions[[i]]$crop_plots)){
-#     out2 = c(out2, knit_expand('CountryRegionTemplate.Rmd')) # this is for child template option
-#   }
-# }
-#`r paste(knit(text = out2), collapse = '\n')`
 ```
 
 `r paste(knit(text = out), collapse = '\n')`
-
-# Regional Country Crop Analysis  {.tabset .tabset-fade}
-
-```{r run_region_loop, echo=FALSE, results='asis'}
-library(pander)
-
-out2 = NULL
-for(i in seq(map.plots.regions)){
-  cat("  \n")
-  cat("## ", {{names(map.plots.regions[i])}}, "  \n")
-  # cat("  \n")
-  cat("  \n")
-
-  #pander::pandoc.header({{names(map.plots.regions[i])}}, level = 2)
-  for(j in seq(map.plots.regions[[i]]$crop_plots)){
-    cat("### ", {{names(map.plots.regions[i])}}, "-", {{names(map.plots.regions[[i]]$map_plot[j])}}, "  \n")
-    out2 = c(out2, knit_expand('CountryRegionTemplate.Rmd'))
-    cat("  \n")
-  }
-}
-#pander::pandoc.p('')
-#pander::pandoc.p('')
-# `r paste(knit(text = out2), collapse = '\n')`
-
-```
-
-`r paste(knit(text = out2), collapse = '\n')`

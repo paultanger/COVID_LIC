@@ -1,6 +1,4 @@
 
-## {{names(map.plots[i])}}
-
 ### How to read the analysis {.unlisted .unnumbered}
 Below, each country’s analysis contains:  
 
@@ -9,7 +7,7 @@ Below, each country’s analysis contains:
 3. a map of the country, with the sub-national area highlighted in cases where there are multiple crop calendars per country (due to variation in timing by area);
 4. a legend listing the different containment scenarios included in the LSHTM model.
 
-### Scenario descriptions
+### Scenario descriptions {.unlisted .unnumbered}
 
 In the LSHTM model, the researchers identify an unmitigated scenario (i.e. the government takes no action to contain the spread of COVID-19), as well as a variety of different containment scenarios.  They model the impacts and timing of the spread of COVID-19 for each scenario, as a way to estimate which approach could have the largest impact on reducing and/or delaying the cases, deaths, and other effects of COVID-19.
 
@@ -19,16 +17,14 @@ The ten containment scenarios involve social distancing, shielding, and/or a com
 
 * Basic Public Health & Social Measures (PHSM) was implemented as a 20% reduction in general contacts outside the home and a 25% reduction in transmission from symptomatic individuals corresponding to symptomatic people being encouraged to self isolate.
 
-```{r scenario-table-{{names(map.plots[i])}}, results='asis', echo = FALSE}
+```{r scenario-table-{{names(combined.plots[i])}}, results='asis', echo = FALSE}
   # can use kable or pander
   # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
   tabledata = tabledata
   print(tabledata %>%
       kable( row.names = F, booktabs = T) %>% #caption = "Scenario Descriptions",
       kable_styling(position = "center", bootstrap_options = c("striped", "hover", "condensed", full_width=F, position = "center"), latex_options = c("striped", "hold_position")))
-
 ```
-
 
 ### Caveats/Notes {.unlisted .unnumbered}
 * These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted [here](https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html).
@@ -36,52 +32,36 @@ The ten containment scenarios involve social distancing, shielding, and/or a com
 * The crop calendars do not include all crops grown in the country, nor all those that are important as a food source or for income generation.
 * Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
 
-```{r country-plots-{{names(map.plots[i])}}, fig.align='center', fig.width=6, echo = FALSE, warning=FALSE}
-  # right now, setup to use combined figs, but might want to do them separately so we can change things in them
-  country = "{{names(map.plots[i])}}"
-  #grid.arrange(map.plots[[country]][['bottom']])
-  # try separate.. need to align them
-  cases = map.plots[[country]][['cases']]
-  crop_plot = map.plots[[country]][['crop_plot']]
-  # adjust legend
-  cases = cases + theme(legend.position = "top", legend.spacing = unit(0.5, 'cm'), legend.key.width = unit(0.4, "cm")) + guides(color=guide_legend(nrow=3)) # ,label.position = "bottom"
-  #cases
-  # remove title from crop_plot
-  crop_plot = crop_plot + theme(plot.title = element_blank())
-  #grid.arrange(cases)
-  #grid.arrange(crop_plot)
-  # with plot grid
-  together <- plot_grid(cases, crop_plot, ncol=1, align="v", rel_heights = c(2, 1))
-  together
-  #grid.arrange(together)
+## {{names(combined.plots[i])}} 
+
+```{r country-plots-{{names(combined.plots[i])}}, fig.align='center', fig.width=6, echo = FALSE, warning = FALSE}
+  country = "{{names(combined.plots[i])}}"
+  # if there are regions, map each
+  if (length(combined.plots[[i]][['map_plot']]) < 2){
+    # try separate.. need to align them
+    cases = combined.plots[[country]][['cases']]
+    crop_plot = combined.plots[[country]][['crop_plot']][[1]]
+    # adjust legend
+    cases = cases + theme(legend.position = "top", legend.spacing = unit(0.5, 'cm'), legend.key.width = unit(0.4, "cm")) + guides(color=guide_legend(nrow=3)) # ,label.position = "bottom"
+    # remove title from crop_plot
+    crop_plot = crop_plot + theme(plot.title = element_blank())
+    # with plot grid
+    together <- plot_grid(cases, crop_plot, ncol=1, align="v", rel_heights = c(2, 1))
+    together
+  } else {
+
+  }
   
 ```
 
-```{r country-table-{{names(map.plots[i])}}, results='asis', echo = FALSE, include = FALSE}
-  # little table of key dates
-  # can use kable or pander
-  # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
-  # country = "{{names(map.plots[i])}}"
-  # 
-  # tabledata = PeaksbyCountry.wide.plots[PeaksbyCountry.wide.plots$USAID_Country == country, ]
-  # print(tabledata[,c(3:5)] %>%
-  #     kable( row.names = F, booktabs = T) %>% #caption = "Estimates of key dates",
-  #     kable_styling(font_size=9, position = "left", bootstrap_options = c("striped", "hover", "condensed", full_width=F, position = "left"), latex_options = c("striped", "hold_position")))
-
-```
-
-```{r country-maps-{{names(map.plots[i])}}, results='asis', fig.width=5, fig.align = 'center', echo = FALSE}
+```{r country-maps-{{names(combined.plots[i])}}, fig.width=5, fig.align = 'center', echo = FALSE}
   #out.width = "60%", 
   # these are the country maps
-
-  # align them? https://stackoverflow.com/questions/32780320/consistent-figures-size-with-gridextra-in-rmarkdown-knitr-html
-  # https://stackoverflow.com/questions/53659160/r-markdown-positioning-table-and-plot-side-by-side
-  # plots side by side
-  # https://bookdown.org/yihui/rmarkdown-cookbook/figures-side.html
-  # https://sebastiansauer.github.io/two-plots-rmd/
-  # https://stackoverflow.com/questions/37115276/control-alignment-of-two-side-by-side-plots-in-knitr
-  country = "{{names(map.plots[i])}}"
-  # the actual maps
-  grid.arrange(map.plots[[country]][['map_plot']])
-  cat("  \n")
+  country = "{{names(combined.plots[i])}}"
+  if (length(combined.plots[[i]][['map_plot']]) < 2){
+    # the actual maps
+    grid.arrange(combined.plots[[country]][['map_plot']][[1]])
+    #cat("  \n")
+  } else {
+  }
 ```

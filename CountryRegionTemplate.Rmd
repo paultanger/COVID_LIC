@@ -1,5 +1,5 @@
 
-```{r country-plots-{{i}}-regions-{{names(map.plots.regions[[i]]$map_plot[j])}}, fig.align='center', fig.width=6, echo = FALSE, warning=FALSE}
+```{r country-plots-{{i}}-regions-{{names(combined.plots[[i]]$map_plot[j])}}, fig.align='center', fig.width=6, echo = FALSE, warning=FALSE}
   # wanted to have chunk names with country names but it doesn't work with cote d'ivoire
   country = "{{names(map.plots.regions[i])}}"
   region = "{{names(map.plots.regions[[i]][['map_plot']][j])}}"
