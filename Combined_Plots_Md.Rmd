@@ -34,6 +34,7 @@ datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
 # cleaner version
 map.plots = readRDS(paste0(datadir, "country_plots_for_markdown_20200612_1023.RDS"))
 map.plots.regions = readRDS(paste0(datadir, "plots_by_region_20200612_1125.RDS"))
+combined.plots = readRDS(paste0(datadir, "combined.plots.for.markdown_20200616_2009.RDS"))
 #PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
 #colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
 tabledata = read.csv(paste0(datadir, "LSHTM_v3_scenarios.csv"))

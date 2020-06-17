@@ -20,7 +20,8 @@ other_crop_plots = readRDS("OtherCountriesAllRegionsCropPlots_20200603_1429.Robj
 #plots = readRDS("peak_plots_list_20200527_1619.RObj")
 #plots = readRDS("peak_plots_list_20200602_1706.RObj")
 # version with pretty breaks
-plots = readRDS("peak_plots_list_20200602_1712.RObj")
+# plots = readRDS("peak_plots_list_20200602_1712.RObj")
+plots = readRDS("peak_plots_listUKSmooth_20200616_1526.RObj")
 
 
 # the easier ones first, we'll take the list object from each and plot together
@@ -234,12 +235,13 @@ for(i in seq(map.plots)){
   paste(names(map.plots)[i], " ", filename)
   mapimg = readPNG(filename)
   mapimg = rasterGrob(mapimg)
-  plots_to_combine[[i]]$map_plot <- mapimg
+  map.plots[[i]]$map_plot <- mapimg
 }
 # save this
 setwd(datadir)
 filename = addStampToFilename("country_plots_for_markdown", "RDS")
 # saveRDS(plots_to_combine, filename)
+# saveRDS(map.plots, filename)
 
 i=1
 for(i in i:length(plots_to_combine)){
@@ -318,6 +320,10 @@ map_filenames.regions = map_filenames.regions[with(map_filenames.regions, order(
 # fix things where two words not sorting correctly
 rownames(map_filenames.regions) <- NULL
 map_filenames.regions = map_filenames.regions[c(1:44,46,45,47:90,92,91,93:110),]
+
+# until we have the maps remove new countries
+map_filenames.regions2 = map_filenames.regions[map_filenames.regions$USAID_Country %in% c("Benin", "Burkina Faso"),]
+map_filenames.regions = map_filenames.regions2
 
 for(i in i:length(map.plots.regions)){
   if (names(map.plots.regions)[[i]] == names(plots_by_region[i])){
@@ -436,6 +442,13 @@ dev.off()
 # }
 # dev.off()
 
+# do with the temp files for markdown approach
+map.plots = readRDS("country_plots_for_markdown_20200616_2003.RDS")
+region.plots = readRDS("plots_by_region_20200616_1936.RDS")
+combined.plots = c(map.plots, region.plots)
+combined.plots = combined.plots[order(names(combined.plots))]
+filename = addStampToFilename("combined.plots.for.markdown", "RDS")
+# saveRDS(combined.plots, filename)
 
 # put into big list
 allplots = vector(mode = "list", length = length(map.plots))

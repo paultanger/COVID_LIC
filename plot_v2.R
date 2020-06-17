@@ -91,7 +91,7 @@ filename = addStampToFilename('subset.alls.plot', 'RDS')
 ############### DO ALL ##################
 
 # load file
-subset.alls.plot = readRDS("subset.alls.plot_20200612_1606.RDS")
+subset.alls.plot = readRDS("subset.alls.plot_20200616_1524.RDS")
 
 # define countries to include
 # TODO: adapt later to filter based on subset of other_sorting_cols
@@ -113,7 +113,7 @@ AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll
 # save object
 filename = addStampToFilename('AllAllsData.11scens.AgeAll.SelectCountries.WithUKdate', 'RObj')
 #saveRDS(AllAllsData.7scens.AgeAll.SelectCountries, filename)
-AllAllsData.7scens.AgeAll.SelectCountries = readRDS("AllAllsData.11scens.AgeAll.SelectCountries.WithUKdate_20200615_1350.RObj")
+AllAllsData.7scens.AgeAll.SelectCountries = readRDS("AllAllsData.11scens.AgeAll.SelectCountries.WithUKdate_20200616_1525.RObj")
 
 # make a list of the subsets for each country
 countrieslist = split(AllAllsData.7scens.AgeAll.SelectCountries, by="USAID_Country")
@@ -137,7 +137,7 @@ plotsUK$Afghanistan$cases
 # save object
 setwd(datadir)
 filename = addStampToFilename('peak_plots_listUKSmooth', 'RObj')
-#saveRDS(plots, filename)
+#saveRDS(plotsUK, filename)
 plotsUK = readRDS("peak_plots_listUKSmooth.RObj")
 
 # print them
