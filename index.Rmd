@@ -90,7 +90,7 @@ Visit the following pages to explore the data for specific countries.
 
 ## [Countries with multiple, sub-national crop calendars](https://paultanger.github.io/COVID_LIC/subnationalregions.html)
 
-For countries with sub-national regional crops, you can view the information [here](https://paultanger.github.io/COVID_LIC/subnationalregions.html).
+For countries with multiple, sub-national crop calendars, you can view the information [here](https://paultanger.github.io/COVID_LIC/subnationalregions.html).
 
 ```{r make-country-region-links, echo = FALSE, results='asis'}
 # or maybe just make one big list of countries and don't highlight the two groups?
@@ -103,7 +103,7 @@ cat("  \n")
 
 ## [Countries with national level crop calendars](https://paultanger.github.io/COVID_LIC/nationalregions.html)
 
-For countries with crops grown throughout the country you can view the information [here](https://paultanger.github.io/COVID_LIC/nationalregions.html).
+For countries with national level crop calendars you can view the information [here](https://paultanger.github.io/COVID_LIC/nationalregions.html).
 
 ```{r make-country-links, echo = FALSE, results='asis'}
 cat("  \n")
