@@ -11,9 +11,8 @@ data/
 figure/
 rsconnect/
 2020_06_11_archive/
-Combined_Plots_Md.html
+*.html
 Combined_Plots_Md.pdf
 Combined_Plots_Md.tex
 Combined_Plots_Md_files
 new_scenario_ids.csv
-CountryRegionTemplate.html

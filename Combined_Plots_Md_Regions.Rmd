@@ -132,9 +132,9 @@ for(i in seq(combined.plots)){
   if (length(combined.plots[[i]][['map_plot']]) < 2){
       out = c(out, knit_expand('CountryTemplate.Rmd'))
   } else{
-      cat("\n##", names(combined.plots[i]),  "\n  ")
+      out = c(out, knit_expand(text = paste0("\n## ", {{names(combined.plots[i])}},  "\n  ")))
       for (j in seq(combined.plots[[i]][['map_plot']])){
-        #out = c(out, knit_expand('CountryTemplateSubRegions.Rmd'))
+        out = c(out, knit_expand('CountryTemplateSubRegions.Rmd'))
       }
   }
 }

@@ -1,4 +1,3 @@
-## {{names(combined.plots[i])}}
 
 ```{r fig.align='center', fig.width=9, fig.height=9, echo = FALSE, warning = FALSE}
   country = "{{names(combined.plots[i])}}"
