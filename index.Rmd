@@ -32,7 +32,9 @@ countries  = as.data.frame(names(country.plots))
 link = "https://paultanger.github.io/COVID_LIC/nationalregions.html#"
 countries$link = paste0(link, gsub(" ", "-", countries$`names(country.plots)`))
 # create markdown
-countries$linkMd = paste0("[", countries$`names(country.plots)`, "](", countries$link, ")  \n")
+# countries$linkMd = paste0("[", countries$`names(country.plots)`, "](", countries$link, ")  \n")
+# without newline
+countries$linkMd = paste0("[", countries$`names(country.plots)`, "](", countries$link, ") ")
 ## for countries with regions
 countries.regions  = as.data.frame(names(region.plots))
 # create link
@@ -42,7 +44,9 @@ countries.regions$link = paste0(link2, gsub(" ", "-", countries.regions$`names(r
 countries.regions$link = gsub("\\(", "", countries.regions$link)
 countries.regions$link = gsub("\\)", "", countries.regions$link)
 countries.regions$link = gsub("\\'", "", countries.regions$link)
-countries.regions$linkMd = paste0("[", countries.regions$`names(region.plots)`, "](", countries.regions$link, ")  \n")
+# countries.regions$linkMd = paste0("[", countries.regions$`names(region.plots)`, "](", countries.regions$link, ")  \n")
+# without newline
+countries.regions$linkMd = paste0("[", countries.regions$`names(region.plots)`, "](", countries.regions$link, ")")
 ```
 
 # Overview
@@ -84,7 +88,7 @@ Refer to the LSHTM link below for more details on the model, including the defin
 Visit the following pages to explore the data for specific countries. 
 
 
-## [Countries with sub-national level crop production](https://paultanger.github.io/COVID_LIC/subnationalregions.html)
+## [Countries with multiple, sub-national crop calendars](https://paultanger.github.io/COVID_LIC/subnationalregions.html)
 
 For countries with sub-national regional crops, you can view the information [here](https://paultanger.github.io/COVID_LIC/subnationalregions.html).
 
@@ -97,7 +101,7 @@ cat("  \n")
 #lapply(as.vector(countries.regions$linkMd), FUN=cat)
 ```
 
-## [Countries with national level crop production](https://paultanger.github.io/COVID_LIC/nationalregions.html)
+## [Countries with national level crop calendars](https://paultanger.github.io/COVID_LIC/nationalregions.html)
 
 For countries with crops grown throughout the country you can view the information [here](https://paultanger.github.io/COVID_LIC/nationalregions.html).
 
@@ -111,7 +115,7 @@ cat("  \n")
 * Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
 * Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. 
 * GEOGLAM major crop type areas are based on the IFPRI/IIASA SPAM 2005 beta release (2013), USDA/NASS 2013 CDL, 2013 AAFC Annual Crop Inventory Map, GLAM/UMD, GLAD/UMD, Australian Land Use and Management Classification (Version 7), SIAP, ARC, and JRC. Country administrative boundaries are from GADM version 4 (https://gadm.org/data.html). Names and boundaries are not necessarily authoritative.
-* Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.
+* Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact chillbruner@usaid.gov.
 
 # Citation and license
 To cite this work, please use:
