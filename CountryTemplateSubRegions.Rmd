@@ -11,13 +11,18 @@
   # #cases
   # remove title from crop_plot
   #crop_plot = crop_plot + theme(plot.title = element_blank())
+  # increase axis label sizes
+  crop_plot = crop_plot + theme(axis.text.x = element_text(angle=90, size=12))
+  cases = cases + theme(axis.text.x = element_text(angle=90, size=12))
+  # increase legend font size
+  cases = cases + theme(legend.text = element_text(size=10))
   # with plot grid
   together <- plot_grid(cases, crop_plot, ncol=1, align="v", rel_heights = c(3, 1.5))
   # together
   grid.arrange(together)
 ```
 
-```{r fig.width=3.7, fig.align = 'center', echo = FALSE}
+```{r out.width='50%', fig.align = 'center', echo = FALSE, results='asis'}
 # these are the country maps
 country = "{{names(combined.plots[i])}}"
 region = "{{names(combined.plots[[i]][['map_plot']][j])}}"

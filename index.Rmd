@@ -8,12 +8,6 @@ author: |
 date: |  
   <center> `r format(Sys.time(), '%d %B %Y, %H:%M:%S %Z')` </center> 
 output:
-  # pdf_document:
-  #   toc: true
-  #   toc_depth: 3
-  #   highlight: tango
-  #   latex_engine: xelatex
-  #   keep_tex: true
   html_document:
     toc: true
     toc_float: true
@@ -21,12 +15,6 @@ output:
     #number_sections: true
     theme: cosmo
     highlight: tango
-# header-includes:
-#   - \usepackage{fontspec}
-#fontsize: 10pt
-#geometry: margin= 0.75in
-# https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
-#mainfont: Latin Modern Sans #Arial #Helvetica
 ---
 
 ```{r setup, include=FALSE}
@@ -35,19 +23,26 @@ source('functions.R')
 suppressPackageStartupMessages(source('load_libs.R'))
 # get data files we need
 datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
-#map.plots = readRDS(paste0(datadir, "map.plots_20200611_1057.RDS"))
-# cleaner version
-#map.plots = readRDS(paste0(datadir, "country_plots_for_markdown_20200612_1023.RDS"))
-#map.plots.regions = readRDS(paste0(datadir, "plots_by_region_20200612_1125.RDS"))
-#combined.plots = readRDS(paste0(datadir, "combined.plots.for.markdown_20200617_1132.RDS"))
-# for testing - just countries
-combined.plots = readRDS(paste0(datadir, "map.plots_20200617_1853.RDS"))
-# for testing - countries with regions
-#combined.plots = readRDS(paste0(datadir, "plots_by_region_20200617_1911.RDS"))
-#PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
-#colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
-tabledata = read.csv(paste0(datadir, "LSHTM_v3_scenarios.csv"))
-colnames(tabledata) = c("Scenario Abbreviation", "Scenario Name", "Description")
+country.plots = readRDS(paste0(datadir, "map.plots_20200617_1853.RDS"))
+region.plots = readRDS(paste0(datadir, "plots_by_region_20200617_1911.RDS"))
+## for countries
+# country names
+countries  = as.data.frame(names(country.plots))
+# create link
+link = "https://paultanger.github.io/COVID_LIC/nationalregions.html#"
+countries$link = paste0(link, gsub(" ", "-", countries$`names(country.plots)`))
+# create markdown
+countries$linkMd = paste0("[", countries$`names(country.plots)`, "](", countries$link, ")  \n")
+## for countries with regions
+countries.regions  = as.data.frame(names(region.plots))
+# create link
+link2 = "https://paultanger.github.io/COVID_LIC/subnationalregions.html#"
+countries.regions$link = paste0(link2, gsub(" ", "-", countries.regions$`names(region.plots)`))
+# remove special chars
+countries.regions$link = gsub("\\(", "", countries.regions$link)
+countries.regions$link = gsub("\\)", "", countries.regions$link)
+countries.regions$link = gsub("\\'", "", countries.regions$link)
+countries.regions$linkMd = paste0("[", countries.regions$`names(region.plots)`, "](", countries.regions$link, ")  \n")
 ```
 
 # Overview
@@ -84,70 +79,41 @@ Refer to the LSHTM link below for more details on the model, including the defin
 
 * For the crop calendars displayed in this document, each sub-national area is represented where the timing of the crop production cycle differs.  In cases where crop cycles followed the same timing throughout the country, only one crop calendar is shown for that country.
 
-# Country Specific Information  {.tabset .tabset-fade}
+# Country specific information
 
-### How to read the analysis {.unlisted .unnumbered}
-Below, each country’s analysis contains:  
+Visit the following pages to explore the data for specific countries. 
 
-1. a graph of the LSHTM projections of COVID-19 case totals over times (all age groups combined) for an unmitigated scenario plus ten disease containment scenarios (see explanation below);
-2. a crop calendar showing when the crop production phases of key staple crops occur throughout the year (with multiple crop calendars in cases where variation in timing occurs);
-3. a map of the country, with the sub-national area highlighted in cases where there are multiple crop calendars per country (due to variation in timing by area);
-4. a legend listing the different containment scenarios included in the LSHTM model.
 
-### Scenario descriptions {.unlisted .unnumbered}
+## [Countries with sub-national level crop production](https://paultanger.github.io/COVID_LIC/subnationalregions.html)
 
-In the LSHTM model, the researchers identify an unmitigated scenario (i.e. the government takes no action to contain the spread of COVID-19), as well as a variety of different containment scenarios.  They model the impacts and timing of the spread of COVID-19 for each scenario, as a way to estimate which approach could have the largest impact on reducing and/or delaying the cases, deaths, and other effects of COVID-19.
+For countries with sub-national regional crops, you can view the information [here](https://paultanger.github.io/COVID_LIC/subnationalregions.html).
 
-The ten containment scenarios involve social distancing, shielding, and/or a combination of these strategies.  The different strategies and selected scenarios are described below: 
-
-* Greenzone shielding (GZ) was implemented in the model by stratifying the population in one shielded and one unshielded compartment. The GZ applies to those aged 60+ years. We assume shielding of this population has a coverage fraction, and reduction fraction; we refer to GZ interventions by coverage / reduction, so “80C80R shielding” is 80% coverage with 80% contact reduction to the shielded group.
-
-* Basic Public Health & Social Measures (PHSM) was implemented as a 20% reduction in general contacts outside the home and a 25% reduction in transmission from symptomatic individuals corresponding to symptomatic people being encouraged to self isolate.
-
-```{r scenario-table-{{names(combined.plots[i])}}, results='asis', echo = FALSE}
-  # can use kable or pander
-  # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
-  tabledata = tabledata
-  print(tabledata %>%
-      kable( row.names = F, booktabs = T) %>% #caption = "Scenario Descriptions",
-      kable_styling(position = "center", bootstrap_options = c("striped", "hover", "condensed", full_width=F, position = "center"), latex_options = c("striped", "hold_position")))
+```{r make-country-region-links, echo = FALSE, results='asis'}
+# or maybe just make one big list of countries and don't highlight the two groups?
+#pandoc.p("This is a Heading in Code", level = 2)
+cat("  \n")
+cat(countries.regions$linkMd)
+cat("  \n")
+#lapply(as.vector(countries.regions$linkMd), FUN=cat)
 ```
 
-### Caveats/Notes {.unlisted .unnumbered}
-* These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted [here](https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html).
-* As noted above, the ‘Day 0’ used for the graphs here is an estimation of when a country reached a date with 50 active infections.
-* The crop calendars do not include all crops grown in the country, nor all those that are important as a food source or for income generation.
-* Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
+## [Countries with national level crop production](https://paultanger.github.io/COVID_LIC/nationalregions.html)
 
-[click here to return to the overview page](https://paultanger.github.io/COVID_LIC/)
+For countries with crops grown throughout the country you can view the information [here](https://paultanger.github.io/COVID_LIC/nationalregions.html).
 
-```{r run_loop, echo=FALSE}
-# results can't be asis
-# options for results are asis - passthrough.. hold - put all results below code
-out = NULL
-for(i in seq(combined.plots)){
-  if (length(combined.plots[[i]][['map_plot']]) < 2){
-      out = c(out, knit_expand('CountryTemplate.Rmd'))
-  } else{
-      out = c(out, knit_expand(text = paste0("\n## ", {{names(combined.plots[i])}},  "\n  ")))
-      for (j in seq(combined.plots[[i]][['map_plot']])){
-        out = c(out, knit_expand('CountryTemplateSubRegions.Rmd'))
-      }
-  }
-}
+```{r make-country-links, echo = FALSE, results='asis'}
+cat("  \n")
+cat(countries$linkMd)
+cat("  \n")
 ```
-
-`r paste(knit(text = out), collapse = '\n')`
-
-# Back to Overview
-[click here to return to the overview page](https://paultanger.github.io/COVID_LIC/)
 
 # Data sources
 * Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
 * Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. 
+* GEOGLAM major crop type areas are based on the IFPRI/IIASA SPAM 2005 beta release (2013), USDA/NASS 2013 CDL, 2013 AAFC Annual Crop Inventory Map, GLAM/UMD, GLAD/UMD, Australian Land Use and Management Classification (Version 7), SIAP, ARC, and JRC. Country administrative boundaries are from GADM version 4 (https://gadm.org/data.html). Names and boundaries are not necessarily authoritative.
 * Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.
 
-# Citation and License
+# Citation and license
 To cite this work, please use:
 
 * USAID / Bureau for Resilience and Food Security, Data, Monitoring, and Analytics Team. "COVID-19 Modeling and the Crop Cycle". 2020. With data from the London School of Hygiene & Tropical Medicine Centre for the Mathematical Modelling of Infectious Diseases (LSHTM/CMMID) and from the Crop Monitor Initiative of the Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM). https://paultanger.github.io/COVID_LIC/. Accessed `r format(Sys.time(), '%d %B %Y, %H:%M:%S %Z')`.

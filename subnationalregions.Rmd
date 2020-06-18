@@ -1,5 +1,5 @@
 ---
-pagetitle: "COVID-19 Modeling and the Crop Cycle" 
+pagetitle: "COVID-19 Modeling and the Crop Cycle subnational regions" 
 title: |  
   <center> ![logo](Horizontal_RGB_294.png){width='50%'}  
   COVID-19 Modeling and the Crop Cycle  </center>  
@@ -41,50 +41,16 @@ datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
 #map.plots.regions = readRDS(paste0(datadir, "plots_by_region_20200612_1125.RDS"))
 #combined.plots = readRDS(paste0(datadir, "combined.plots.for.markdown_20200617_1132.RDS"))
 # for testing - just countries
-combined.plots = readRDS(paste0(datadir, "map.plots_20200617_1853.RDS"))
+#combined.plots = readRDS(paste0(datadir, "map.plots_20200617_1853.RDS"))
 # for testing - countries with regions
-#combined.plots = readRDS(paste0(datadir, "plots_by_region_20200617_1911.RDS"))
+combined.plots = readRDS(paste0(datadir, "plots_by_region_20200617_1911.RDS"))
 #PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
 #colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
 tabledata = read.csv(paste0(datadir, "LSHTM_v3_scenarios.csv"))
 colnames(tabledata) = c("Scenario Abbreviation", "Scenario Name", "Description")
 ```
 
-# Overview
-## Introduction
-The effects of COVID-19 go well beyond the initial acute health impacts into prolonged repercussions on the economy, employment, poverty levels, safe water access, food security status, crop production, and much more.  In this analysis, we looked at whether projections of COVID-19 case totals in low-and-middle-income countries (LMICs) overlapped with key phases in the crop production cycle to understand where, when, and on which important crops COVID-19 could take a toll.  From this work, we can better inform our thinking on where to focus on Feed the Future programming, estimate which areas will be hit hardest next, and whether COVID-19 impacts will affect crops that are significant food sources, income generators, or both.  Combined with data on the demographics of value chain actors involved in each affected crop, we could also see whether the impacts are projected to disproportionately impact women, smallholder farmers, small businesses, and other already-marginalized groups. 
-
-## Methodology
-We began with time series projections of COVID-19 case totals from a model developed by the Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM), and overlaid those data with the calendar/timing of phases of the crop cycles in various countries from the Crop Monitor initiative of the Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) to observe if peaks in the number of cases for a country were projected to occur at the same time as a key phase in the cycle of production for crops important to that country.
-
-## The LSHTM model
-* This model provides simulation-based estimates for COVID-19 epidemic scenarios in many low-and-middle-income countries.  The model starts with the date a country reached 50 active infections (i.e. “Day 0”), and then projects the totals of several variables (cases, deaths, hospitalizations, etc.) each day over time for an ‘unmitigated’ scenario (i.e. the country takes no action to contain COVID-19 spread), as well as in ten different COVID-19 containment strategies involving social distancing, shielding, lockdowns, or combined approaches.  The projections estimate how different containment strategies could have different outcomes on the spread and intensity of the disease in a country.  
-
-* While you can see the full results and more granularity of the LSHTM research for each country [here](https://ln2.sync.com/dl/b3fc9ebc0?sync_id=1394099258#36ipcgk3-5mghvhh4-vi29b9yy-8e688twu), the line graphs in this document utilize a loess smoothing function over a 10% window to plot the model’s projections for each country’s case totals across time for the eleven scenarios (unmitigated plus ten containment strategies) for all age groups combined.
-
-* ‘Day 0’ in the LSHTM model is defined as the date the country has 50 active infections. Note that this is different from the date the country reaches 50 total (cumulative) infections. While the true date of ‘Day 0’ is unknown, the model estimates this date for each country by looking at reported cases and adjusting that number based on a few factors, including:
-
-  + An estimate of the difference between the number of actual infections and the number of reported cases (not all infections are reported);
-  + An estimate of what portion of cases are asymptomatic (since many cases, especially in young people, may be asymptomatic and thus not ever reported/tested/known to the medical community);
-  + An estimate of the delay between initial infection to onset of symptoms, and then the lag between onset of symptoms to accessing a test and getting results to be counted as a ‘confirmed case’.
-  + Note: some countries do not yet meet the criteria of having had a ‘Day 0’ (i.e., a day with 50 active infections).
-
-
-Refer to the LSHTM link below for more details on the model, including the definition of the different scenarios and methodologies for determining transmission rates, etc.
-
-## The GEOGLAM crop calendars
-* For each country, the timing of crop production phases was plotted for significant staple crops, and for each sub-national area where production occurs in a country.  In the case of multiple crop seasons such as maize 1 and maize 2, the more significant season in terms of total production will be labeled as the first crop, e.g, maize 1.
-
-* The phases of the crop production cycle reflected in this analysis were defined as:
-
-  + Planting: Start of Planting through the Early Vegetative stage
-  + Idle (represents the dormancy stage of winter wheat where applicable)
-  + Vegetative: Start of Vegetative period through the Reproductive period (Period of peak weeding)
-  + Harvest: Ripening through Harvest
-
-* For the crop calendars displayed in this document, each sub-national area is represented where the timing of the crop production cycle differs.  In cases where crop cycles followed the same timing throughout the country, only one crop calendar is shown for that country.
-
-# Country Specific Information  {.tabset .tabset-fade}
+# Country specific information  {.tabset .tabset-fade}
 
 ### How to read the analysis {.unlisted .unnumbered}
 Below, each country’s analysis contains:  
@@ -116,6 +82,8 @@ The ten containment scenarios involve social distancing, shielding, and/or a com
 ### Caveats/Notes {.unlisted .unnumbered}
 * These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted [here](https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html).
 * As noted above, the ‘Day 0’ used for the graphs here is an estimation of when a country reached a date with 50 active infections.
+* The quality of COVID-19-related data that is available for LMICs is variable and this likely impacts the accuracy of modeling.
+* A number of COVID-19 modeling efforts are underway. The use of the LSHTM modeling for this analysis does not imply USAID endorsement of this approach over others.
 * The crop calendars do not include all crops grown in the country, nor all those that are important as a food source or for income generation.
 * Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
 
@@ -139,15 +107,16 @@ for(i in seq(combined.plots)){
 
 `r paste(knit(text = out), collapse = '\n')`
 
-# Back to Overview
+# Back to overview
 [click here to return to the overview page](https://paultanger.github.io/COVID_LIC/)
 
 # Data sources
 * Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
 * Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. 
+* GEOGLAM major crop type areas are based on the IFPRI/IIASA SPAM 2005 beta release (2013), USDA/NASS 2013 CDL, 2013 AAFC Annual Crop Inventory Map, GLAM/UMD, GLAD/UMD, Australian Land Use and Management Classification (Version 7), SIAP, ARC, and JRC. Country administrative boundaries are from GADM version 4 (https://gadm.org/data.html). Names and boundaries are not necessarily authoritative.
 * Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security.  For questions on this analysis, please contact RFSAnalyticsQueries@usaid.gov.
 
-# Citation and License
+# Citation and license
 To cite this work, please use:
 
 * USAID / Bureau for Resilience and Food Security, Data, Monitoring, and Analytics Team. "COVID-19 Modeling and the Crop Cycle". 2020. With data from the London School of Hygiene & Tropical Medicine Centre for the Mathematical Modelling of Infectious Diseases (LSHTM/CMMID) and from the Crop Monitor Initiative of the Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM). https://paultanger.github.io/COVID_LIC/. Accessed `r format(Sys.time(), '%d %B %Y, %H:%M:%S %Z')`.

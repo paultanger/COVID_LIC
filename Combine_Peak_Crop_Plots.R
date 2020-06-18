@@ -142,11 +142,11 @@ map_filenames.countries = unique(map_filenames[map_filenames$plot_regions == F, 
 map_filenames.regions = unique(map_filenames[map_filenames$plot_regions == T, c(3,5)])
 
 # get list of region countries that are new (not in old list)
-new.map_filenames.regions = map_filenames.regions
-old.map_filenames.regions = map_filenames.regions
+# new.map_filenames.regions = map_filenames.regions
+# old.map_filenames.regions = map_filenames.regions
 
 
-missing.map.regions = setdiff(new.map_filenames.regions$map_filename, old.map_filenames.regions$map_filename)
+# missing.map.regions = setdiff(new.map_filenames.regions$map_filename, old.map_filenames.regions$map_filename)
 setwd(datadir)
 filename = addStampToFilename("missing.map.regions", "csv")
 # write.csv(missing.map.regions, filename, row.names = F)
