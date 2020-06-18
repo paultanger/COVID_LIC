@@ -334,6 +334,12 @@ map_filenames.regions = map_filenames.regions[with(map_filenames.regions, order(
 
 # fix things where two words not sorting correctly
 rownames(map_filenames.regions) <- NULL
+# this includes: 
+# Central African Republic (West has Central region map; Vakaga has West; South West has Vakaga; Central has South West)
+# Chad (Zone 2 East has Zone 4; Zone 3 has  Zone 2 East; Zone 4 has Zone 3)
+# Guinea (Zone North has Zone South; Zone South has Zone South East; Zone East has Zone West; Zone West has Zone North)
+# South Sudan (Bahr El Ghazal has Central Equatoria; Central Equatoria has Kapoeta; Kapoeta has  Bahr El Ghazal)
+# Tanzania (Central has Northern; Northeast has Northern Coast; Northern has Southeast; Northern Coast has Southwest; Southeast has Central; Southwest has Northeast)
 #map_filenames.regions = map_filenames.regions[c(1:),]
 #map_filenames.regions = map_filenames.regions[c(1:44,46,45,47:90,92,91,93:110),]
 
