@@ -334,7 +334,7 @@ map_filenames.regions = map_filenames.regions[with(map_filenames.regions, order(
 
 # fix things where two words not sorting correctly
 rownames(map_filenames.regions) <- NULL
-map_filenames.regions = map_filenames.regions[c(1:),]
+#map_filenames.regions = map_filenames.regions[c(1:),]
 #map_filenames.regions = map_filenames.regions[c(1:44,46,45,47:90,92,91,93:110),]
 
 # until we have the maps remove new countries

@@ -41,7 +41,7 @@ datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
 #map.plots.regions = readRDS(paste0(datadir, "plots_by_region_20200612_1125.RDS"))
 #combined.plots = readRDS(paste0(datadir, "combined.plots.for.markdown_20200617_1132.RDS"))
 # for testing - just countries
-combined.plots = readRDS(paste0(datadir, "map.plots_20200617_1853.RDS"))
+#combined.plots = readRDS(paste0(datadir, "map.plots_20200617_1853.RDS"))
 # for testing - countries with regions
 combined.plots = readRDS(paste0(datadir, "plots_by_region_20200617_1911.RDS"))
 #PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
@@ -132,8 +132,9 @@ for(i in seq(combined.plots)){
   if (length(combined.plots[[i]][['map_plot']]) < 2){
       out = c(out, knit_expand('CountryTemplate.Rmd'))
   } else{
+      cat("\n##", names(combined.plots[i]),  "\n  ")
       for (j in seq(combined.plots[[i]][['map_plot']])){
-        out = c(out, knit_expand('CountryTemplateSubRegions.Rmd'))
+        #out = c(out, knit_expand('CountryTemplateSubRegions.Rmd'))
       }
   }
 }
