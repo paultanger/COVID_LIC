@@ -39,10 +39,11 @@ datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
 # cleaner version
 #map.plots = readRDS(paste0(datadir, "country_plots_for_markdown_20200612_1023.RDS"))
 #map.plots.regions = readRDS(paste0(datadir, "plots_by_region_20200612_1125.RDS"))
-combined.plots = readRDS(paste0(datadir, "combined.plots.for.markdown_20200617_1132.RDS"))
-# for testing
-#combined.plots = readRDS(paste0(datadir, "combined.plots.for.testing.RDS"))
-
+#combined.plots = readRDS(paste0(datadir, "combined.plots.for.markdown_20200617_1132.RDS"))
+# for testing - just countries
+combined.plots = readRDS(paste0(datadir, "map.plots_20200617_1853.RDS"))
+# for testing - countries with regions
+combined.plots = readRDS(paste0(datadir, "plots_by_region_20200617_1911.RDS"))
 #PeaksbyCountry.wide.plots = read.csv(paste0(datadir, "PeaksbyCountry.wide.plots_20200611_1003.csv"))
 #colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases Date", "Peak Deaths Date")
 tabledata = read.csv(paste0(datadir, "LSHTM_v3_scenarios.csv"))
@@ -90,11 +91,51 @@ Refer to the LSHTM link below for more details on the model, including the defin
 
 # Country Specific Information  {.tabset .tabset-fade}
 
+### How to read the analysis {.unlisted .unnumbered}
+Below, each country’s analysis contains:  
+
+1. a graph of the LSHTM projections of COVID-19 case totals over times (all age groups combined) for an unmitigated scenario plus ten disease containment scenarios (see explanation below);
+2. a crop calendar showing when the crop production phases of key staple crops occur throughout the year (with multiple crop calendars in cases where variation in timing occurs);
+3. a map of the country, with the sub-national area highlighted in cases where there are multiple crop calendars per country (due to variation in timing by area);
+4. a legend listing the different containment scenarios included in the LSHTM model.
+
+### Scenario descriptions {.unlisted .unnumbered}
+
+In the LSHTM model, the researchers identify an unmitigated scenario (i.e. the government takes no action to contain the spread of COVID-19), as well as a variety of different containment scenarios.  They model the impacts and timing of the spread of COVID-19 for each scenario, as a way to estimate which approach could have the largest impact on reducing and/or delaying the cases, deaths, and other effects of COVID-19.
+
+The ten containment scenarios involve social distancing, shielding, and/or a combination of these strategies.  The different strategies and selected scenarios are described below: 
+
+* Greenzone shielding (GZ) was implemented in the model by stratifying the population in one shielded and one unshielded compartment. The GZ applies to those aged 60+ years. We assume shielding of this population has a coverage fraction, and reduction fraction; we refer to GZ interventions by coverage / reduction, so “80C80R shielding” is 80% coverage with 80% contact reduction to the shielded group.
+
+* Basic Public Health & Social Measures (PHSM) was implemented as a 20% reduction in general contacts outside the home and a 25% reduction in transmission from symptomatic individuals corresponding to symptomatic people being encouraged to self isolate.
+
+```{r scenario-table-{{names(combined.plots[i])}}, results='asis', echo = FALSE}
+  # can use kable or pander
+  # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
+  tabledata = tabledata
+  print(tabledata %>%
+      kable( row.names = F, booktabs = T) %>% #caption = "Scenario Descriptions",
+      kable_styling(position = "center", bootstrap_options = c("striped", "hover", "condensed", full_width=F, position = "center"), latex_options = c("striped", "hold_position")))
+```
+
+### Caveats/Notes {.unlisted .unnumbered}
+* These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted [here](https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html).
+* As noted above, the ‘Day 0’ used for the graphs here is an estimation of when a country reached a date with 50 active infections.
+* The crop calendars do not include all crops grown in the country, nor all those that are important as a food source or for income generation.
+* Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
+
 ```{r run_loop, echo=FALSE}
+# results can't be asis
 # options for results are asis - passthrough.. hold - put all results below code
 out = NULL
 for(i in seq(combined.plots)){
-  out = c(out, knit_expand('CountryTemplate.Rmd'))
+  if (length(combined.plots[[i]][['map_plot']]) < 2){
+      out = c(out, knit_expand('CountryTemplate.Rmd'))
+  } else{
+      for (j in seq(combined.plots[[i]][['map_plot']])){
+        out = c(out, knit_expand('CountryTemplateSubRegions.Rmd'))
+      }
+  }
 }
 ```
 

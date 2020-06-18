@@ -1,0 +1,90 @@
+
+## {{names(combined.plots[i])}}
+
+### How to read the analysis {.unlisted .unnumbered}
+Below, each country’s analysis contains:  
+
+1. a graph of the LSHTM projections of COVID-19 case totals over times (all age groups combined) for an unmitigated scenario plus ten disease containment scenarios (see explanation below);
+2. a crop calendar showing when the crop production phases of key staple crops occur throughout the year (with multiple crop calendars in cases where variation in timing occurs);
+3. a map of the country, with the sub-national area highlighted in cases where there are multiple crop calendars per country (due to variation in timing by area);
+4. a legend listing the different containment scenarios included in the LSHTM model.
+
+### Scenario descriptions
+
+In the LSHTM model, the researchers identify an unmitigated scenario (i.e. the government takes no action to contain the spread of COVID-19), as well as a variety of different containment scenarios.  They model the impacts and timing of the spread of COVID-19 for each scenario, as a way to estimate which approach could have the largest impact on reducing and/or delaying the cases, deaths, and other effects of COVID-19.
+
+The ten containment scenarios involve social distancing, shielding, and/or a combination of these strategies.  The different strategies and selected scenarios are described below: 
+
+* Greenzone shielding (GZ) was implemented in the model by stratifying the population in one shielded and one unshielded compartment. The GZ applies to those aged 60+ years. We assume shielding of this population has a coverage fraction, and reduction fraction; we refer to GZ interventions by coverage / reduction, so “80C80R shielding” is 80% coverage with 80% contact reduction to the shielded group.
+
+* Basic Public Health & Social Measures (PHSM) was implemented as a 20% reduction in general contacts outside the home and a 25% reduction in transmission from symptomatic individuals corresponding to symptomatic people being encouraged to self isolate.
+
+```{r scenario-table-{{names(combined.plots[i])}}, results='asis', echo = FALSE}
+  # can use kable or pander
+  # https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
+  tabledata = tabledata
+  print(tabledata %>%
+      kable( row.names = F, booktabs = T) %>% #caption = "Scenario Descriptions",
+      kable_styling(position = "center", bootstrap_options = c("striped", "hover", "condensed", full_width=F, position = "center"), latex_options = c("striped", "hold_position")))
+```
+
+### Caveats/Notes {.unlisted .unnumbered}
+* These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted [here](https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html).
+* As noted above, the ‘Day 0’ used for the graphs here is an estimation of when a country reached a date with 50 active infections.
+* The crop calendars do not include all crops grown in the country, nor all those that are important as a food source or for income generation.
+* Maps, area names, and borders do not necessarily reflect the concurrence of the US Government.
+
+```{r country-plots-{{names(combined.plots[i])}}, fig.align='center', fig.width=6, echo = FALSE, warning=FALSE}
+  country = "{{names(combined.plots[i])}}"
+  # if there are regions, map each
+  if (length(combined.plots[[i]][['map_plot']]) < 2){
+    # try separate.. need to align them
+    cases = combined.plots[[country]][['cases']]
+    crop_plot = combined.plots[[country]][['crop_plot']][[1]]
+    # adjust legend
+    cases = cases + theme(legend.position = "top", legend.spacing = unit(0.5, 'cm'), legend.key.width = unit(0.4, "cm")) + guides(color=guide_legend(nrow=3)) # ,label.position = "bottom"
+    # remove title from crop_plot
+    crop_plot = crop_plot + theme(plot.title = element_blank())
+    # with plot grid
+    together <- plot_grid(cases, crop_plot, ncol=1, align="v", rel_heights = c(2, 1))
+    together
+  } else {
+    #loop through regions
+    for (j in seq(combined.plots[[i]][['map_plot']])){
+      region = "{{names(combined.plots[[i]][['map_plot']][j])}}"
+      # try separate.. need to align them
+      cases = combined.plots[[country]]$cases
+      crop_plot = combined.plots[[country]][['crop_plots']][[region]][[1]]
+      # adjust legend
+      cases = cases + theme(legend.position = "top", legend.spacing = unit(0.5, 'cm'), legend.key.width = unit(0.4, "cm")) + guides(color=guide_legend(nrow=3)) # ,label.position = "bottom"
+      # #cases
+      # remove title from crop_plot
+      #crop_plot = crop_plot + theme(plot.title = element_blank())
+      # with plot grid
+      together <- plot_grid(cases, crop_plot, ncol=1, align="v", rel_heights = c(2, 1))
+      # together
+      grid.arrange(together)
+      # cat("  \n")
+    }
+  }
+  
+```
+
+```{r country-maps-{{names(combined.plots[i])}}, fig.width=5, fig.align = 'center', echo = FALSE}
+  #out.width = "60%", 
+  # these are the country maps
+  country = "{{names(combined.plots[i])}}"
+  if (length(combined.plots[[i]][['map_plot']]) < 2){
+    # the actual maps
+    grid.arrange(combined.plots[[country]][['map_plot']][[1]])
+    #cat("  \n")
+  } else {
+      # loop through regions
+      # for (j in seq(combined.plots[[i]][['map_plot']])){
+      #   region = "{{names(combined.plots[[i]][['map_plot']][j])}}"
+      #   # these are the country region maps
+      #   grid.arrange(combined.plots[[country]][['map_plot']][[region]])
+      #   #cat("  \n")
+      # }
+  }
+```

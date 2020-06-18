@@ -1,0 +1,9 @@
+## {{names(combined.plots[i])}}-{{names(combined.plots[[i]][['map_plot']][j])}}
+
+```{r fig.width=3.7, fig.align = 'center', echo = FALSE}
+# these are the country maps
+country = "{{names(combined.plots[i])}}"
+region = "{{names(combined.plots[[i]][['map_plot']][j])}}"
+# these are the country region maps
+grid.arrange(combined.plots[[country]][['map_plot']][[region]])
+```

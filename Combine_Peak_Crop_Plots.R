@@ -13,15 +13,17 @@ setwd(datadir)
 # other countries (regions need to be separate) = other_crop_plots
 
 # load files
-crop_plots = readRDS("SelectCountriesAllRegionsCropPlots_20200603_1429.Robj")
-other_crop_plots = readRDS("OtherCountriesAllRegionsCropPlots_20200603_1429.Robj")
+# crop_plots = readRDS("SelectCountriesAllRegionsCropPlots_20200603_1429.Robj")
+# other_crop_plots = readRDS("OtherCountriesAllRegionsCropPlots_20200603_1429.Robj")
+crop_plots = readRDS("SelectCountriesAllRegionsCropPlots_20200617_1829.Robj")
+other_crop_plots = readRDS("OtherCountriesAllRegionsCropPlots_20200617_1829.Robj")
 
 # from plot_v1.R we should have a list object of ggplots = plots
 #plots = readRDS("peak_plots_list_20200527_1619.RObj")
 #plots = readRDS("peak_plots_list_20200602_1706.RObj")
 # version with pretty breaks
 # plots = readRDS("peak_plots_list_20200602_1712.RObj")
-plots = readRDS("peak_plots_listUKSmooth_20200616_1526.RObj")
+plots = readRDS("peak_plots_listUKSmooth_20200617_1821.RObj")
 
 
 # the easier ones first, we'll take the list object from each and plot together
@@ -154,11 +156,12 @@ map_filenames.countries = map_filenames.countries[map_filenames.countries$USAID_
 # make plots
 setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/")
 
-i=1
+# order the country lists
+combine_countries = sort(combine_countries)
 map.plots = vector(mode = "list", length = length(combine_countries))
 names(map.plots) = combine_countries
 
-for(i in i:length(map.plots)){
+for(i in seq(map.plots)){
   # if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
   #get file from directory
   filename = map_filenames.countries$map_filename[names(map.plots)[i] == map_filenames.countries$USAID_Country]
@@ -168,11 +171,13 @@ for(i in i:length(map.plots)){
   #map.plots[[i]]$map_plot <- mapimg
   map.plots[[i]]$map_plot <- list(mapimg)
 }
+map.plots = map.plots[order(names(map.plots))]
 
 # for regions
-i=1
+combine_region_countries = sort(combine_region_countries)
 map.plots.regions = vector(mode = "list", length = length(combine_region_countries))
 names(map.plots.regions) = combine_region_countries
+map.plots.regions = map.plots.regions[order(names(map.plots.regions))]
 
 # for(i in i:length(map.plots.regions)){
 #   # if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
@@ -261,6 +266,10 @@ for(i in seq(plots_to_combine)){
     plots_to_combine[[i]]$crop_plot <- list(crop_plots_to_combine[[temp_country_name]])
   }
 }
+# save for markdown approach
+setwd(datadir)
+filename = addStampToFilename("map.plots", "RDS")
+# saveRDS(plots_to_combine, filename)
 
 # i = 1
 # for(i in i:length(map.plots)){
@@ -286,8 +295,7 @@ crop_plots_region_to_combine = crop_plots_region_to_combine[order(names(crop_plo
 plots_by_region = plots_by_region[order(names(plots_by_region))]
 
 # combine plots into one big list
-i=1
-for(i in i:length(plots_by_region)){
+for(i in seq(plots_by_region)){
   if (names(plots_by_region)[[i]] == names(crop_plots_region_to_combine[i])){
     print(paste0("crop_plots$", names(plots_by_region)[i]))
     temp_country_name = names(plots_by_region)[[i]]
@@ -320,36 +328,34 @@ for(i in i:length(plots_by_region)){
 # names(map.plots.regions.list) = names(map.plots.regions)
 # for(j in levels(other_countries_list[[i]]$region)){
 
-i = 1
-j = 1
-
 # order the list regions the same..
 map.plots.regions = map.plots.regions[order(names(map.plots.regions))]
 map_filenames.regions = map_filenames.regions[with(map_filenames.regions, order(USAID_Country, map_filename)),]
 
 # fix things where two words not sorting correctly
 rownames(map_filenames.regions) <- NULL
-map_filenames.regions = map_filenames.regions[c(1:44,46,45,47:90,92,91,93:110),]
+map_filenames.regions = map_filenames.regions[c(1:),]
+#map_filenames.regions = map_filenames.regions[c(1:44,46,45,47:90,92,91,93:110),]
 
 # until we have the maps remove new countries
-map_filenames.regions2 = map_filenames.regions[map_filenames.regions$USAID_Country %in% c("Benin", "Burkina Faso"),]
-map_filenames.regions = map_filenames.regions2
+# map_filenames.regions2 = map_filenames.regions[map_filenames.regions$USAID_Country %in% c("Benin", "Burkina Faso"),]
+# map_filenames.regions = map_filenames.regions2
 
-for(i in i:length(map.plots.regions)){
-  if (names(map.plots.regions)[[i]] == names(plots_by_region[i])){
-    map.plots.regions[[i]]$title <- ggdraw() + draw_label(names(map.plots.regions[i]), fontface='bold')
-    # bottom and map_plot will need to be sublists..
-    print(names(map.plots.regions[i]))
-    j=1
-    for(j in j:length(plots_by_region[[i]]$crop_plots)){
-      temp_region_name = names(plots_by_region[[i]]$crop_plots[j])
-      print(temp_region_name)
-      bottom <- plot_grid(plots_by_region[[i]]$cases, plots_by_region[[i]]$crop_plots[j][[1]][[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
-      map.plots.regions[[i]]$bottom_plots[temp_region_name] =  list(bottom)
-      #map.plots.regions[[i]][[temp_region_name]] = c(map.plots.regions[[i]][[temp_region_name]] , list(bottom))
-    }
-  }
-}
+# for(i in seq(map.plots.regions)){
+#   if (names(map.plots.regions)[[i]] == names(plots_by_region[i])){
+#     map.plots.regions[[i]]$title <- ggdraw() + draw_label(names(map.plots.regions[i]), fontface='bold')
+#     # bottom and map_plot will need to be sublists..
+#     print(names(map.plots.regions[i]))
+#     j=1
+#     for(j in seq(plots_by_region[[i]]$crop_plots)){
+#       temp_region_name = names(plots_by_region[[i]]$crop_plots[j])
+#       print(temp_region_name)
+#       bottom <- plot_grid(plots_by_region[[i]]$cases, plots_by_region[[i]]$crop_plots[j][[1]][[1]], ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+#       map.plots.regions[[i]]$bottom_plots[temp_region_name] =  list(bottom)
+#       #map.plots.regions[[i]][[temp_region_name]] = c(map.plots.regions[[i]][[temp_region_name]] , list(bottom))
+#     }
+#   }
+# }
 
 # redo the map plots - one for each region
 # for(i in i:length(map.plots.regions)){
@@ -361,25 +367,27 @@ for(i in i:length(map.plots.regions)){
 #   mapimg = rasterGrob(mapimg)
 #   map.plots.regions[[i]]$map_plot <- mapimg
 # }
-setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/")
-i=1
-for(i in i:length(map.plots.regions)){
-    j=1
-    for(j in j:length(map.plots.regions[[i]]$bottom_plots)){
-      filename = map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country][j]
-      print(filename)
-      #paste(names(map.plots.regions)[i], " ", filename)
-      # test = map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country]
-      # print(test[j])
-      # #print(map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country][j])
-      mapimg = readPNG(filename)
-      mapimg = rasterGrob(mapimg)
-      temp_region_name = names(map.plots.regions[[i]]$bottom_plots[j])
-      map.plots.regions[[i]]$map_plot[temp_region_name] = list(mapimg)
-    }
-}
+# setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/")
+# i=1
+# for(i in i:length(map.plots.regions)){
+#     j=1
+#     for(j in j:length(map.plots.regions[[i]]$bottom_plots)){
+#       filename = map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country][j]
+#       print(filename)
+#       #paste(names(map.plots.regions)[i], " ", filename)
+#       # test = map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country]
+#       # print(test[j])
+#       # #print(map_filenames.regions$map_filename[names(map.plots.regions)[i] == map_filenames.regions$USAID_Country][j])
+#       mapimg = readPNG(filename)
+#       mapimg = rasterGrob(mapimg)
+#       temp_region_name = names(map.plots.regions[[i]]$bottom_plots[j])
+#       map.plots.regions[[i]]$map_plot[temp_region_name] = list(mapimg)
+#     }
+# }
 
 # markdown approach, add maps to plots_by_region
+setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/")
+plots_by_regionbackup = plots_by_region
 for(i in seq(plots_by_region)){
   for(j in seq(plots_by_region[[i]]$crop_plots)){
     filename = map_filenames.regions$map_filename[names(plots_by_region)[i] == map_filenames.regions$USAID_Country][j]
