@@ -36,7 +36,7 @@ countries  = as.data.frame(names(country.plots))
 # without newline
 # countries$linkMd = paste0("[", countries$`names(country.plots)`, "](", countries$link, ") ")
 # sadly relative links to headings don't work: https://github.com/rstudio/rmarkdown/issues/718
-countries$linkMd = paste0(countries$`names(country.plots)`)
+countries$linkMd = paste0("* ", countries$`names(country.plots)`, "\n")
 ## for countries with regions
 countries.regions  = as.data.frame(names(region.plots))
 # create link
@@ -49,7 +49,7 @@ countries.regions  = as.data.frame(names(region.plots))
 # countries.regions$linkMd = paste0("[", countries.regions$`names(region.plots)`, "](", countries.regions$link, ")  \n")
 # without newline
 # countries.regions$linkMd = paste0("[", countries.regions$`names(region.plots)`, "](", countries.regions$link, ")")
-countries.regions$linkMd = paste0(countries.regions$`names(region.plots)`)
+countries.regions$linkMd = paste0("* ", countries.regions$`names(region.plots)`, "\n")
 
 ```
 
@@ -96,24 +96,44 @@ Visit the following pages to explore the data for specific countries.
 
 For countries with multiple, sub-national crop calendars, you can view the information [here](https://paultanger.github.io/COVID_LIC/subnationalregions.html).
 
-```{r make-country-region-links, echo = FALSE, results='asis'}
-# or maybe just make one big list of countries and don't highlight the two groups?
-#pandoc.p("This is a Heading in Code", level = 2)
+<div class = "row">
+<div class = "col-md-6">
+```{r make-country-region-links-1, echo = FALSE, results='asis'}
 cat("  \n")
-cat(countries.regions$linkMd)
+# split in half
+# TODO MAKE THIS A KABLE TABLE WITH COL HEADINGS AS WORLD REGIONS!
+cat(countries.regions$linkMd[1: (round(length(countries.regions$linkMd)/2)-1) ])
 cat("  \n")
-#lapply(as.vector(countries.regions$linkMd), FUN=cat)
 ```
-
+</div>
+<div class = "col-md-6">
+```{r make-country-region-links-2, echo = FALSE, results='asis'}
+cat("  \n")
+cat(countries.regions$linkMd[round(1+length(countries.regions$linkMd)/2):length(countries.regions$linkMd)])
+cat("  \n")
+```
+</div>
 ## [Countries with national level crop calendars](https://paultanger.github.io/COVID_LIC/nationalregions.html)
 
 For countries with national level crop calendars you can view the information [here](https://paultanger.github.io/COVID_LIC/nationalregions.html).
 
-```{r make-country-links, echo = FALSE, results='asis'}
+<div class = "row">
+<div class = "col-md-6">
+```{r make-country-links1, echo = FALSE, results='asis'}
 cat("  \n")
-cat(countries$linkMd)
+# split list in 1/2
+cat(countries$linkMd[1: (round(length(countries$linkMd)/2)-1) ])
 cat("  \n")
 ```
+</div>
+
+<div class = "col-md-6">
+```{r make-country-links2, echo = FALSE, results='asis'}
+cat("  \n")
+cat(countries$linkMd[round(1+length(countries$linkMd)/2):length(countries$linkMd)])
+cat("  \n")
+```
+</div>
 
 # Data sources
 * Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
