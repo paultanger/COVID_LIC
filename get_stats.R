@@ -3,19 +3,19 @@ datadir = "~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/"
 
 setwd(codedir)
 source('functions.R')
-source('plot_function.R')
 source('load_libs.R')
-#setwd("2020_05_05_archived_04_30_generated/afghanistan/")
 setwd(datadir)
 
 subset.alls.plot = readRDS("subset.alls.plot_20200527_1159.RObj")
+subset.alls.plot = readRDS("subset.alls.plot_20200616_1524.RDS")
+
 compartments = c("cases", "death_o")
-countries = levels(subset.alls.plot$LSHTM_Country)
-AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[LSHTM_Country %in% countries & compartment %in% compartments]
+countries = levels(subset.alls.plot$USAID_Country)
+AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[USAID_Country %in% countries & compartment %in% compartments & Scenarios=="Unmitigated"]
 AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll.SelectCountries)
 PeakMedAllCntryAllScensCases = as.data.table(AllAllsData.7scens.AgeAll.SelectCountries)
 as.data.frame(colnames(PeakMedAllCntryAllScensCases))
-PeakMedAllCntryAllScensCases = PeakMedAllCntryAllScensCases[,c(2,7,33,42,45,38)]
+PeakMedAllCntryAllScensCases = PeakMedAllCntryAllScensCases[,c(2,7,36,41,45,48,50)]
 head(PeakMedAllCntryAllScensCases, 2)
 
 # get quick stats on dates..
@@ -23,15 +23,31 @@ head(PeakMedAllCntryAllScensCases, 2)
 # keep what we need
 #PeakMedAllCntryAllScensCases = subset.alls.plot[,c("age","t","scen_id","Date","date_50"):=NULL]
 
-# get peaks
+# get peaks 
 PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases[
-  PeakMedAllCntryAllScensCases[, .I[which.max(med)], by=list(USAID_Country, compartment, Scenarios)]$V1]
+  PeakMedAllCntryAllScensCases[, .I[which.max(med)], by=list(region_name, USAID_Country, compartment, Scenarios)]$V1]
+
+# get peaks for UK
+PeakMedAllCntryAllScensCases1 = PeakMedAllCntryAllScensCases[,-6]
+PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases1[
+  PeakMedAllCntryAllScensCases1[, .I[which.max(med)], by=list(region_name, USAID_Country, compartment, Scenarios)]$V1]
+
+# get peaks for JHU
+PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases[,-7]
+PeakMedAllCntryAllScensCases3 = PeakMedAllCntryAllScensCases2[
+  PeakMedAllCntryAllScensCases2[, .I[which.max(med)], by=list(region_name, USAID_Country, compartment, Scenarios)]$V1]
+
 
 # drop med, we just want dates
-PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases2[,-6]
+PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases2[,-4]
 
 # drop countries with no data
 PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases2[!is.na(PeakMedAllCntryAllScensCases2$Date_JHU),]
+
+# save this
+setwd(datadir)
+filename = addStampToFilename("peak_cases_deaths_all_countries", "csv")
+write.csv(PeakMedAllCntryAllScensCases2, filename, row.names = F)
 
 # can do it with dt functions?
 # PeakMedAllCntryAllScensCases3 = PeakMedAllCntryAllScensCases2[, peak_diff := compartment.Date_JHU - compartment.Date_JHU, keyby=.(USAID_Country, region_abbrev, Scenarios)]
@@ -42,15 +58,15 @@ PeakMedAllCntryAllScensCases2 = PeakMedAllCntryAllScensCases2[!is.na(PeakMedAllC
 
 # get range of peak death days
 peak_death_dates = PeakMedAllCntryAllScensCases2[compartment == "death_o"]
-deaths.summary = setDT(peak_death_dates)[, .(.N, Min=min(Date_JHU),
-                                               Median=median(Date_JHU),
-                                               Max=max(Date_JHU)), 
+deaths.summary = setDT(peak_death_dates)[, .(.N, Min=min(Date_UK),
+                                               Median=median(Date_UK),
+                                               Max=max(Date_UK)), 
                                            keyby=.(Scenarios)]
 
-deaths.summary.region = setDT(peak_death_dates)[, .(.N, Min=min(Date_JHU),
-                                             Median=median(Date_JHU),
-                                             Max=max(Date_JHU)), 
-                                         keyby=.(Scenarios, region_abbrev)]
+deaths.summary.region = setDT(peak_death_dates)[, .(.N, Min=min(Date_UK),
+                                             Median=median(Date_UK),
+                                             Max=max(Date_UK)), 
+                                         keyby=.(Scenarios, region_name)]
 
 # save these
 setwd(datadir)
@@ -62,10 +78,10 @@ filename = addStampToFilename("deaths.summary.region", "csv")
 write.csv(deaths.summary.region, filename, row.names = F)
 
 # make wide to calc day diff
-PeaksbyCountry.wide = dcast.data.table(PeakMedAllCntryAllScensCases2, USAID_Country + region_abbrev ~ Scenarios + compartment, value.var = "Date_JHU")
+PeaksbyCountry.wide = dcast.data.table(PeakMedAllCntryAllScensCases2, USAID_Country + region_name ~ Scenarios + compartment, value.var = "Date_UK")
 
 # make it wide, but keep two cols so we can put into plots
-PeaksbyCountry.wide.plots = dcast.data.table(PeakMedAllCntryAllScensCases2, USAID_Country + region_abbrev + Scenarios ~ compartment, value.var = "Date_JHU")
+PeaksbyCountry.wide.plots = dcast.data.table(PeakMedAllCntryAllScensCases2, USAID_Country + region_name + Scenarios ~ compartment, value.var = "Date_UK")
 
 # renam cols to make it pretty
 colnames(PeaksbyCountry.wide.plots) = c("USAID_Country", "Region", "Scenario", "Peak Cases", "Peak Deaths")
@@ -130,6 +146,33 @@ write.csv(Peaks.summary, filename, row.names = F)
 #PeaksbyCountry.range
 filename = addStampToFilename("PeaksbyCountry.range", "csv")
 write.csv(PeaksbyCountry.range, filename, row.names = F)
+
+####### ####### ####### ####### ####### ####### ####### ####### ####### ####### 
+####### get cumulative cases for 12 months
+# can do this from accs files, or the final tables from their sync folders
+# but I'll do it from alls file since I already have that
+# numbers may be slightly diff - flag for Katie
+AllAllsData.7scens.AgeAll.SelectCountries = subset.alls.plot[USAID_Country %in% countries & compartment %in% compartments]
+AllAllsData.7scens.AgeAll.SelectCountries = droplevels(AllAllsData.7scens.AgeAll.SelectCountries)
+AllCntryAllScensCasesDeaths = as.data.table(AllAllsData.7scens.AgeAll.SelectCountries)
+as.data.frame(colnames(AllCntryAllScensCasesDeaths))
+CumulAllCntryAllScensCasesDeaths = AllCntryAllScensCasesDeaths[,c(2,7,36,41,45)]
+head(CumulAllCntryAllScensCasesDeaths, 2)
+
+SumsCumulAllCntryAllScensCasesDeaths = setDT(CumulAllCntryAllScensCasesDeaths)[, .(Cumul_Value=sum(med)), keyby=.(region_name, USAID_Country, Scenarios, compartment)]
+# SumsCumulAllCntryAllScensCasesDeaths = CumulAllCntryAllScensCasesDeaths[CumulAllCntryAllScensCasesDeaths[, sum(med), by=list(USAID_Country, Scenarios, compartment)]$V1]
+# nicer col names
+colnames(SumsCumulAllCntryAllScensCasesDeaths) = c("Region", "Country", "Scenario", "Parameter", "Cumululative 1 yr total")
+SumsCumulAllCntryAllScensCasesDeaths$`Cumululative 1 yr total` = round(SumsCumulAllCntryAllScensCasesDeaths$`Cumululative 1 yr total`)
+
+SumsCumulAllCntryAllScensCasesDeaths
+setwd(datadir)
+filename = addStampToFilename("CumulAllCntryAllScensCasesDeaths", "csv")
+write.csv(SumsCumulAllCntryAllScensCasesDeaths, filename, row.names = F)
+
+####### ####### ####### ####### ####### ####### ####### ####### ####### ####### ####### 
+####### ####### ####### ####### ####### ####### ####### ####### ####### ####### ####### 
+####### ####### ####### ####### ####### ####### ####### ####### ####### ####### ####### 
 
 # load the file above
 setwd(datadir)
