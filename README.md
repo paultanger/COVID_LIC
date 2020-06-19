@@ -39,6 +39,12 @@ Supporting files (best to just source them):
 * plot_crop_cal_function.R
 * plot_function.R
 
+For the webpages, there is three 3 Rmd files:
+index.Rmd builds the main page
+nationalregions.Rmd builds the nationalregions.html using CountryTemplate.Rmd
+subnationalregions.Rmd builds the subnationalregions.html using CountryTemplateSubRegions.Rmd
+
+
 ## Future plans
 Improve documentation and add additional analysis
 
