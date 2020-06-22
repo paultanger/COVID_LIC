@@ -51,9 +51,9 @@ tabledata = read.csv(paste0(datadir, "LSHTM_v3_scenarios.csv"))
 colnames(tabledata) = c("Scenario Abbreviation", "Scenario Name", "Description")
 ```
 
-# Country specific information  {.tabset .tabset-fade}
+# Country specific information
 
-### How to read the analysis {.unlisted .unnumbered}
+## How to read the analysis
 Below, each country’s analysis contains:  
 
 1. a graph of the LSHTM projections of COVID-19 case totals over times (all age groups combined) for an unmitigated scenario plus ten disease containment scenarios (see explanation below);
@@ -61,7 +61,7 @@ Below, each country’s analysis contains:
 3. a map of the country, with the sub-national area highlighted in cases where there are multiple crop calendars per country (due to variation in timing by area);
 4. a legend listing the different containment scenarios included in the LSHTM model.
 
-### Scenario descriptions {.unlisted .unnumbered}
+## Scenario descriptions
 
 In the LSHTM model, the researchers identify an unmitigated scenario (i.e. the government takes no action to contain the spread of COVID-19), as well as a variety of different containment scenarios.  They model the impacts and timing of the spread of COVID-19 for each scenario, as a way to estimate which approach could have the largest impact on reducing and/or delaying the cases, deaths, and other effects of COVID-19.
 
@@ -80,7 +80,7 @@ The ten containment scenarios involve social distancing, shielding, and/or a com
       kable_styling(position = "center", bootstrap_options = c("striped", "hover", "condensed", full_width=F, position = "center"), latex_options = c("striped", "hold_position")))
 ```
 
-### Caveats/Notes {.unlisted .unnumbered}
+## Caveats/Notes
 * These are projections based on a model with documented assumptions.  That model will be updated as the LSHTM gathers more information, as noted [here](https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html).
 * As noted above, the ‘Day 0’ used for the graphs here is an estimation of when a country reached a date with 50 active infections.
 * The quality of COVID-19-related data that is available for LMICs is variable and this likely impacts the accuracy of modeling.
@@ -94,6 +94,7 @@ The ten containment scenarios involve social distancing, shielding, and/or a com
 # results can't be asis
 # options for results are asis - passthrough.. hold - put all results below code
 out = NULL
+#out = "\n## "
 for(i in seq(combined.plots)){
   if (length(combined.plots[[i]][['map_plot']]) < 2){
       out = c(out, knit_expand('CountryTemplate.Rmd'))
@@ -106,7 +107,9 @@ for(i in seq(combined.plots)){
 }
 ```
 
+
 `r paste(knit(text = out), collapse = '\n')`
+
 
 # Back to overview
 [click here to return to the overview page](https://paultanger.github.io/COVID_LIC/)

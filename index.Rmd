@@ -29,27 +29,31 @@ region.plots = readRDS(paste0(datadir, "plots_by_region_20200617_1911.RDS"))
 # country names
 countries  = as.data.frame(names(country.plots))
 # create link
-#link = "./nationalregions.html#"
-#countries$link = paste0(link, gsub(" ", "-", countries$`names(country.plots)`))
+link = "./nationalregions.html#"
+countries$link = paste0(link, gsub(" ", "-", countries$`names(country.plots)`))
 # create markdown
 # countries$linkMd = paste0("[", countries$`names(country.plots)`, "](", countries$link, ")  \n")
 # without newline
-# countries$linkMd = paste0("[", countries$`names(country.plots)`, "](", countries$link, ") ")
+#countries$linkMd = paste0("[", countries$`names(country.plots)`, "](", countries$link, ") ")
 # sadly relative links to headings don't work: https://github.com/rstudio/rmarkdown/issues/718
-countries$linkMd = paste0("* ", countries$`names(country.plots)`, "\n")
+#countries$linkMd = paste0("* ", countries$`names(country.plots)`, "\n")
+# try removing tabset and then the country links might work?
+countries$linkMd = paste0("* [", countries$`names(country.plots)`, "](", countries$link, ")\n")
 ## for countries with regions
 countries.regions  = as.data.frame(names(region.plots))
 # create link
-# link2 = "./subnationalregions.html#"
-# countries.regions$link = paste0(link2, gsub(" ", "-", countries.regions$`names(region.plots)`))
+link2 = "./subnationalregions.html#"
+countries.regions$link = paste0(link2, gsub(" ", "-", countries.regions$`names(region.plots)`))
 # remove special chars
-# countries.regions$link = gsub("\\(", "", countries.regions$link)
-# countries.regions$link = gsub("\\)", "", countries.regions$link)
-# countries.regions$link = gsub("\\'", "", countries.regions$link)
+countries.regions$link = gsub("\\(", "", countries.regions$link)
+countries.regions$link = gsub("\\)", "", countries.regions$link)
+countries.regions$link = gsub("\\'", "", countries.regions$link)
 # countries.regions$linkMd = paste0("[", countries.regions$`names(region.plots)`, "](", countries.regions$link, ")  \n")
 # without newline
 # countries.regions$linkMd = paste0("[", countries.regions$`names(region.plots)`, "](", countries.regions$link, ")")
-countries.regions$linkMd = paste0("* ", countries.regions$`names(region.plots)`, "\n")
+# countries.regions$linkMd = paste0("* ", countries.regions$`names(region.plots)`, "\n")
+# try removing tabset and then the country links might work?
+countries.regions$linkMd = paste0("* [", countries.regions$`names(region.plots)`, "](", countries.regions$link, ")\n")
 
 ```
 
@@ -102,14 +106,23 @@ For countries with multiple, sub-national crop calendars, you can view the infor
 cat("  \n")
 # split in half
 # TODO MAKE THIS A KABLE TABLE WITH COL HEADINGS AS WORLD REGIONS!
-cat(countries.regions$linkMd[1: (round(length(countries.regions$linkMd)/2)-1) ])
+# cat(countries.regions$linkMd[1: (round(length(countries.regions$linkMd)/2)-1) ])
+for (i in seq(countries.regions$linkMd[1: (round(length(countries.regions$linkMd)/2)-1) ])) {
+  cat("### ", countries.regions$linkMd[i])
+}
 cat("  \n")
 ```
 </div>
 <div class = "col-md-6">
 ```{r make-country-region-links-2, echo = FALSE, results='asis'}
 cat("  \n")
-cat(countries.regions$linkMd[round(1+length(countries.regions$linkMd)/2):length(countries.regions$linkMd)])
+# cat(countries.regions$linkMd[round(1+length(countries.regions$linkMd)/2):length(countries.regions$linkMd)])
+# try with a loop to make each a heading
+# start with i halfway through list
+i = round(1+length(countries.regions$linkMd)/2)
+for (i in i:length(countries.regions$linkMd)) {
+  cat("### ", countries.regions$linkMd[i])
+}
 cat("  \n")
 ```
 </div>
@@ -122,7 +135,11 @@ For countries with national level crop calendars you can view the information [h
 ```{r make-country-links1, echo = FALSE, results='asis'}
 cat("  \n")
 # split list in 1/2
-cat(countries$linkMd[1: (round(length(countries$linkMd)/2)-1) ])
+#cat(countries$linkMd[1: (round(length(countries$linkMd)/2)-1) ])
+# try with a loop to make each a heading
+for (i in seq(countries$linkMd[1: (round(length(countries$linkMd)/2)-1) ])) {
+  cat("### ", countries$linkMd[i])
+}
 cat("  \n")
 ```
 </div>
@@ -130,7 +147,13 @@ cat("  \n")
 <div class = "col-md-6">
 ```{r make-country-links2, echo = FALSE, results='asis'}
 cat("  \n")
-cat(countries$linkMd[round(1+length(countries$linkMd)/2):length(countries$linkMd)])
+#cat(countries$linkMd[round(1+length(countries$linkMd)/2):length(countries$linkMd)])
+# try with a loop to make each a heading
+# start with i halfway through list
+i = round(1+length(countries$linkMd)/2)
+for (i in i:length(countries$linkMd)) {
+  cat("### ", countries$linkMd[i])
+}
 cat("  \n")
 ```
 </div>

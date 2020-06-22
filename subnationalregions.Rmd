@@ -51,7 +51,7 @@ tabledata = read.csv(paste0(datadir, "LSHTM_v3_scenarios.csv"))
 colnames(tabledata) = c("Scenario Abbreviation", "Scenario Name", "Description")
 ```
 
-# Country specific information  {.tabset .tabset-fade}
+# Country specific information
 
 ### How to read the analysis {.unlisted .unnumbered}
 Below, each country’s analysis contains:  
@@ -94,6 +94,7 @@ The ten containment scenarios involve social distancing, shielding, and/or a com
 # results can't be asis
 # options for results are asis - passthrough.. hold - put all results below code
 out = NULL
+out = "\n## "
 for(i in seq(combined.plots)){
   if (length(combined.plots[[i]][['map_plot']]) < 2){
       out = c(out, knit_expand('CountryTemplate.Rmd'))
@@ -106,7 +107,9 @@ for(i in seq(combined.plots)){
 }
 ```
 
+
 `r paste(knit(text = out), collapse = '\n')`
+
 
 # Back to overview
 [click here to return to the overview page](https://paultanger.github.io/COVID_LIC/)
