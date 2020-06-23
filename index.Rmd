@@ -30,7 +30,7 @@ region.plots = readRDS(paste0(datadir, "plots_by_region_20200617_1911.RDS"))
 countries  = as.data.frame(names(country.plots))
 # create link
 link = "./nationalregions.html#"
-countries$link = paste0(link, gsub(" ", "-", countries$`names(country.plots)`))
+countries$link = paste0(link, gsub(" ", "_", countries$`names(country.plots)`))
 # create markdown
 # countries$linkMd = paste0("[", countries$`names(country.plots)`, "](", countries$link, ")  \n")
 # without newline
@@ -43,7 +43,7 @@ countries$linkMd = paste0("* [", countries$`names(country.plots)`, "](", countri
 countries.regions  = as.data.frame(names(region.plots))
 # create link
 link2 = "./subnationalregions.html#"
-countries.regions$link = paste0(link2, gsub(" ", "-", countries.regions$`names(region.plots)`))
+countries.regions$link = paste0(link2, gsub(" ", "_", countries.regions$`names(region.plots)`))
 # remove special chars
 countries.regions$link = gsub("\\(", "", countries.regions$link)
 countries.regions$link = gsub("\\)", "", countries.regions$link)
