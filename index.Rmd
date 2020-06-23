@@ -10,8 +10,8 @@ date: |
 output:
   html_document:
     toc: true
-    toc_float: true
-    toc_depth: 3
+    toc_float: false
+    toc_depth: 5
     #number_sections: true
     theme: cosmo
     highlight: tango
@@ -96,7 +96,7 @@ Refer to the LSHTM link below for more details on the model, including the defin
 Visit the following pages to explore the data for specific countries. 
 
 
-## [Countries with multiple, sub-national crop calendars](https://paultanger.github.io/COVID_LIC/subnationalregions.html)
+# Countries with multiple, sub-national crop calendars
 
 For countries with multiple, sub-national crop calendars, you can view the information [here](https://paultanger.github.io/COVID_LIC/subnationalregions.html).
 
@@ -108,7 +108,7 @@ cat("  \n")
 # TODO MAKE THIS A KABLE TABLE WITH COL HEADINGS AS WORLD REGIONS!
 # cat(countries.regions$linkMd[1: (round(length(countries.regions$linkMd)/2)-1) ])
 for (i in seq(countries.regions$linkMd[1: (round(length(countries.regions$linkMd)/2)-1) ])) {
-  cat("### ", countries.regions$linkMd[i])
+  cat("#### ", countries.regions$linkMd[i])
 }
 cat("  \n")
 ```
@@ -121,12 +121,13 @@ cat("  \n")
 # start with i halfway through list
 i = round(1+length(countries.regions$linkMd)/2)
 for (i in i:length(countries.regions$linkMd)) {
-  cat("### ", countries.regions$linkMd[i])
+  cat("#### ", countries.regions$linkMd[i])
 }
 cat("  \n")
 ```
 </div>
-## [Countries with national level crop calendars](https://paultanger.github.io/COVID_LIC/nationalregions.html)
+
+# Countries with national level crop calendars
 
 For countries with national level crop calendars you can view the information [here](https://paultanger.github.io/COVID_LIC/nationalregions.html).
 
@@ -138,7 +139,7 @@ cat("  \n")
 #cat(countries$linkMd[1: (round(length(countries$linkMd)/2)-1) ])
 # try with a loop to make each a heading
 for (i in seq(countries$linkMd[1: (round(length(countries$linkMd)/2)-1) ])) {
-  cat("### ", countries$linkMd[i])
+  cat("#### ", countries$linkMd[i])
 }
 cat("  \n")
 ```
@@ -152,7 +153,7 @@ cat("  \n")
 # start with i halfway through list
 i = round(1+length(countries$linkMd)/2)
 for (i in i:length(countries$linkMd)) {
-  cat("### ", countries$linkMd[i])
+  cat("#### ", countries$linkMd[i])
 }
 cat("  \n")
 ```
