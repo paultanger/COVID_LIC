@@ -44,6 +44,8 @@ For the webpages, there is three 3 Rmd files:
 * nationalregions.Rmd builds the nationalregions.html using CountryTemplate.Rmd
 * subnationalregions.Rmd builds the subnationalregions.html using CountryTemplateSubRegions.Rmd
 
+For testing of the website, there is a test repo, to pull from that:
+git pull test master
 
 ## Future plans
 Improve documentation and add additional analysis
