@@ -75,6 +75,18 @@ combine_countries = sort(combine_countries)
 map.plots = vector(mode = "list", length = length(combine_countries))
 names(map.plots) = combine_countries
 
+for(i in seq(map.plots)){
+  # if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
+  #get file from directory
+  filename = map_filenames.countries$map_filename[names(map.plots)[i] == map_filenames.countries$USAID_Country]
+  paste(names(map.plots)[i], " ", filename)
+  mapimg = readPNG(filename)
+  mapimg = rasterGrob(mapimg)
+  map.plots[[i]]$map_plot <- mapimg
+  #map.plots[[i]]$map_plot <- list(mapimg)
+}
+map.plots = map.plots[order(names(map.plots))]
+
 # for regions
 combine_region_countries = sort(combine_region_countries)
 map.plots.regions = vector(mode = "list", length = length(combine_region_countries))
@@ -260,14 +272,11 @@ filename = addStampToFilename("region.plots_pdf", "RDS")
 # try printing together
 setwd(plotdir)
 filename = addStampToFilename("AllPlotsTogether", "pdf")
-i=1
-j=1
 pdf(filename, width=8.5, height=11)
-for (i in i:length(allplots)) {
-  j=1
-  for (j in j:length(allplots[[i]])) {
+for (i in seq(allplots)) {
+  for (j in seq(allplots[[i]])) {
     grid.newpage()
-    grid.draw(allplots[[i]][[j]][1])
+    grid.draw(allplots[[i]][[j]])
   }
 }
 dev.off()
