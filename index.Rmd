@@ -15,10 +15,10 @@ output:
     latex_engine: xelatex
     keep_tex: true
 header-includes:
-  - \usepackage{fontspec}
+    \usepackage{fontspec}
 fontsize: 10pt
 geometry: margin= 0.75in
-https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
+# https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
 mainfont: Latin Modern Sans #Arial #Helvetica
   # html_document:
   #   toc: true
@@ -103,57 +103,58 @@ Refer to the LSHTM link below for more details on the model, including the defin
 
 * For the crop calendars displayed in this document, each sub-national area is represented where the timing of the crop production cycle differs.  In cases where crop cycles followed the same timing throughout the country, only one crop calendar is shown for that country.
 
+\newpage
 # Country specific information
 
-Visit the following pages to explore the data for specific countries. 
+<!-- Visit the following pages to explore the data for specific countries.  -->
 
 
-# Countries with multiple, sub-national crop calendars
+<!-- # Countries with multiple, sub-national crop calendars -->
 
-For countries with multiple, sub-national crop calendars, you can view the information [here](https://paultanger.github.io/COVID_LIC/subnationalregions.html).
+<!-- For countries with multiple, sub-national crop calendars, you can view the information [here](https://paultanger.github.io/COVID_LIC/subnationalregions.html). -->
 
 <div class = "row">
 <div class = "col-md-6">
 ```{r make-country-region-links-1, echo = FALSE, results='asis'}
-cat("  \n")
+#cat("  \n")
 # split in half
 # TODO MAKE THIS A KABLE TABLE WITH COL HEADINGS AS WORLD REGIONS!
 # cat(countries.regions$linkMd[1: (round(length(countries.regions$linkMd)/2)-1) ])
 for (i in seq(countries.regions$linkMd[1: (round(length(countries.regions$linkMd)/2)-1) ])) {
-  cat("#### ", countries.regions$linkMd[i])
+#  cat("#### ", countries.regions$linkMd[i])
 }
-cat("  \n")
+#cat("  \n")
 ```
 </div>
 <div class = "col-md-6">
 ```{r make-country-region-links-2, echo = FALSE, results='asis'}
-cat("  \n")
+#cat("  \n")
 # cat(countries.regions$linkMd[round(1+length(countries.regions$linkMd)/2):length(countries.regions$linkMd)])
 # try with a loop to make each a heading
 # start with i halfway through list
 i = round(1+length(countries.regions$linkMd)/2)
 for (i in i:length(countries.regions$linkMd)) {
-  cat("#### ", countries.regions$linkMd[i])
+#  cat("#### ", countries.regions$linkMd[i])
 }
-cat("  \n")
+#cat("  \n")
 ```
 </div>
 
-# Countries with national level crop calendars
+<!-- # Countries with national level crop calendars -->
 
-For countries with national level crop calendars you can view the information [here](https://paultanger.github.io/COVID_LIC/nationalregions.html).
+<!-- For countries with national level crop calendars you can view the information [here](https://paultanger.github.io/COVID_LIC/nationalregions.html). -->
 
 <div class = "row">
 <div class = "col-md-6">
 ```{r make-country-links1, echo = FALSE, results='asis'}
-cat("  \n")
+#cat("  \n")
 # split list in 1/2
 #cat(countries$linkMd[1: (round(length(countries$linkMd)/2)-1) ])
 # try with a loop to make each a heading
 for (i in seq(countries$linkMd[1: (round(length(countries$linkMd)/2)-1) ])) {
-  cat("#### ", countries$linkMd[i])
+#  cat("#### ", countries$linkMd[i])
 }
-cat("  \n")
+#cat("  \n")
 ```
 </div>
 
@@ -165,9 +166,9 @@ cat("  \n")
 # start with i halfway through list
 i = round(1+length(countries$linkMd)/2)
 for (i in i:length(countries$linkMd)) {
-  cat("#### ", countries$linkMd[i])
+#  cat("#### ", countries$linkMd[i])
 }
-cat("  \n")
+# cat("  \n")
 ```
 </div>
 

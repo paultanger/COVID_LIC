@@ -83,22 +83,28 @@ map.plots.regions = map.plots.regions[order(names(map.plots.regions))]
 
 # now create text objects
 mytheme <- ttheme_default(base_size = 7)
-
+setwd(codedir)
 for(i in seq(map.plots)){
   # subset data for each country
   #paste(names(map.plots)[i], " ", filename)
-  countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"),
-                                      size = 7, x = 0.1, y = .95, hjust=0)
-  map.plots[[i]]$map_text <- countrytext
+  #countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"),
+  #                                     size = 7, x = 0.1, y = .95, hjust=0)
+  # instead just insert png with text
+  textimg = readPNG("source_text.png")
+  textimg = rasterGrob(textimg)
+  map.plots[[i]]$map_text <- textimg
 }
 
 # # for regions
 for(i in seq(map.plots.regions)){
   # subset data for each country
   #paste(names(map.plots.regions)[i], " ", filename)
-  countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"),
-                                      size = 7, x = 0.1, y = .95, hjust=0)
-  map.plots.regions[[i]]$map_text <- countrytext
+  # countrytext = ggdraw() + draw_label(paste0("Data sources: London School of Hygiene & Tropical Medicine (LSHTM) for COVID-19 modeling\n Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM) for crop calendars\n Johns Hopkins University for date of 50th confirmed cases.  Contact: CHillbruner@usaid.gov"),
+  #                                     size = 7, x = 0.1, y = .95, hjust=0)
+  # map.plots.regions[[i]]$map_text <- countrytext
+  textimg = readPNG("source_text.png")
+  textimg = rasterGrob(textimg)
+  map.plots.regions[[i]]$map_text <- textimg
 }
 
 # big loop to make the whole figures
@@ -140,6 +146,9 @@ setwd(datadir)
 filename = addStampToFilename("map.plots_pdf", "RDS")
 # saveRDS(map.plots, filename)
 
+# compare to version saved yesterday
+setwd(datadir)
+test = readRDS("allplots_20200623_1830.RDS")
 ###############
 # first subset crop plot list
 crop_plots_region_to_combine = other_crop_plots[names(other_crop_plots) %in% combine_region_countries]
@@ -224,7 +233,7 @@ names(region.plots) = names(map.plots.regions)
 allplots = vector(mode = "list", length = length(map.plots))
 # reload map plots
 setwd(datadir)
-map.plots = readRDS("map.plots_pdf_20200623_1715.RDS")
+#map.plots = readRDS("map.plots_pdf_20200623_1715.RDS")
 i=1
 for(i in i:length(map.plots)){
   if (names(map.plots)[[i]] == names(plots_to_combine[i])){
@@ -251,11 +260,14 @@ filename = addStampToFilename("region.plots_pdf", "RDS")
 # try printing together
 setwd(plotdir)
 filename = addStampToFilename("AllPlotsTogether", "pdf")
+i=1
+j=1
 pdf(filename, width=8.5, height=11)
-for (i in seq(allplots)) {
-  for (j in seq(allplots[[i]])) {
+for (i in i:length(allplots)) {
+  j=1
+  for (j in j:length(allplots[[i]])) {
     grid.newpage()
-    grid.draw(allplots[[i]][[j]])
+    grid.draw(allplots[[i]][[j]][1])
   }
 }
 dev.off()

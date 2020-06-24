@@ -20,6 +20,8 @@
   together
 ```
 
+![image](source_text.png){ width=3in }
+
 ```{r country-maps-{{names(combined.plots[i])}}, fig.align = 'center', echo = FALSE, results='asis', out.width='50%'}
   # fig.width=3.7,
   # these are the country maps
