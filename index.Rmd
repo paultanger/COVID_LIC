@@ -8,13 +8,25 @@ author: |
 date: |  
   <center> `r format(Sys.time(), '%d %B %Y, %H:%M:%S %Z')` </center> 
 output:
-  html_document:
+  pdf_document:
     toc: true
-    toc_float: false
-    toc_depth: 5
-    #number_sections: true
-    theme: cosmo
+    toc_depth: 3
     highlight: tango
+    latex_engine: xelatex
+    keep_tex: true
+header-includes:
+  - \usepackage{fontspec}
+fontsize: 10pt
+geometry: margin= 0.75in
+https://github.com/Homebrew/homebrew-cask-fonts/tree/master/Casks
+mainfont: Latin Modern Sans #Arial #Helvetica
+  # html_document:
+  #   toc: true
+  #   toc_float: false
+  #   toc_depth: 5
+  #   #number_sections: true
+  #   theme: cosmo
+  #   highlight: tango
 ---
 
 ```{r setup, include=FALSE}
