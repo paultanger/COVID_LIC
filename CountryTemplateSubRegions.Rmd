@@ -1,31 +1,63 @@
 
-```{r fig.align='center', fig.width=9, fig.height=9, echo = FALSE, warning = FALSE}
-  country = "{{names(combined.plots[i])}}"
-  region = "{{names(combined.plots[[i]][['map_plot']][j])}}"
+```{r fig.align='center', fig.height=6, echo = FALSE, warning = FALSE}
+  country = "{{names(combined.plots2[i])}}"
+  region = "{{names(combined.plots2[[i]][['map_plot']][j])}}"
   #print(region)
   # try separate.. need to align them
-  cases = combined.plots[[country]]$cases
-  crop_plot = combined.plots[[country]][['crop_plots']][[region]][[1]]
-  # adjust legend
-  cases = cases + theme(legend.position = "top", legend.spacing = unit(0.5, 'cm'), legend.key.width = unit(0.4, "cm")) + guides(color=guide_legend(nrow=4)) # ,label.position = "bottom"
-  # #cases
+  cases = combined.plots2[[country]]$cases
+  crop_plot = combined.plots2[[country]][['crop_plots']][[region]][[1]]
+# adjust legend
+  cases = cases + theme(legend.position = "top", legend.title.align=0.5,
+                        legend.spacing = unit(0.05, 'cm'), legend.key.width = unit(0.4, "cm")
+                        # this is really finicky.. and is affected by subsequent resizing
+                        # legend.position = c(-0.2, 1.7), # x and y between 0 and 1
+                        # legend.justification = c("left", "top"),
+                        # plot.margin=unit(c(2,0,0,0),"cm")
+    ) + guides(color=guide_legend(title.position = "top",  nrow=4)) # ,label.position = "bottom" 
   # remove title from crop_plot
   #crop_plot = crop_plot + theme(plot.title = element_blank())
   # increase axis label sizes
-  crop_plot = crop_plot + theme(axis.text.x = element_text(angle=90, size=12))
-  cases = cases + theme(axis.text.x = element_text(angle=90, size=12))
+  crop_plot = crop_plot + theme(axis.text.x = element_text(angle=90, size=10))
+  cases = cases + theme(axis.text.x = element_text(angle=90, size=10))
   # increase legend font size
-  cases = cases + theme(legend.text = element_text(size=10))
+  cases = cases + theme(legend.text = element_text(size=7))
   # with plot grid
   together <- plot_grid(cases, crop_plot, ncol=1, align="v", rel_heights = c(3, 1.5))
   # together
   grid.arrange(together)
 ```
 
-```{r out.width='50%', fig.align = 'center', echo = FALSE, results='asis'}
-# these are the country maps
-country = "{{names(combined.plots[i])}}"
-region = "{{names(combined.plots[[i]][['map_plot']][j])}}"
-# these are the country region maps
-grid.arrange(combined.plots[[country]][['map_plot']][[region]])
+
+\  
+
+:::::: {.columns}
+
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+**Data sources**
+
+\  
+
+\scriptsize
+
+* Model projections of COVID-19 cases and deaths over time: Centre for the Mathematical Modelling of Infectious Diseases (CMMID) at the London School of Hygiene & Tropical Medicine (LSHTM); https://cmmid.github.io/topics/covid19/LMIC-projection-reports.html
+* Crop calendars: Crop Monitor initiative from Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM); https://cropmonitor.org/index.php/eodatatools/baseline-data/. 
+* GEOGLAM major crop type areas are based on the IFPRI/IIASA SPAM 2005 beta release (2013), USDA/NASS 2013 CDL, 2013 AAFC Annual Crop Inventory Map, GLAM/UMD, GLAD/UMD, Australian Land Use and Management Classification (Version 7), SIAP, ARC, and JRC. Country administrative boundaries are from GADM version 4 (https://gadm.org/data.html). Names and boundaries are not necessarily authoritative.
+* Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security. For questions, contact chillbruner@usaid.gov.
+
+\normalsize
+<!-- https://bookdown.org/yihui/rmarkdown-cookbook/multi-column.html -->
+:::
+::: {.column width="2%" data-latex="{0.02\textwidth}"}
+\ 
+<!-- an empty Div (with a white space), serving as
+a column separator -->
+:::
+
+::: {.column width="48%" data-latex="{0.48\textwidth}"}
+```{r, echo=FALSE, fig.align='center', results='asis'}
+country = "{{names(combined.plots2[i])}}"
+region = "{{names(combined.plots2[[i]][['map_plot']][j])}}"
+grid.arrange(combined.plots2[[country]][['map_plot']][[region]])
 ```
+:::
+::::::

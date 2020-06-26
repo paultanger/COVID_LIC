@@ -181,7 +181,7 @@ for (i in i:length(countries$linkMd)) {
 # Citation and license
 To cite this work, please use:
 
-* USAID / Bureau for Resilience and Food Security, Data, Monitoring, and Analytics Team. "COVID-19 Modeling and the Crop Cycle". 2020. With data from the London School of Hygiene & Tropical Medicine Centre for the Mathematical Modelling of Infectious Diseases (LSHTM/CMMID) and from the Crop Monitor Initiative of the Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM). https://paultanger.github.io/COVID_LIC/. Accessed `r format(Sys.time(), '%d %B %Y, %H:%M:%S %Z')`.
+* USAID / Bureau for Resilience and Food Security, Data, Monitoring, and Analytics Team. "COVID-19 Modeling and the Crop Cycle". 2020. With data from the London School of Hygiene & Tropical Medicine Centre for the Mathematical Modelling of Infectious Diseases (LSHTM/CMMID) and from the Crop Monitor Initiative of the Group on Earth Observations Global Agricultural Monitoring Initiative (GEOGLAM).
 
 This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
 
