@@ -137,7 +137,6 @@ plots_to_combine_backup = plots_to_combine
 crop_plots_to_combine = crop_plots_to_combine[order(names(crop_plots_to_combine))]
 plots_to_combine = plots_to_combine[order(names(plots_to_combine))]
 
-
 for(i in seq(plots_to_combine)){
   if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
     print(paste0("crop_plots$", names(plots_to_combine)[i]))
@@ -145,6 +144,37 @@ for(i in seq(plots_to_combine)){
     plots_to_combine[[i]]$crop_plot <- crop_plots_to_combine[[temp_country_name]]
   }
 }
+
+########## ########## ########## ########## ########## ########## 
+########## ONLY RUN THIS FOR THE NEW COMBINED PDF APPROACH #######
+##### THIS WILL PUT ALL THE PLOTS IN ONE LIST: cases, crop_plot, map_plot
+
+for(i in seq(plots_to_combine)){
+  if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
+    print(paste0("crop_plots$", names(plots_to_combine)[i]))
+    temp_country_name = names(plots_to_combine)[[i]]
+    plots_to_combine[[i]]$crop_plot <- list(crop_plots_to_combine[[temp_country_name]])
+  }
+}
+setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/")
+
+for(i in seq(map.plots)){
+  # if (names(plots_to_combine)[[i]] == names(crop_plots_to_combine[i])){
+  #get file from directory
+  filename = map_filenames.countries$map_filename[names(map.plots)[i] == map_filenames.countries$USAID_Country]
+  paste(names(map.plots)[i], " ", filename)
+  mapimg = readPNG(filename)
+  mapimg = rasterGrob(mapimg)
+  plots_to_combine[[i]]$map_plot <- list(mapimg)
+}
+
+# save this
+setwd(datadir)
+filename = addStampToFilename("map_plots", "RDS")
+# saveRDS(plots_to_combine, filename)
+
+########## END OF RUN THIS FOR THE NEW COMBINED PDF APPROACH #######
+########## ########## ########## ########## ########## ########## 
 
 for(i in seq(map.plots)){
   if (names(map.plots)[[i]] == names(plots_to_combine[i])){
@@ -158,9 +188,7 @@ setwd(datadir)
 filename = addStampToFilename("map.plots_pdf", "RDS")
 # saveRDS(map.plots, filename)
 
-# compare to version saved yesterday
-setwd(datadir)
-test = readRDS("allplots_20200623_1830.RDS")
+
 ###############
 # first subset crop plot list
 crop_plots_region_to_combine = other_crop_plots[names(other_crop_plots) %in% combine_region_countries]
@@ -194,7 +222,30 @@ for(i in seq(plots_by_region)){
   }
 }
 
-j=1
+########## ########## ########## ########## ########## ########## 
+########## ONLY RUN THIS FOR THE NEW COMBINED PDF APPROACH #######
+##### THIS WILL PUT ALL THE PLOTS IN ONE LIST: cases, crop_plot, map_plot
+
+setwd("~/paultangerusda drive/2020_Sync/COVID analysis (Paul Tanger)/data/GEOGLAM_map_files/")
+for(i in seq(plots_by_region)){
+  for(j in seq(plots_by_region[[i]]$crop_plots)){
+    filename = map_filenames.regions$map_filename[names(plots_by_region)[i] == map_filenames.regions$USAID_Country][j]
+    print(filename)
+    mapimg = readPNG(filename)
+    mapimg = rasterGrob(mapimg)
+    temp_region_name = names(plots_by_region[[i]]$crop_plots[j])
+    plots_by_region[[i]]$map_plot[temp_region_name] = list(mapimg)
+  }
+}
+
+# save this
+setwd(datadir)
+filename = addStampToFilename("plots_by_region", "RDS")
+# saveRDS(plots_by_region, filename)
+
+########## END OF RUN THIS FOR THE NEW COMBINED PDF APPROACH #######
+########## ########## ########## ########## ########## ########## 
+
 for(i in seq(map.plots.regions)){
   if (names(map.plots.regions)[[i]] == names(plots_by_region[i])){
     map.plots.regions[[i]]$title <- ggdraw() + draw_label(names(map.plots.regions[i]), fontface='bold')
@@ -268,6 +319,9 @@ filename = addStampToFilename("allplots", "RDS")
 
 filename = addStampToFilename("region.plots_pdf", "RDS")
 #saveRDS(region.plots, filename)
+
+filename = addStampToFilename("map.plots_pdf", "RDS")
+#saveRDS(map.plots, filename)
 
 # try printing together
 setwd(plotdir)
