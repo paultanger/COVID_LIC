@@ -26,23 +26,6 @@
   together
 ```
 
-<!-- ![image](source_text.png){ width=3in } -->
-
-```{r country-text-maps-include-graphics-method-{{names(combined.plots[i])}}, echo=FALSE, out.width = "49%", out.height = "20%", fig.show = "hold", fig.align = "center"}
-country = "{{names(combined.plots[i])}}"
-sourcetext = readPNG("source_text.png")
-sourcetext = rasterGrob(sourcetext)
-#include_graphics(c("source_text.png","path/to/img1"))
-```
-
-```{r country-text-maps-grid-method-{{names(combined.plots[i])}}, echo=FALSE, out.width="95%", fig.align='center'}
-country = "{{names(combined.plots[i])}}"
-sourcetext = readPNG("source_text.png")
-sourcetext = rasterGrob(sourcetext)
-#grid.arrange(sourcetext, combined.plots[[country]][['map_plot']][[1]])
-#plot_grid(sourcetext, combined.plots[[country]][['map_plot']][[1]], ncol=2, rel_widths = c(1.5, 1))
-```
-
 \  
 
 :::::: {.columns}
@@ -60,11 +43,6 @@ sourcetext = rasterGrob(sourcetext)
 * Prepared by the Data, Monitoring, and Analytics Team at USAID/Bureau for Resilience and Food Security; https://www.usaid.gov/who-we-are/organization/bureaus/bureau-resilience-and-food-security. For questions, contact chillbruner@usaid.gov.
 
 \normalsize
-```{r country-text-col-method-{{names(combined.plots[i])}}, echo=FALSE, fig.align='center'}
-sourcetext = readPNG("source_text.png")
-sourcetext = rasterGrob(sourcetext)
-#grid.arrange(sourcetext) # or grid.draw?
-```
 
 <!-- https://bookdown.org/yihui/rmarkdown-cookbook/multi-column.html -->
 :::
@@ -81,12 +59,3 @@ grid.arrange(combined.plots[[country]][['map_plot']][[1]])
 ```
 :::
 ::::::
-
-```{r country-maps-{{names(combined.plots[i])}}, fig.align = 'center', echo = FALSE, results='asis', out.width='40%'}
-  # fig.width=3.7,
-  # these are the country maps
-  #country = "{{names(combined.plots[i])}}"
-  # the actual maps
-  #grid.arrange(combined.plots[[country]][['map_plot']][[1]])
-  #cat("  \n")
-```

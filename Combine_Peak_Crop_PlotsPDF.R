@@ -176,13 +176,13 @@ filename = addStampToFilename("map_plots", "RDS")
 ########## END OF RUN THIS FOR THE NEW COMBINED PDF APPROACH #######
 ########## ########## ########## ########## ########## ########## 
 
-for(i in seq(map.plots)){
-  if (names(map.plots)[[i]] == names(plots_to_combine[i])){
-    map.plots[[i]]$title <- ggdraw() + draw_label(names(map.plots[i]), fontface='bold')
-    bottom <- plot_grid(plots_to_combine[[i]]$cases, plots_to_combine[[i]]$crop_plot, ncol=1, align="v", axis="l", rel_heights = c(2, 1))
-    map.plots[[i]]$bottom <- bottom
-  }
-}
+# for(i in seq(map.plots)){
+#   if (names(map.plots)[[i]] == names(plots_to_combine[i])){
+#     map.plots[[i]]$title <- ggdraw() + draw_label(names(map.plots[i]), fontface='bold')
+#     bottom <- plot_grid(plots_to_combine[[i]]$cases, plots_to_combine[[i]]$crop_plot, ncol=1, align="v", axis="l", rel_heights = c(2, 1))
+#     map.plots[[i]]$bottom <- bottom
+#   }
+# }
 # save this version with "bottom" plots
 setwd(datadir)
 filename = addStampToFilename("map.plots_pdf", "RDS")
