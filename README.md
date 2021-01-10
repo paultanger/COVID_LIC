@@ -15,6 +15,9 @@ Outlined in load_libs.R and described in more detail below.
 For now, the best way is clone or fork the repo.  The data files have not been uplodated yet, so please contact the author for assistance.
 
 ## How to use
+The data files required for this project are being hosted here: https://drive.google.com/file/d/1naUVZuKa61fosltkoIjhIQJ8XeKROcnO/view?usp=sharing
+You will need to update the relative directories for these files in the scripts based on where you unzip the data.
+
 This is a work in progress and some files need to be cleaned up but the key places to start are these files:
 
 * These capture and consolidate data:
